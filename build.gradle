@@ -1,3 +1,5 @@
+import groovy.swing.SwingBuilder
+
 apply plugin: 'java'
 apply plugin: 'war'
 
@@ -29,38 +31,70 @@ dependencies {
     providedRuntime 'javax.ejb:ejb-api:3.0'
 }
 
-/*war {
-    from ('./src/main/resources') {
-        include 'META-INF/**'
-    }
-}*/
 
 ext{
     CREATE_MYSQL_ACCOUNT_SQL_PATH = 'setup/CreateSystemDBAccount.sql'
+	INIT_SYSTEM_DB_SQL_PATH = 'setup/InitSystemDB.sql'
     GLASSFISH_RESOURCES_PATH = 'setup/glassfish-resources.xml'
     BUILD_WAR_PATH = 'build/libs/subway-ticket-web.war'
     GLASSFISH_DOMAIN = 'subway-ticket-server'
     WEBAPP_NAME = 'subway-ticket-web'
     password = null
+	if(System.getProperties().getProperty("os.name").toLowerCase().contains("windows"))		//In Windows
+		ASADMIN_EXEC = 'asadmin.bat'
+	else	//In Linux
+		ASADMIN_EXEC = 'asadmin'
 }
 
-task initWebServer(){
+def inputPassword = {
+	if (password == null) {
+		if(System.console() == null) {
+			new SwingBuilder().edt {
+				dialog(modal: true, title: 'Enter password', alwaysOnTop: true, resizable: true, locationRelativeTo: null, pack: true, show: true) {
+					vbox {
+						label(text: "Please enter MySQL root password:");
+						def input1 = passwordField();
+						button(defaultButton: true, text: 'OK', actionPerformed: {
+							password = input1.password;
+							dispose();
+						});
+					}
+				}
+			}
+		} else {
+			password = System.console().readPassword("\nPlease enter MySQL root password: ");
+		}
+	}
+}
+
+task initProjectDB(){
+	doLast{
+		println 'Init project database...'
+		inputPassword();
+		exec{
+			commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + INIT_SYSTEM_DB_SQL_PATH + ';'
+		}
+	}
+}
+
+task initWebServer(dependsOn: 'initProjectDB'){
     description 'Init web server, including creating a new MySQL account and a new GlassFish domain named micronurse-server.'
     doLast {
         println 'Create new MySQL account...'
-        if (password == null) {
-            println 'MySQL root password:'
-            password = System.console().readPassword();
+        inputPassword()
+
+		try{
+			exec{
+				commandLine 'mysql', '-uroot', '-p' + password, '-e', 'DROP USER \'SubwayTicketWeb\'@\'127.0.0.1\';'
+			}
+		}catch (Exception e){}
+		
+        exec {
+            commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + CREATE_MYSQL_ACCOUNT_SQL_PATH + ';'
         }
 
-        try {
-            exec {
-                commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + CREATE_MYSQL_ACCOUNT_SQL_PATH + ';'
-            }
-        }catch (Exception e){}
-
         exec {
-            commandLine 'asadmin', 'create-domain', '--portbase', '16000', '--nopassword', GLASSFISH_DOMAIN
+            commandLine ASADMIN_EXEC, 'create-domain', '--portbase', '16000', '--nopassword', GLASSFISH_DOMAIN
         }
     }
 }
@@ -68,7 +102,7 @@ task initWebServer(){
 task startWebServer {
     doLast {
         exec {
-            commandLine 'asadmin', 'start-domain', GLASSFISH_DOMAIN
+            commandLine ASADMIN_EXEC, 'start-domain', GLASSFISH_DOMAIN
         }
     }
 }
@@ -76,7 +110,7 @@ task startWebServer {
 task stopWebServer {
     doLast {
         exec {
-            commandLine 'asadmin', 'stop-domain', GLASSFISH_DOMAIN
+            commandLine ASADMIN_EXEC, 'stop-domain', GLASSFISH_DOMAIN
         }
     }
 }
@@ -85,15 +119,15 @@ task deployWebapp(dependsOn: ['build']){
     description 'Build and deploy(or redeploy) the web app on Glassfish.'
     doLast {
         exec {
-            commandLine 'asadmin', '--port', '16048', 'add-resources', GLASSFISH_RESOURCES_PATH
+            commandLine ASADMIN_EXEC, '--port', '16048', 'add-resources', GLASSFISH_RESOURCES_PATH
         }
         try {
             exec {
-                commandLine 'asadmin', '--port', '16048', '--user', 'admin', 'undeploy', WEBAPP_NAME
+                commandLine ASADMIN_EXEC, '--port', '16048', '--user', 'admin', 'undeploy', WEBAPP_NAME
             }
         }catch (Exception e){}
         exec{
-            commandLine 'asadmin', '--port', '16048', '--user', 'admin', 'deploy', '--name', WEBAPP_NAME, BUILD_WAR_PATH
+            commandLine ASADMIN_EXEC, '--port', '16048', '--user', 'admin', 'deploy', '--name', WEBAPP_NAME, BUILD_WAR_PATH
         }
         println 'Deploy finished. Please visit http://localhost:16080/' + WEBAPP_NAME
     }
