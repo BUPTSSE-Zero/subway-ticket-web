@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'war'
 
-sourceCompatibility = 1.5
+sourceCompatibility = 1.7
 
 repositories {
     mavenCentral()
@@ -15,7 +15,7 @@ dependencies {
             'log4j:log4j:1.2.+',
             'com.google.code.gson:gson:2.6.+',
             'javax.servlet:javax.servlet-api:4.+',
-            'org.eclipse.persistence:javax.persistence:2.1.+',
+            'org.eclipse.persistence:eclipselink:+',
             'javax.validation:validation-api:1.1.+',
             'javax.faces:javax.faces-api:+',
             'javax.ejb:ejb-api:3.0',
@@ -28,6 +28,12 @@ dependencies {
     providedRuntime 'javax.faces:javax.faces-api:+'
     providedRuntime 'javax.ejb:ejb-api:3.0'
 }
+
+/*war {
+    from ('./src/main/resources') {
+        include 'META-INF/**'
+    }
+}*/
 
 ext{
     CREATE_MYSQL_ACCOUNT_SQL_PATH = 'setup/CreateSystemDBAccount.sql'
@@ -47,9 +53,11 @@ task initWebServer(){
             password = System.console().readPassword();
         }
 
-        exec {
-            commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + CREATE_MYSQL_ACCOUNT_SQL_PATH + ';'
-        }
+        try {
+            exec {
+                commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + CREATE_MYSQL_ACCOUNT_SQL_PATH + ';'
+            }
+        }catch (Exception e){}
 
         exec {
             commandLine 'asadmin', 'create-domain', '--portbase', '16000', '--nopassword', GLASSFISH_DOMAIN
@@ -76,9 +84,9 @@ task stopWebServer {
 task deployWebapp(dependsOn: ['build']){
     description 'Build and deploy(or redeploy) the web app on Glassfish.'
     doLast {
-        /*exec {
-            commandLine 'asadmin', 'add-resources', GLASSFISH_RESOURCES_PATH
-        }*/
+        exec {
+            commandLine 'asadmin', '--port', '16048', 'add-resources', GLASSFISH_RESOURCES_PATH
+        }
         try {
             exec {
                 commandLine 'asadmin', '--port', '16048', '--user', 'admin', 'undeploy', WEBAPP_NAME
