@@ -3,6 +3,7 @@ package com.subwayticket.control; /**
  */
 
 import com.subwayticket.util.JedisUtil;
+import com.subwayticket.util.LoggerUtil;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -20,6 +21,7 @@ public class WebappListener implements ServletContextListener {
     // -------------------------------------------------------
     public void contextInitialized(ServletContextEvent sce) {
         JedisUtil.initJedisPool();
+        LoggerUtil.setLogBaseDir(sce.getServletContext().getRealPath("/"));
     }
 
     public void contextDestroyed(ServletContextEvent sce) {

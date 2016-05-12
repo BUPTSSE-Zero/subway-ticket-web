@@ -25,7 +25,11 @@ build*/
 lib/
 out/
 
-#Other files
+#Other Files
 *~
 .directory
 *.rdb
+
+#Log Files
+logs/*
+*.log

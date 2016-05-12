@@ -17,7 +17,7 @@
 ### 第一次构建前的准备工作
 ①安装所有依赖软件，并将`${GLASSFISH_HOME}/bin`和`${GRADLE_HOME}/bin`这两个路径加入到`PATH`环境变量中。其中，`${GLASSFISH_HOME}`为Glassfish的安装路径，`{GRADLE_HOME}`为Gradle的安装路径
 	
-②创建项目所需的MySQL账号和Glassfish域。将工作目录切换到项目根目录，执行：
+②创建项目所需的MySQL账号和Glassfish域，以及初始化工程所需的所有数据库表。将工作目录切换到项目根目录，执行：
 
 ```
 gradle initWebServer
@@ -44,7 +44,8 @@ gradle deployWebapp
 
 ## gradle.build常用任务一览
 + build：构建项目并打包成war文件于`build/libs`目录下。
-+ initWebServer： 初次构建工程使用，包括创建新的MySQL账号，创建新的Glassfish域。
++ initProjectDB：初始化工程所需的所有数据库表。
++ initWebServer： 初次构建工程使用，包括创建新的MySQL账号，创建新的Glassfish域，以及初始化工程所需的所有数据库表。
 + startWebServer：启动Glassfish域。
 + stopWebServer：停止Glassfish域。
 + deployWebapp： 构建并部署（或重新部署）项目到Glassfish上。
