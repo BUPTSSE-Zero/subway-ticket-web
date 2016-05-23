@@ -9,12 +9,72 @@
 
     <h:head>
         <title>#{bundle.IndexPageTitle}</title>
+        <h:outputScript library="js" name="jquery-bgswitcher.js" />
+        <h:outputScript library="js" name="autoSwitchPageBG.js" />
+        <h:outputStylesheet library="css" name="style.css" />
     </h:head>
-    <f:view>
-        <p:outputLabel value="#{bundle.IndexPageTitle}"/>
-        <br/>
-        <p:inputTextarea/>
-        <br/>
-        <p:button icon="ui-icon-check" value="OK"/>
-    </f:view>
+    <body>
+    <div id="bg-body"></div>
+            <p:layout fullPage="true">
+                <p:layoutUnit position="north" style="border-style: none" size="100" maxSize="100" minSize="100">
+                    <h:outputLabel value="地铁自动取票系统" style="font-size: 35px;margin-left: 50px;margin-top: 40px" />
+                </p:layoutUnit>
+                <p:layoutUnit position="center" style="border-style: none">
+                    <div>
+                    </div>
+                    <div style="margin-left: 100px;margin-top: 100px">
+                        <h:form>
+                            <p:commandButton icon="ui-icon-star" style="width: 350px;height: 50px;background-color: #4D73FF" value="开始购票" />
+                            <p:commandButton icon="ui-icon-arrowthickstop-1-s" style="width: 350px;height: 50px;margin-top: 25px" value="立即下载" />
+                        </h:form>
+                    </div>
+                </p:layoutUnit>
+                <p:layoutUnit position="east" style="border-style: none" size="600" minSize="600" maxSize="600">
+                    <div style="margin-left: 40px;margin-top: 20px;">
+                        <h:form style="width: 60%">
+                            <p:tabView>
+                                <p:tab title="登录">
+                                    <div>
+                                        <h:outputLabel value="手机号：" style="font-size: 20px" />
+                                        <p:inputText value="#{basicView.phonenumber}" style="width: 282px;height: 38px" />
+                                    </div>
+                                    <div style="margin-top: 10px">
+                                        <h:outputLabel value="密码：" style="font-size: 20px"><a href="forgot_password.xhtml" style="font-size:15px;float: right;font-style: italic">忘记密码</a> </h:outputLabel>
+                                        <p:password value="#{basicView.password}" style="width: 282px;height: 38px" />
+                                    </div>
+                                    <div style="margin-top: 20px">
+                                        <p:selectBooleanCheckbox value="#{selectBooleanCheckbox.value}" />
+                                        <h:outputLabel value="下次自动登录" style="margin-left: 10px" />
+                                    </div>
+                                    <div style="margin-top: 15px">
+                                        <p:commandButton value="Login" actionListener="#{buttonView.buttonAction}" style="width: 285px;height: 38px;" icon="ui-icon-star" />
+                                    </div>
+                                </p:tab>
+                                <p:tab title="快速注册">
+                                    <div>
+                                        <h:outputLabel value="手机号：" style="font-size: 20px" />
+                                        <p:inputText value="#{userOperation.phoneNumber}" style="width: 282px;height: 38px" />
+                                    </div>
+                                    <div style="margin-top: 10px">
+                                        <h:outputLabel value="密码：" style="font-size: 20px" />
+                                        <p:password value="#{userOperation.password}" style="width: 282px;height: 38px" />
+                                    </div>
+                                    <div style="margin-top: 10px">
+                                        <h:outputLabel value="验证码：" style="font-size: 20px" />
+                                        <br />
+                                        <p:inputText value="#{UserOperation.captcha}" style="width: 100px;height: 32px;margin-right: 5px" />
+                                        <p:commandButton value="短信验证码" actionListener="#{userOperation.sendCaptcha}" style="height: 38px" />
+                                    </div>
+                                    <div style="margin-top: 20px">
+                                        <p:commandButton value="注册" actionListener="#{userOperation.register}" style="height: 38px;width: 285px" />
+                                    </div>
+                                </p:tab>
+                            </p:tabView>
+                    </h:form>
+                    </div>
+                </p:layoutUnit>
+                <p:layoutUnit position="south" style="border-style: none" size="100">
+                </p:layoutUnit>
+            </p:layout>
+    </body>
 </html>
