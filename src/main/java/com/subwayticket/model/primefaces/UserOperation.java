@@ -30,6 +30,7 @@ public class UserOperation{
     private String password;
     private String captcha;
     private boolean registSuccessfull;
+    public UserOperation(){}
     public UserOperation(String phoneNumber, String password, String captcha){
         this.phoneNumber = phoneNumber;
         this.password = password;
@@ -44,9 +45,6 @@ public class UserOperation{
     public void setCaptcha(String captcha){
         this.captcha = captcha;
     }
-    public void setProductID(int productID){
-        this.productID = productID;
-    }
     public void setRegistSuccessfull(boolean registSuccessfull){
         this.registSuccessfull = registSuccessfull;
     }
@@ -59,13 +57,10 @@ public class UserOperation{
     public String getCaptcha(){
         return captcha;
     }
-    public int getProductID() {
-        return productID;
-    }
     public boolean getRegistSuccessfull() {
         return registSuccessfull;
     }
-    public void register(ActionEvent actionEvent) {
+    public void register(ActionEvent actionEgetCurrentInstancevent) {
         request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
         Result result = CheckUtil.checkRegisterInfo(request, regReq, dbBean, JedisUtil.getJedis());
         if (result.getResultCode() == PublicResultCode.SUCCESS_CODE) {
