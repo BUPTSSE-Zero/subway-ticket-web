@@ -30,4 +30,17 @@ public class SecurityUtil {
         jedis.setex(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber, AUTH_CODE_VALID_MINUTES * 60, new PhoneCaptcha("123456").toString());
         return new Result(PublicResultCode.SUCCESS_CODE, BundleUtil.getString(request, "TipCaptchaSendSuccess"));
     }
+
+    public static boolean checkPhoneCaptcha(String phoneNumber, String captcha, Jedis jedis){
+        if(phoneNumber == null || captcha == null)
+            return false;
+        PhoneCaptcha pc = PhoneCaptcha.fromString(jedis.get(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber));
+        if(pc == null || !captcha.equals(pc.getCode()))
+            return false;
+        return true;
+    }
+
+    public static void clearPhoneCaptcha(Jedis jedis, String phoneNumber){
+        jedis.del(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber);
+    }
 }

@@ -1,12 +1,10 @@
 package com.subwayticket.control.servlet.mobile;
 
 import com.google.gson.Gson;
+import com.subwayticket.control.AccountControl;
 import com.subwayticket.database.control.SubwayTicketDBHelperBean;
-import com.subwayticket.database.model.Account;
-import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.RegisterRequest;
 import com.subwayticket.model.Result;
-import com.subwayticket.util.CheckUtil;
 import com.subwayticket.util.GsonUtil;
 import com.subwayticket.util.JedisUtil;
 import com.subwayticket.util.LoggerUtil;
@@ -33,11 +31,7 @@ public class RegisterServlet extends HttpServlet {
         Gson gson = GsonUtil.getGson();
         try {
             RegisterRequest regReq = gson.fromJson(request.getParameter("data"), RegisterRequest.class);
-            Result result = CheckUtil.checkRegisterInfo(request, regReq, dbBean, JedisUtil.getJedis());
-            if (result.getResultCode() == PublicResultCode.SUCCESS_CODE) {
-                Account newUser = new Account(regReq.getPhoneNumber(), regReq.getPassword());
-                dbBean.create(newUser);
-            }
+            Result result = AccountControl.register(request, regReq, dbBean, JedisUtil.getJedis());
             response.getWriter().write(gson.toJson(result));
             logger.info("JSON Result:" + gson.toJson(result));
         }catch (Exception e){

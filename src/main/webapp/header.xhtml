@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<f:view>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <h:outputScript library="js" name="materialize.js"/>
+    <h:outputStylesheet library="css" name="materialize.css"/>
+    <h:outputStylesheet library="css" name="style.css"/>
+    <h:outputScript library="js" name="login.js"/>
+</f:view>
+
+<div id="header" class="light-blue z-depth-1">
+    <div id="titlebar">
+        <span>#{bundle.IndexPageTitle}<i class="material-icons left">payment</i></span>
+    </div>
+    <p:outputPanel id="header-panel">
+    </p:outputPanel>
+    <div class="header-right">
+        <p:clock id="time-text" pattern="yyyy-MM-dd HH:mm" autoSync="false" mode="server" syncInterval="60000"/>
+    </div>
+    <div class="header-right" style="margin-right: 0">
+        <i class="material-icons">schedule</i>
+    </div>
+</div>
+
+</html>

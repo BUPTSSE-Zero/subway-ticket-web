@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:p="http://primefaces.org/ui">
+
+    <div class="col s12">
+        <ul class="tabs light-blue-text">
+            <li class="tab col s3"><a class="active waves-effect" href="#login-tab">#{bundle.Signin}</a></li>
+            <li class="tab col s3"><a class="waves-effect" href="#signup-tab">#{bundle.Signup}</a></li>
+        </ul>
+    </div>
+    <div id="login-tab">
+        <div id="login-page">
+            <h:form id="login-from">
+                <div class="row" style="margin-bottom: 0">
+                    <div class="input-field col s12" style="margin-top: 30px">
+                        <i class="material-icons prefix">stay_primary_portrait</i>
+                        <p:inputText id="login_phone_number" class="validate" value="#{userOperationBean.phoneNumber}"
+                                     required="true" requiredMessage="#{bundle.TipInputPhoneNumber}"/>
+                        <label for="login_phone_number">#{bundle.PhoneNumber}</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 0">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">lock</i>
+                        <p:password id="login_password" class="validate" value="#{userOperationBean.password}"
+                                    required="true" requiredMessage="#{bundle.TipInputPassword}"/>
+                        <label for="login_password">#{bundle.Password}</label>
+                    </div>
+                </div>
+                <p:messages id="login_error_message" autoUpdate="false" closable="true"/>
+                <div style="text-align: center">
+                    <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                                     value="#{bundle.Login}" action="#{userOperationBean.login}"
+                                     update="login_error_message">
+                    </p:commandButton>
+                </div>
+            </h:form>
+        </div>
+        <div id="forget-password-page" style="display: none">
+            <h:form id="reset-password-form">
+                <div class="row" style="margin-bottom: 0">
+                    <div class="input-field col s12" style="margin-top: 30px">
+                        <i class="material-icons prefix">stay_primary_portrait</i>
+                        <p:inputText id="reset_password_phone_number" class="validate" value="#{userOperationBean.phoneNumber}"
+                                     required="true" requiredMessage="#{bundle.TipInputPhoneNumber}"/>
+                        <label for="reset_password_phone_number">#{bundle.PhoneNumber}</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 0">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">lock</i>
+                        <p:password id="reset_password_password" class="validate" value="#{userOperationBean.newPassword}"
+                                    match="reset_password_repeat_password" validatorMessage="#{bundle.TipPasswordNotMatch}"/>
+                        <label for="reset_password_password">#{bundle.ResetPassword}</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 0">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">lock</i>
+                        <p:password id="reset_password_repeat_password" class="validate"/>
+                        <label for="reset_password_repeat_password">#{bundle.RepeatNewPassword}</label>
+                    </div>
+                </div>
+                <div class="row" style="margin-bottom: 0;">
+                    <div class="input-field col s6">
+                        <p:inputText id="reset_password_captcha" class="validate" value="#{userOperationBean.captcha}"/>
+                        <label for="reset_password_captcha">#{bundle.PhoneCaptcha}</label>
+                    </div>
+                    <div style="height: 60px; line-height: 60px">
+                        <p:commandLink class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" action="#{userOperationBean.sendCaptcha}"
+                                       update="reset_password_message"/>
+                    </div>
+                </div>
+                <p:messages id="reset_password_message" autoUpdate="false" closable="true"/>
+                <div style="text-align: center">
+                    <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                                     value="#{bundle.Login}" update="reset_password_message"/>
+                </div>
+            </h:form>
+        </div>
+        <div style="text-align: right; margin-top: 15px">
+            <div class="switch">
+                <label>
+                    #{bundle.ForgetPassword}
+                    <input type="checkbox" onchange="onForgetPasswordSwitch(this.checked)"/>
+                    <span class="lever"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+    <div id="signup-tab">
+        <h:form id="signup-form">
+            <div class="row" style="margin-bottom: 0">
+                <div class="input-field col s12" style="margin-top: 30px">
+                    <i class="material-icons prefix">stay_primary_portrait</i>
+                    <p:inputText id="signup_phone_number" class="validate" value="#{userOperationBean.phoneNumber}"
+                                 required="true" requiredMessage="#{bundle.TipInputPhoneNumber}"/>
+                    <label for="signup_phone_number">#{bundle.PhoneNumber}</label>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 0">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">lock</i>
+                    <p:password id="signup_password" class="validate" value="#{userOperationBean.newPassword}"
+                                match="signup_repeat_password" validatorMessage="#{bundle.TipPasswordNotMatch}"/>
+                    <label for="signup_password">#{bundle.Password}</label>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 0">
+                <div class="input-field col s12">
+                    <i class="material-icons prefix">lock</i>
+                    <p:password id="signup_repeat_password" class="validate"/>
+                    <label for="signup_repeat_password">#{bundle.RepeatNewPassword}</label>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 0;">
+                <div class="input-field col s6">
+                    <p:inputText id="signup_captcha" class="validate" value="#{userOperationBean.captcha}"/>
+                    <label for="signup_captcha">#{bundle.PhoneCaptcha}</label>
+                </div>
+                <div style="height: 60px; line-height: 60px">
+                    <p:commandLink class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" action="#{userOperationBean.sendCaptcha}"
+                        update="singup_message">
+                        <i class="material-icons left">send</i>
+                    </p:commandLink>
+                </div>
+            </div>
+            <p:messages id="singup_message" autoUpdate="false" closable="true"/>
+            <div style="text-align: center">
+                <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                                 value="#{bundle.Register}" action="#{userOperationBean.register}"
+                                 update="singup_message"/>
+            </div>
+        </h:form>
+    </div>
+
+</html>
