@@ -7,20 +7,24 @@ package com.subwayticket.model.managedbean;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.application.FacesMessage;
 
 import com.subwayticket.control.AccountControl;
+import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
-import com.subwayticket.model.RegisterRequest;
-import com.subwayticket.model.Result;
+import com.subwayticket.model.request.LoginRequest;
+import com.subwayticket.model.request.RegisterRequest;
+import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
 import com.subwayticket.util.JedisUtil;
 import com.subwayticket.util.SecurityUtil;
 import com.subwayticket.database.control.*;
+import org.primefaces.context.RequestContext;
+
 import javax.ejb.EJB;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 
 @ManagedBean
@@ -91,10 +95,21 @@ public class UserOperationBean implements Serializable {
 
 
     public boolean login(){
-        setCaptcha("");
-        setPassword("");
-        setPhoneNumber("");
-        return true;
+        FacesContext context = FacesContext.getCurrentInstance();
+        Result result = AccountControl.webLogin((HttpServletRequest)context.getExternalContext().getRequest(),
+                                                new LoginRequest(phoneNumber, password), dbBean);
+        if(result.getResultCode() == PublicResultCode.SUCCESS_CODE || result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE) {
+            RequestContext requestContext = RequestContext.getCurrentInstance();
+            requestContext.addCallbackParam("login_result", result.getResultCode());
+            setCaptcha("");
+            setPassword("");
+            setPhoneNumber("");
+            setNewPassword("");
+            return true;
+        }else{
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
+        }
+        return false;
     }
 
 
@@ -117,4 +132,16 @@ public class UserOperationBean implements Serializable {
         }
     }
 
+    public String getUserID(){
+        HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+        if(session == null)
+            return null;
+        Account account = (Account)session.getAttribute(AccountControl.SESSION_ATTR_USER);
+        if(account == null)
+            return null;
+        StringBuffer phoneNumber = new StringBuffer(account.getPhoneNumber());
+        for(int i = 3; i < 7 && i < phoneNumber.length(); i++)
+            phoneNumber.setCharAt(i, '*');
+        return phoneNumber.toString();
+    }
 }

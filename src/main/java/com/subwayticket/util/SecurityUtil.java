@@ -2,7 +2,7 @@ package com.subwayticket.util;
 
 import com.subwayticket.model.PhoneCaptcha;
 import com.subwayticket.model.PublicResultCode;
-import com.subwayticket.model.Result;
+import com.subwayticket.model.result.Result;
 import redis.clients.jedis.Jedis;
 
 import javax.servlet.ServletRequest;

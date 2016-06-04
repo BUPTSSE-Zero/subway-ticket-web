@@ -5,21 +5,61 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <f:view>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <h:outputScript library="js" name="materialize.js"/>
     <h:outputStylesheet library="css" name="materialize.css"/>
     <h:outputStylesheet library="css" name="style.css"/>
-    <h:outputScript library="js" name="login.js"/>
 </f:view>
 
 <div id="header" class="light-blue z-depth-1">
     <div id="titlebar">
         <span>#{bundle.IndexPageTitle}<i class="material-icons left">payment</i></span>
     </div>
-    <p:outputPanel id="header-panel">
+    <c:if test="#{facesContext.viewRoot.viewId != '/index.xhtml'}">
+        <div class="header-right hide-on-med-and-down">
+            <h:link class="waves-effect" value="#{bundle.MobileClient}" outcome="/mobile-download.xhtml"></h:link>
+        </div>
+        <div class="header-right" style="margin-right: 0">
+            <i class="material-icons">android</i>
+        </div>
+    </c:if>
+    <p:outputPanel id="header-panel" styleClass="header-right">
+        <c:if test="#{facesContext.viewRoot.viewId != '/index.xhtml'}">
+            <c:choose>
+                <c:when test="#{not empty userOperationBean.userID}">
+                    <div class="header-right">
+                        <a id="header-user-dropdown" class='dropdown-button waves-effect' data-activates='header-user-menu'>#{userOperationBean.userID}</a>
+
+                        <ul id='header-user-menu' class="dropdown-content" style="min-width: 200px">
+                            <li class="waves-effect">
+                                <div class="user-menu-item">
+                                    <i class="material-icons light-green-text" style="float: left">perm_identity</i>
+                                    <h:link style="float: left" outcome="/personal-center.xhtml" value="#{bundle.PersonCenter}"/>
+                                </div>
+                            </li>
+                            <li class="divider"></li>
+                            <li class="waves-effect">
+                                <div class="user-menu-item">
+                                    <i class="material-icons red-text" style="float: left">power_settings_new</i>
+                                    <h:link style="float: left" outcome="/index.xhtml" value="#{bundle.Logout}"/>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="header-right">
+                        <span class="waves-effect" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab')">#{bundle.Signin}/#{bundle.Signup}</span>
+                    </div>
+                </c:otherwise>
+            </c:choose>
+            <div class="header-right" style="margin-right: 0">
+                <i class="material-icons">account_circle</i>
+            </div>
+        </c:if>
     </p:outputPanel>
     <div class="header-right">
         <p:clock id="time-text" pattern="yyyy-MM-dd HH:mm" autoSync="false" mode="server" syncInterval="60000"/>
@@ -28,5 +68,24 @@
         <i class="material-icons">schedule</i>
     </div>
 </div>
+
+<c:if test="#{facesContext.viewRoot.viewId != '/index.xhtml'}">
+    <div id="login-modal" class="modal white">
+        <div class="modal-content">
+            <ui:include src="login-register.xhtml"/>
+        </div>
+    </div>
+    <div id="login-tip-modal" class="modal">
+        <div class="modal-content">
+            <p>#{bundle.TipLoginWithPreOffline}</p>
+            <p>#{bundle.TipWithoutLogout}</p>
+        </div>
+        <div class="modal-footer">
+            <a class=" modal-action modal-close waves-effect waves-red btn-flat">#{bundle.Close}
+                <i class="material-icons left" style="font-size: 24px">close</i>
+            </a>
+        </div>
+    </div>
+</c:if>
 
 </html>

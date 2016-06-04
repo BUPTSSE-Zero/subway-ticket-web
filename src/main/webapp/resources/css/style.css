@@ -32,13 +32,8 @@ body{
 
 #header{
 	width:100%;
-	color: white;
 	height: 60px;
 	line-height: 60px;
-}
-
-#header a{
-	color: white;
 }
 
 #titlebar{
@@ -55,7 +50,6 @@ body{
 
 #header-panel{
 	float: right;
-	height: 100%;
 }
 
 .header-right{
@@ -75,11 +69,24 @@ body{
 	margin-top: 18px;
 }
 
+.header-right span, .header-right a{
+	color: white;
+	padding: 0 10px 0 10px;
+	vertical-align: baseline;
+}
+
 #time-text{
 	color: white;
 	background: none;
 	text-decoration: none;
 	border: none;
+	font-weight: normal;
+	font-size: 15px;
+}
+
+#login-modal{
+	overflow-x: hidden;
+	width: 370px;
 }
 
 #login-panel{
@@ -94,7 +101,7 @@ body{
 	font-size: 17px;
 }
 
-#login-panel .submit-button{
+.submit-button{
 	font-size: 18px;
 	font-weight: bold;
 	width: 60%;
@@ -105,6 +112,23 @@ body{
 	padding-left: 15px;
 	padding-right: 15px;
 	overflow: hidden;
+}
+
+.user-menu-item{
+	height: 50px;
+	line-height: 50px;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.user-menu-item i{
+	font-size: 32px;
+	color: black;
+	margin: 9px 5px 9px 5px;
+}
+
+.user-menu-item a, .user-menu-item span{
+	color: black;
 }
 
 #footer{

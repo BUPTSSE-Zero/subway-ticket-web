@@ -1,7 +1,7 @@
 package com.subwayticket.control.servlet.mobile;
 
 import com.google.gson.Gson;
-import com.subwayticket.model.Result;
+import com.subwayticket.model.result.Result;
 import com.subwayticket.util.GsonUtil;
 import com.subwayticket.util.JedisUtil;
 import com.subwayticket.util.LoggerUtil;

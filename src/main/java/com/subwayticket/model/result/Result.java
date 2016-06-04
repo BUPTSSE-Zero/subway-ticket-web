@@ -1,4 +1,4 @@
-package com.subwayticket.model;
+package com.subwayticket.model.result;
 
 /**
  * @author buptsse-zero <GGGZ-1101-28@Live.cn>

@@ -1,21 +1,18 @@
-package com.subwayticket.model;
+package com.subwayticket.model.request;
 
 /**
- * @author buptsse-zero <GGGZ-1101-28@Live.cn>
+ * Created by shengyun-zhou on 6/2/16.
  */
-public class RegisterRequest {
+public class LoginRequest {
     private String phoneNumber;
     private String password;
-    private String captcha;
 
-    public RegisterRequest(){}
+    public LoginRequest(){}
 
-    public RegisterRequest(String phoneNumber, String password, String captcha) {
+    public LoginRequest(String phoneNumber, String password) {
         this.phoneNumber = phoneNumber;
         this.password = password;
-        this.captcha = captcha;
     }
-
 
     public String getPhoneNumber() {
         return phoneNumber;
@@ -31,13 +28,5 @@ public class RegisterRequest {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getCaptcha() {
-        return captcha;
-    }
-
-    public void setCaptcha(String captcha) {
-        this.captcha = captcha;
     }
 }

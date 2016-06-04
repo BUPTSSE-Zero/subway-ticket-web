@@ -3,13 +3,17 @@ package com.subwayticket.control;
 import com.subwayticket.database.control.SubwayTicketDBHelperBean;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
-import com.subwayticket.model.RegisterRequest;
-import com.subwayticket.model.Result;
+import com.subwayticket.model.request.LoginRequest;
+import com.subwayticket.model.request.RegisterRequest;
+import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
 import com.subwayticket.util.SecurityUtil;
 import redis.clients.jedis.Jedis;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * @author buptsse-zero <GGGZ-1101-28@Live.cn>
@@ -49,5 +53,43 @@ public class AccountControl {
         if(password == null || password.length() < 6 || password.length() > 20)
             return PASSWORD_LENGTH_ILLEGAL;
         return PublicResultCode.SUCCESS_CODE;
+    }
+
+    public static final String SESSION_ATTR_USER = "user";
+    public static final String APPLICATION_ATTR_WEBUSER = "appWebUser";
+
+    public static final int LOGIN_SUCCESS_WITH_PRE_OFFLINE = 100;
+    public static final int LOGIN_USER_NOT_EXIST = 200;
+    public static final int LOGIN_PASSWORD_INCORRECT = 300;
+
+    private static Result login(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean){
+        Account account = (Account) dbBean.find(Account.class, loginRequest.getPhoneNumber());
+        if(account == null)
+            return new Result(LOGIN_USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
+        if(!account.getPassword().equals(loginRequest.getPassword()))
+            return new Result(LOGIN_PASSWORD_INCORRECT, BundleUtil.getString(req, "TipPasswordIncorrect"));
+        req.getSession(true).setAttribute(SESSION_ATTR_USER, account);
+        return new Result(PublicResultCode.SUCCESS_CODE, BundleUtil.getString(req, "TipLoginSuccess"));
+    }
+
+    public static Result webLogin(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean){
+        Result result = login(req, loginRequest, dbBean);
+        if(result.getResultCode() == PublicResultCode.SUCCESS_CODE){
+            ServletContext context = req.getServletContext();
+            String appAttr = APPLICATION_ATTR_WEBUSER + ((Account)req.getSession().getAttribute(SESSION_ATTR_USER)).getPhoneNumber();
+            HttpSession preSession = (HttpSession) context.getAttribute(appAttr);
+            if(preSession != null && !preSession.getId().equals(req.getSession().getId())){
+                result.setResultCode(LOGIN_SUCCESS_WITH_PRE_OFFLINE);
+                result.setResultDescription(BundleUtil.getString(req, "TipLoginWithPreOffline"));
+                logout(preSession);
+            }
+            context.setAttribute(appAttr, req.getSession());
+        }
+        return result;
+    }
+
+    private static void logout(HttpSession session){
+        session.removeAttribute(SESSION_ATTR_USER);
+        session.invalidate();
     }
 }
