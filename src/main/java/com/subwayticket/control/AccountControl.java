@@ -92,4 +92,14 @@ public class AccountControl {
         session.removeAttribute(SESSION_ATTR_USER);
         session.invalidate();
     }
+
+    public static void webLogout(HttpServletRequest req){
+        Account account = (Account) req.getSession(false).getAttribute(SESSION_ATTR_USER);
+        if(account == null)
+            return;
+        ServletContext context = req.getServletContext();
+        context.removeAttribute(APPLICATION_ATTR_WEBUSER + account.getPhoneNumber());
+        logout(req.getSession(false));
+        req.getSession(true);
+    }
 }

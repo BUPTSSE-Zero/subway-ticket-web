@@ -105,6 +105,8 @@ public class UserOperationBean implements Serializable {
             setPassword("");
             setPhoneNumber("");
             setNewPassword("");
+            if(result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
+                return false;
             return true;
         }else{
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
@@ -112,6 +114,9 @@ public class UserOperationBean implements Serializable {
         return false;
     }
 
+    public void logout(){
+        AccountControl.webLogout((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
+    }
 
     public void sendCaptcha(){
         System.out.println("Send Captcha");

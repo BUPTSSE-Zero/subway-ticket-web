@@ -14,6 +14,15 @@ function onForgetPasswordSwitch(checked){
     }
 }
 
+function indexHandleLoginResult(xhr, status, args){
+    if(args.login_result == 100) {
+        if(args.login_result == 100)
+            $('#login-tip-modal').openModal({
+                dismissible: false
+            });
+    }
+}
+
 function handleLoginResult(xhr, status, args){
     if(args.login_result == 0 || args.login_result == 100) {
         $('#login-modal').closeModal();
@@ -22,7 +31,8 @@ function handleLoginResult(xhr, status, args){
                 dismissible: false
             });
         $('#header-user-dropdown').dropdown({
-                belowOrigin: true,
+                hover: true,
+                belowOrigin: true
             }
         );
     }

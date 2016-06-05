@@ -40,7 +40,7 @@
                         <c:when test="#{facesContext.viewRoot.viewId == '/index.xhtml'}">
                             <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                                              value="#{bundle.Login}" action="#{userOperationBean.login}"
-                                             update="login_error_message"/>
+                                             update="login_error_message" oncomplete="indexHandleLoginResult(xhr, status, args)"/>
                         </c:when>
                         <c:otherwise>
                             <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
