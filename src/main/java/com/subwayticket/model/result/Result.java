@@ -7,6 +7,7 @@ public class Result {
     private int resultCode;
     private String resultDescription;
 
+    public Result(){}
 
     public Result(int resultCode, String resultDescription) {
         this.resultCode = resultCode;

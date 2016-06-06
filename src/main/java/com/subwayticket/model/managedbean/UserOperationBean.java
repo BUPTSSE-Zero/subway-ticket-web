@@ -13,7 +13,7 @@ import com.subwayticket.control.AccountControl;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.LoginRequest;
-import com.subwayticket.model.request.LoginWithNewPasswordRequest;
+import com.subwayticket.model.request.ResetPasswordRequest;
 import com.subwayticket.model.request.RegisterRequest;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
@@ -23,7 +23,6 @@ import com.subwayticket.database.control.*;
 import org.primefaces.context.RequestContext;
 
 import javax.ejb.EJB;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
@@ -124,7 +123,7 @@ public class UserOperationBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
         try {
-            Result result = AccountControl.resetPassword(request, new LoginWithNewPasswordRequest(phoneNumber, newPassword, captcha), dbBean, JedisUtil.getJedis());
+            Result result = AccountControl.resetPassword(request, new ResetPasswordRequest(phoneNumber, newPassword, captcha), dbBean, JedisUtil.getJedis());
             if (result.getResultCode() != PublicResultCode.SUCCESS_CODE) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
                 return false;

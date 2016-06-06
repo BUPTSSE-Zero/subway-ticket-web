@@ -22,6 +22,7 @@ dependencies {
             'javax.faces:javax.faces-api:+',
             'javax.ejb:ejb-api:3.0',
             'org.primefaces:primefaces:+',
+            'io.jsonwebtoken:jjwt:+'
     )
 
     providedRuntime 'javax.servlet:javax.servlet-api:4.+'

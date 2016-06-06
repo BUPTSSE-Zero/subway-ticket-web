@@ -3,15 +3,15 @@ package com.subwayticket.model.request;
 /**
  * Created by shengyun-zhou on 6/6/16.
  */
-public class LoginWithNewPasswordRequest {
+public class ResetPasswordRequest {
     private String phoneNumber;
     private String newPassword;
     private String captcha;
 
-    public LoginWithNewPasswordRequest() {
+    public ResetPasswordRequest() {
     }
 
-    public LoginWithNewPasswordRequest(String phoneNumber, String newPassword, String captcha) {
+    public ResetPasswordRequest(String phoneNumber, String newPassword, String captcha) {
         this.phoneNumber = phoneNumber;
         this.newPassword = newPassword;
         this.captcha = captcha;

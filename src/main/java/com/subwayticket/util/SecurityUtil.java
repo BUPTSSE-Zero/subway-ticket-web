@@ -1,11 +1,18 @@
 package com.subwayticket.util;
 
+import com.google.gson.Gson;
+import com.subwayticket.model.MobileToken;
 import com.subwayticket.model.PhoneCaptcha;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.result.Result;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.crypto.MacProvider;
 import redis.clients.jedis.Jedis;
 
 import javax.servlet.ServletRequest;
+import java.security.Key;
 import java.util.Date;
 
 /**
@@ -42,5 +49,14 @@ public class SecurityUtil {
 
     public static void clearPhoneCaptcha(Jedis jedis, String phoneNumber){
         jedis.del(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber);
+    }
+
+    private static Key tokenkey = MacProvider.generateKey();
+
+    public static String getMobileToken(String phoneNumber){
+        MobileToken token = new MobileToken(phoneNumber);
+        Gson gson = GsonUtil.getGson();
+        String tokenString = Jwts.builder().setSubject(gson.toJson(token)).signWith(SignatureAlgorithm.HS512, tokenkey).compact();
+        return tokenString.substring(tokenString.lastIndexOf(".") + 1);
     }
 }

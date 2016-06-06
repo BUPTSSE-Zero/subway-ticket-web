@@ -4,8 +4,9 @@ import com.subwayticket.database.control.SubwayTicketDBHelperBean;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.LoginRequest;
-import com.subwayticket.model.request.LoginWithNewPasswordRequest;
+import com.subwayticket.model.request.ResetPasswordRequest;
 import com.subwayticket.model.request.RegisterRequest;
+import com.subwayticket.model.result.MobileLoginResult;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
 import com.subwayticket.util.SecurityUtil;
@@ -58,6 +59,8 @@ public class AccountControl {
 
     public static final String SESSION_ATTR_USER = "user";
     public static final String APPLICATION_ATTR_WEBUSER = "appWebUser";
+    public static final String REDIS_KEY_MOBILETOKEN = "MobileToken";
+    public static int MOBILETOKEN_VALID_HOURS = 120;
 
     public static final int LOGIN_SUCCESS_WITH_PRE_OFFLINE = 100;
     public static final int LOGIN_USER_NOT_EXIST = 200;
@@ -92,7 +95,22 @@ public class AccountControl {
         return result;
     }
 
-    public static Result resetPassword(HttpServletRequest req, LoginWithNewPasswordRequest loginRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
+    public static Result mobileLogin(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
+        Result result = login(req, loginRequest, dbBean);
+        if(result.getResultCode() != PublicResultCode.SUCCESS_CODE)
+            return result;
+        MobileLoginResult mobileLoginResult = new MobileLoginResult(result);
+        if(jedis.get(REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber()) != null){
+            mobileLoginResult.setResultCode(LOGIN_SUCCESS_WITH_PRE_OFFLINE);
+            mobileLoginResult.setResultDescription(BundleUtil.getString(req, "TipLoginWithPreOffline"));
+        }
+        mobileLoginResult.setToken(SecurityUtil.getMobileToken(loginRequest.getPhoneNumber()));
+        jedis.setex(REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber(), MOBILETOKEN_VALID_HOURS * 3600,
+                    mobileLoginResult.getToken());
+        return mobileLoginResult;
+    }
+
+    public static Result resetPassword(HttpServletRequest req, ResetPasswordRequest loginRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
         Account account = (Account) dbBean.find(Account.class, loginRequest.getPhoneNumber());
         if(account == null)
             return new Result(LOGIN_USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
@@ -108,7 +126,7 @@ public class AccountControl {
         account.setPassword(loginRequest.getNewPassword());
         dbBean.merge(account);
         SecurityUtil.clearPhoneCaptcha(jedis, loginRequest.getPhoneNumber());
-        return new Result(PublicResultCode.SUCCESS_CODE, "");
+        return new Result(PublicResultCode.SUCCESS_CODE, BundleUtil.getString(req, "TipResetPasswordSuccess"));
     }
 
     private static void logout(HttpSession session){
