@@ -13,6 +13,7 @@ import com.subwayticket.control.AccountControl;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.LoginRequest;
+import com.subwayticket.model.request.LoginWithNewPasswordRequest;
 import com.subwayticket.model.request.RegisterRequest;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
@@ -32,7 +33,7 @@ import java.io.Serializable;
 public class UserOperationBean implements Serializable {
     @EJB
     private SubwayTicketDBHelperBean dbBean;
-    private ServletRequest request;
+    private HttpServletRequest request;
     private String phoneNumber;
     private String password;
     private String newPassword;
@@ -96,20 +97,43 @@ public class UserOperationBean implements Serializable {
 
     public boolean login(){
         FacesContext context = FacesContext.getCurrentInstance();
-        Result result = AccountControl.webLogin((HttpServletRequest)context.getExternalContext().getRequest(),
-                                                new LoginRequest(phoneNumber, password), dbBean);
-        if(result.getResultCode() == PublicResultCode.SUCCESS_CODE || result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE) {
-            RequestContext requestContext = RequestContext.getCurrentInstance();
-            requestContext.addCallbackParam("login_result", result.getResultCode());
-            setCaptcha("");
-            setPassword("");
-            setPhoneNumber("");
-            setNewPassword("");
-            if(result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
+        request = (HttpServletRequest) context.getExternalContext().getRequest();
+        try {
+            Result result = AccountControl.webLogin(request, new LoginRequest(phoneNumber, password), dbBean);
+            if (result.getResultCode() == PublicResultCode.SUCCESS_CODE || result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE) {
+                RequestContext requestContext = RequestContext.getCurrentInstance();
+                requestContext.addCallbackParam("login_result", result.getResultCode());
+                setCaptcha("");
+                setPassword("");
+                setPhoneNumber("");
+                setNewPassword("");
+                if (result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
+                    return false;
+                return true;
+            } else {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, BundleUtil.getString(request, "TipServerInternalError"), ""));
+        }
+        return false;
+    }
+
+    public boolean loginWithNewPassword(){
+        FacesContext context = FacesContext.getCurrentInstance();
+        request = (HttpServletRequest) context.getExternalContext().getRequest();
+        try {
+            Result result = AccountControl.resetPassword(request, new LoginWithNewPasswordRequest(phoneNumber, newPassword, captcha), dbBean, JedisUtil.getJedis());
+            if (result.getResultCode() != PublicResultCode.SUCCESS_CODE) {
+                context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
                 return false;
-            return true;
-        }else{
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
+            }
+            setPassword(newPassword);
+            return login();
+        }catch (Exception e){
+            e.printStackTrace();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, BundleUtil.getString(request, "TipServerInternalError"), ""));
         }
         return false;
     }

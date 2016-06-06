@@ -9,6 +9,9 @@
             <base-name>bundle.string</base-name>
             <var>bundle</var>
         </resource-bundle>
+        <el-resolver>
+            org.primefaces.application.exceptionhandler.PrimeExceptionHandlerELResolver
+        </el-resolver>
     </application>
 
     <navigation-rule>
@@ -21,6 +24,21 @@
         </navigation-case>
         <navigation-case>
             <from-action>#{userOperationBean.login}</from-action>
+            <from-outcome>false</from-outcome>
+            <to-view-id>/index.xhtml</to-view-id>
+        </navigation-case>
+    </navigation-rule>
+
+    <navigation-rule>
+        <from-view-id>/index.xhtml</from-view-id>
+        <navigation-case>
+            <from-action>#{userOperationBean.loginWithNewPassword}</from-action>
+            <from-outcome>true</from-outcome>
+            <to-view-id>/buyticket.xhtml</to-view-id>
+            <redirect/>
+        </navigation-case>
+        <navigation-case>
+            <from-action>#{userOperationBean.loginWithNewPassword}</from-action>
             <from-outcome>false</from-outcome>
             <to-view-id>/index.xhtml</to-view-id>
         </navigation-case>
