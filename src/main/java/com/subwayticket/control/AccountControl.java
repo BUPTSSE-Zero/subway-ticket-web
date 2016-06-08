@@ -126,7 +126,7 @@ public class AccountControl {
         if(resetRequest.getPhoneNumber() != null) {
             account = (Account) dbBean.find(Account.class, resetRequest.getPhoneNumber());
             if(account == null)
-                return new Result(LOGIN_USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
+                return new Result(RESET_PASSWORD_USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
             if(!SecurityUtil.checkPhoneCaptcha(resetRequest.getPhoneNumber(), resetRequest.getCaptcha(), jedis))
                 return new Result(RESET_PASSWORD_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
         }else {

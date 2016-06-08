@@ -122,65 +122,11 @@ private SubwayTicketDBHelperBean dbBean;
 ```
 **注意**：`@EJB`标记只能在一些特殊的Java类中使用，如Servlet，EJB、ManagedBean等。
 
-## 数据合法性检查 - CheckUtil
-`com.subwayticket.util.CheckUtil`方法一览：
+## 获取系统消息EJB - SystemMessageDBHelperBean
+
+`com.subwayticket.database.control.SystemMessageDBHelperBean` 方法一览：
 
 ```java
-public static Result checkRegisterInfo(ServletRequest req, RegisterRequest regReq, SubwayTicketDBHelperBean dbBean, Jedis jedis)
+public List<SystemMessage> getLatestMessage(int n)
 ```
-对用户的注册请求进行检查，并返回检查结果。
-
-+ req：客户端发送的Http请求
-+ regReq：用户的注册请求，有如下属性：
-	+ phoneNumber：手机号
-	+ password：密码
-	+ captcha：手机验证码
-+ dbBean：`SubwayTicketDBHelperBean`的EJB对象实例。
-+ jedis：Jedis对象实例，可通过`JedisUtil.getJedis()`获得
-
-返回的Result中包含如下属性：
-
-+ resultCode：结果码，值可能为0（`PublicResultCode.SUCCESS_CODE`）或者CheckUtil中的`REGISTER_XXX`这些静态常量。值为0表示验证通过。
-+ resultDescription：结果描述。
-
-示例：一个简单的用户注册流程：
-
-```java
-@EJB
-private SubwayTicketDBHelperBean dbBean;
-
-public void register(){
-	RegisterRequest regReq = new RegisterRequest("123456", "123456", "123456");
-	if(CheckUtil.checkRegisterInfo(request, regReq, dbBean, JedisUtil.getJedis()).getResultCode() == PublicResultCode.SUCCESS_CODE){
-		//将新的用户信息写入到数据库中
-		Account newUser = new Account(regReq.getPhoneNumber(), regReq.getPassword());
-        dbBean.create(newUser);
-	}
-
-```
-
-```java
-public static boolean checkPhoneCaptcha(String phoneNumber, String captcha, Jedis jedis)
-```
-检查用户输入的验证码是否正确，如果验证通过，验证码将会从Redis数据库中删除。
-
-+ phoneNumber: 手机号
-+ captcha：用户输入的验证码
-+ jedis：Jedis对象
-
-## 安全相关 - SecurityUtil
-`com.subwayticket.util.SecurityUtil`方法一览：
-
-```java
-public static Result sendPhoneCaptcha(ServletRequest request, String phoneNumber, Jedis jedis)
-```
-向用户的手机发送验证码，目前只是模拟发送，并不会真正发送到手机上，且验证码固定为123456
-
-+ request：用户的Http请求
-+ phoneNumber：用户的手机号
-+ jedis：Jedis对象
-
-返回一个Result对象，含有两个属性：
-
-+ resultCode：结果码，值可能为0（`PublicResultCode.SUCCESS_CODE`）或者SecurityUtil中的`PHONE_CAPTCHA_XXX`这些静态常量。值为0表示发送成功。
-+ resultDescription：结果描述。
+获取n条最新发布的系统消息，结果集按发布时间从新到旧排序。
