@@ -29,6 +29,8 @@ public abstract class EntityManagerHelper {
     }
     
     public Object find(Class<?> entityClass, Object id) {
+        if(id == null)
+            return null;
         return getEntityManager().find(entityClass, id);
     }
 

@@ -4,5 +4,6 @@
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
         <jta-data-source>jdbc/subwayticketdb</jta-data-source>
         <class>com.subwayticket.database.model.Account</class>
+        <class>com.subwayticket.database.model.SystemMessage</class>
     </persistence-unit>
 </persistence>

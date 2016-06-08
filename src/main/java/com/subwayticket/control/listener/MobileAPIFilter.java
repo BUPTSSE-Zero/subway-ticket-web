@@ -9,13 +9,13 @@ import java.io.IOException;
 /**
  * Created by shengyun-zhou on 6/6/16.
  */
-@WebFilter(filterName = "MobileAPIFilter", servletNames = {"RegisterServlet", "PhoneCaptchaServlet", "ResetPasswordServlet", "LoginServlet"})
+@WebFilter(filterName = "MobileAPIFilter", urlPatterns = {"/mobileapi/*"})
 public class MobileAPIFilter implements Filter {
     public void destroy() {
     }
 
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws ServletException, IOException {
-        HttpServletRequest request = (HttpServletRequest)req;
+        HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse)resp;
         if(request.getMethod().toLowerCase().equals("get")){
             response.setStatus(404);

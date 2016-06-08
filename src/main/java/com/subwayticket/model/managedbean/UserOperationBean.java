@@ -119,6 +119,17 @@ public class UserOperationBean implements Serializable {
         return false;
     }
 
+    public void modifyPassword(){
+        FacesContext context = FacesContext.getCurrentInstance();
+        request = (HttpServletRequest) context.getExternalContext().getRequest();
+        Result result = AccountControl.resetPassword(request, new ResetPasswordRequest(password, newPassword), dbBean, JedisUtil.getJedis());
+        if (result.getResultCode() != PublicResultCode.SUCCESS_CODE) {
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
+        }else{
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, result.getResultDescription(), ""));
+        }
+    }
+
     public boolean loginWithNewPassword(){
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -142,7 +153,6 @@ public class UserOperationBean implements Serializable {
     }
 
     public void sendCaptcha(){
-        System.out.println("Send Captcha");
         request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try{
             Result result = SecurityUtil.sendPhoneCaptcha(request, phoneNumber, JedisUtil.getJedis());

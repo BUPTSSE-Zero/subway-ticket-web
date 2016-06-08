@@ -65,9 +65,6 @@ public class AccountControl {
     public static final int LOGIN_SUCCESS_WITH_PRE_OFFLINE = 100;
     public static final int LOGIN_USER_NOT_EXIST = 200;
     public static final int LOGIN_PASSWORD_INCORRECT = 300;
-    public static final int LOGIN_NEW_PASSWORD_LENGTH_ILLEGAL = 301;
-    public static final int LOGIN_NEW_PASSWORD_FORMAT_ILLEGAL = 302;
-    public static final int LOGIN_CAPTCHA_INCORRECT = 400;
 
     private static Result login(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean){
         Account account = (Account) dbBean.find(Account.class, loginRequest.getPhoneNumber());
@@ -110,22 +107,37 @@ public class AccountControl {
         return mobileLoginResult;
     }
 
-    public static Result resetPassword(HttpServletRequest req, ResetPasswordRequest loginRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
-        Account account = (Account) dbBean.find(Account.class, loginRequest.getPhoneNumber());
-        if(account == null)
-            return new Result(LOGIN_USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
-        int passwordResult = checkPassword(loginRequest.getNewPassword());
+    public static final int RESET_PASSWORD_USER_NOT_EXIST = 200;
+    public static final int RESET_PASSWORD_OLDPASSWORD_INCORRECT = 300;
+    public static final int RESET_PASSWORD_NEW_PASSWORD_LENGTH_ILLEGAL = 301;
+    public static final int RESET_PASSWORD_NEW_PASSWORD_FORMAT_ILLEGAL = 302;
+    public static final int RESET_PASSWORD_CAPTCHA_INCORRECT = 400;
+
+    public static Result resetPassword(HttpServletRequest req, ResetPasswordRequest resetRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
+        int passwordResult = checkPassword(resetRequest.getNewPassword());
         switch (passwordResult){
             case PASSWORD_LENGTH_ILLEGAL:
-                return new Result(LOGIN_NEW_PASSWORD_LENGTH_ILLEGAL, BundleUtil.getString(req, "TipPasswordLengthIllegal"));
+                return new Result(RESET_PASSWORD_NEW_PASSWORD_LENGTH_ILLEGAL, BundleUtil.getString(req, "TipPasswordLengthIllegal"));
             case PASSWORD_FORMAT_ILLEGAL:
-                return new Result(LOGIN_NEW_PASSWORD_FORMAT_ILLEGAL, BundleUtil.getString(req, "TipPasswordFormatIllegal"));
+                return new Result(RESET_PASSWORD_NEW_PASSWORD_FORMAT_ILLEGAL, BundleUtil.getString(req, "TipPasswordFormatIllegal"));
         }
-        if(!SecurityUtil.checkPhoneCaptcha(loginRequest.getPhoneNumber(), loginRequest.getCaptcha(), jedis))
-            return new Result(LOGIN_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
-        account.setPassword(loginRequest.getNewPassword());
+
+        Account account = null;
+        if(resetRequest.getPhoneNumber() != null) {
+            account = (Account) dbBean.find(Account.class, resetRequest.getPhoneNumber());
+            if(account == null)
+                return new Result(LOGIN_USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
+            if(!SecurityUtil.checkPhoneCaptcha(resetRequest.getPhoneNumber(), resetRequest.getCaptcha(), jedis))
+                return new Result(RESET_PASSWORD_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
+        }else {
+            account = (Account) dbBean.find(Account.class, ((Account) req.getSession(false).getAttribute(SESSION_ATTR_USER)).getPhoneNumber());
+            if(!account.getPassword().equals(resetRequest.getOldPassword()))
+                return new Result(RESET_PASSWORD_OLDPASSWORD_INCORRECT, BundleUtil.getString(req, "TipOldPasswordIncorrect"));
+        }
+
+        account.setPassword(resetRequest.getNewPassword());
         dbBean.merge(account);
-        SecurityUtil.clearPhoneCaptcha(jedis, loginRequest.getPhoneNumber());
+        SecurityUtil.clearPhoneCaptcha(jedis, resetRequest.getPhoneNumber());
         return new Result(PublicResultCode.SUCCESS_CODE, BundleUtil.getString(req, "TipResetPasswordSuccess"));
     }
 

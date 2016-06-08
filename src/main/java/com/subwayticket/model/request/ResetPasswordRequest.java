@@ -5,6 +5,7 @@ package com.subwayticket.model.request;
  */
 public class ResetPasswordRequest {
     private String phoneNumber;
+    private String oldPassword;
     private String newPassword;
     private String captcha;
 
@@ -15,6 +16,11 @@ public class ResetPasswordRequest {
         this.phoneNumber = phoneNumber;
         this.newPassword = newPassword;
         this.captcha = captcha;
+    }
+
+    public ResetPasswordRequest(String oldPassword, String newPassword) {
+        this.oldPassword = oldPassword;
+        this.newPassword = newPassword;
     }
 
     public String getPhoneNumber() {
@@ -39,5 +45,13 @@ public class ResetPasswordRequest {
 
     public void setCaptcha(String captcha) {
         this.captcha = captcha;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }
