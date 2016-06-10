@@ -5,7 +5,6 @@ import com.subwayticket.model.MobileToken;
 import com.subwayticket.model.PhoneCaptcha;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.result.Result;
-import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
@@ -35,7 +34,7 @@ public class SecurityUtil {
                 return new Result(PHONE_CAPTCHA_INTERVAL_ILLEGAL, BundleUtil.getString(request, "TipCaptchaIntervalIllegal"));
         }
         jedis.setex(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber, AUTH_CODE_VALID_MINUTES * 60, new PhoneCaptcha("123456").toString());
-        return new Result(PublicResultCode.SUCCESS_CODE, BundleUtil.getString(request, "TipCaptchaSendSuccess"));
+        return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(request, "TipCaptchaSendSuccess"));
     }
 
     public static boolean checkPhoneCaptcha(String phoneNumber, String captcha, Jedis jedis){

@@ -17,19 +17,24 @@ dependencies {
             'log4j:log4j:1.2.+',
             'com.google.code.gson:gson:2.6.+',
             'javax.servlet:javax.servlet-api:4.+',
-            'org.eclipse.persistence:eclipselink:+',
+            'org.eclipse.persistence:org.eclipse.persistence.jpa:+',
+            'org.eclipse.persistence:org.eclipse.persistence.moxy:+',
             'javax.validation:validation-api:1.1.+',
             'javax.faces:javax.faces-api:+',
             'javax.ejb:ejb-api:3.0',
             'org.primefaces:primefaces:+',
-            'io.jsonwebtoken:jjwt:+'
+            'io.jsonwebtoken:jjwt:+',
+            'javax.ws.rs:javax.ws.rs-api:+',
+            'org.glassfish.jersey.containers:jersey-container-servlet:2.+',
     )
 
     providedRuntime 'javax.servlet:javax.servlet-api:4.+'
-    providedRuntime 'org.eclipse.persistence:javax.persistence:2.1.+'
     providedRuntime 'javax.validation:validation-api:1.1.+'
     providedRuntime 'javax.faces:javax.faces-api:+'
     providedRuntime 'javax.ejb:ejb-api:3.0'
+    providedRuntime 'org.eclipse.persistence:org.eclipse.persistence.jpa:+'
+    providedRuntime 'org.eclipse.persistence:org.eclipse.persistence.moxy:+'
+    providedRuntime 'org.glassfish.jersey.containers:jersey-container-servlet:2.+'
 }
 
 

@@ -78,7 +78,7 @@ public class UserOperationBean implements Serializable {
         try{
             Result result = AccountControl.register(request, new RegisterRequest(phoneNumber, newPassword, captcha),
                     dbBean, JedisUtil.getJedis());
-            if (result.getResultCode() == PublicResultCode.SUCCESS_CODE) {
+            if (result.getResultCode() == PublicResultCode.SUCCESS) {
                 login();
                 return true;
             }else{
@@ -99,14 +99,14 @@ public class UserOperationBean implements Serializable {
         request = (HttpServletRequest) context.getExternalContext().getRequest();
         try {
             Result result = AccountControl.webLogin(request, new LoginRequest(phoneNumber, password), dbBean);
-            if (result.getResultCode() == PublicResultCode.SUCCESS_CODE || result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE) {
+            if (result.getResultCode() == PublicResultCode.SUCCESS || result.getResultCode() == PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE) {
                 RequestContext requestContext = RequestContext.getCurrentInstance();
                 requestContext.addCallbackParam("login_result", result.getResultCode());
                 setCaptcha("");
                 setPassword("");
                 setPhoneNumber("");
                 setNewPassword("");
-                if (result.getResultCode() == AccountControl.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
+                if (result.getResultCode() == PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
                     return false;
                 return true;
             } else {
@@ -123,7 +123,7 @@ public class UserOperationBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
         Result result = AccountControl.resetPassword(request, new ResetPasswordRequest(password, newPassword), dbBean, JedisUtil.getJedis());
-        if (result.getResultCode() != PublicResultCode.SUCCESS_CODE) {
+        if (result.getResultCode() != PublicResultCode.SUCCESS) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
         }else{
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, result.getResultDescription(), ""));
@@ -135,7 +135,7 @@ public class UserOperationBean implements Serializable {
         request = (HttpServletRequest) context.getExternalContext().getRequest();
         try {
             Result result = AccountControl.resetPassword(request, new ResetPasswordRequest(phoneNumber, newPassword, captcha), dbBean, JedisUtil.getJedis());
-            if (result.getResultCode() != PublicResultCode.SUCCESS_CODE) {
+            if (result.getResultCode() != PublicResultCode.SUCCESS) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
                 return false;
             }
@@ -156,7 +156,7 @@ public class UserOperationBean implements Serializable {
         request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try{
             Result result = SecurityUtil.sendPhoneCaptcha(request, phoneNumber, JedisUtil.getJedis());
-            if (result.getResultCode() == PublicResultCode.SUCCESS_CODE) {
+            if (result.getResultCode() == PublicResultCode.SUCCESS) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                         result.getResultDescription(), ""));
             }else{
