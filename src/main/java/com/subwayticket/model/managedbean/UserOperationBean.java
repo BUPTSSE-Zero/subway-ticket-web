@@ -13,6 +13,7 @@ import com.subwayticket.control.AccountControl;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.LoginRequest;
+import com.subwayticket.model.request.ModifyPasswordRequest;
 import com.subwayticket.model.request.ResetPasswordRequest;
 import com.subwayticket.model.request.RegisterRequest;
 import com.subwayticket.model.result.Result;
@@ -122,7 +123,7 @@ public class UserOperationBean implements Serializable {
     public void modifyPassword(){
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
-        Result result = AccountControl.resetPassword(request, new ResetPasswordRequest(password, newPassword), dbBean, JedisUtil.getJedis());
+        Result result = AccountControl.webModifyPassword(request, new ModifyPasswordRequest(password, newPassword), dbBean);
         if (result.getResultCode() != PublicResultCode.SUCCESS) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
         }else{

@@ -2,11 +2,10 @@ package com.subwayticket.mobileapitest;
 
 import com.subwayticket.control.mobileapi.GsonProvider;
 import com.subwayticket.model.result.Result;
+import com.subwayticket.util.SecurityUtil;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.client.*;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 /**
@@ -21,20 +20,31 @@ public class RESTServiceTestUtil {
         return client.target(url);
     }
 
-    public static Response post(String url, Object jsonEntity){
+    public static Invocation.Builder getRequestBuilder(String url, String token){
         WebTarget target = getWebTarget(url);
-        return target.request().buildPost(Entity.json(jsonEntity)).invoke();
+        Invocation.Builder builder = target.request();
+        if(token != null)
+            builder.header(SecurityUtil.HEADER_TOKEN_KEY, token);
+        return builder;
     }
 
-    public static Response put(String url, Object jsonEntity){
-        WebTarget target = getWebTarget(url);
-        return target.request().buildPut(Entity.json(jsonEntity)).invoke();
+    public static Response post(String url, Object jsonEntity, String token){
+        return getRequestBuilder(url, token).buildPost(Entity.json(jsonEntity)).invoke();
     }
 
-    public static void showResponse(Response response){
+    public static Response put(String url, Object jsonEntity, String token){
+        return getRequestBuilder(url, token).buildPut(Entity.json(jsonEntity)).invoke();
+    }
+
+    public static Result showResponse(Response response){
+        return showResponse(response, Result.class);
+    }
+
+    public static Result showResponse(Response response, Class<? extends Result> entityClass){
         System.out.println("Status Code:" + response.getStatus());
-        Result result = response.readEntity(Result.class);
+        Result result = response.readEntity(entityClass);
         System.out.println("Result Code:" + result.getResultCode());
         System.out.println("Result Description:" + result.getResultDescription());
+        return result;
     }
 }

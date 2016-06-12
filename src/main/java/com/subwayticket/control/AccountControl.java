@@ -4,6 +4,7 @@ import com.subwayticket.database.control.SubwayTicketDBHelperBean;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.LoginRequest;
+import com.subwayticket.model.request.ModifyPasswordRequest;
 import com.subwayticket.model.request.ResetPasswordRequest;
 import com.subwayticket.model.request.RegisterRequest;
 import com.subwayticket.model.result.MobileLoginResult;
@@ -28,10 +29,10 @@ public class AccountControl {
             return new Result(PublicResultCode.PHONE_NUM_REGISTERED, BundleUtil.getString(req, "TipPhoneNumRegistered"));
         int passwordResult = checkPassword(regReq.getPassword());
         switch (passwordResult){
-            case PASSWORD_LENGTH_ILLEGAL:
-                return new Result(PublicResultCode.PASSWORD_LENGTH_ILLEGAL, BundleUtil.getString(req, "TipPasswordLengthIllegal"));
-            case PASSWORD_FORMAT_ILLEGAL:
-                return new Result(PublicResultCode.PASSWORD_FORMAT_ILLEGAL, BundleUtil.getString(req, "TipPasswordFormatIllegal"));
+            case PublicResultCode.PASSWORD_LENGTH_ILLEGAL:
+                return new Result(passwordResult, BundleUtil.getString(req, "TipPasswordLengthIllegal"));
+            case PublicResultCode.PASSWORD_FORMAT_ILLEGAL:
+                return new Result(passwordResult, BundleUtil.getString(req, "TipPasswordFormatIllegal"));
         }
         if(!SecurityUtil.checkPhoneCaptcha(regReq.getPhoneNumber(), regReq.getCaptcha(), jedis))
             return new Result(PublicResultCode.PHONE_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
@@ -42,41 +43,41 @@ public class AccountControl {
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipRegisterSuccess"));
     }
 
-    public static final int PASSWORD_LENGTH_ILLEGAL = 1;
-    public static final int PASSWORD_FORMAT_ILLEGAL = 2;
-
     public static int checkPassword(String password){
         if(password == null || password.length() < 6 || password.length() > 20)
-            return PASSWORD_LENGTH_ILLEGAL;
+            return PublicResultCode.PASSWORD_LENGTH_ILLEGAL;
         return PublicResultCode.SUCCESS;
     }
 
     public static final String SESSION_ATTR_USER = "user";
     public static final String APPLICATION_ATTR_WEBUSER = "appWebUser";
-    public static final String REDIS_KEY_MOBILETOKEN = "MobileToken";
-    public static int MOBILETOKEN_VALID_HOURS = 120;
 
 
-    private static Result login(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean){
+    private static Result login(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean, boolean sessionFlag){
         Account account = (Account) dbBean.find(Account.class, loginRequest.getPhoneNumber());
         if(account == null)
             return new Result(PublicResultCode.USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
         if(!account.getPassword().equals(loginRequest.getPassword()))
             return new Result(PublicResultCode.PASSWORD_INCORRECT, BundleUtil.getString(req, "TipPasswordIncorrect"));
-        req.getSession(true).setAttribute(SESSION_ATTR_USER, account);
+        if(sessionFlag)
+            req.getSession(true).setAttribute(SESSION_ATTR_USER, account);
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipLoginSuccess"));
     }
 
     public static Result webLogin(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean){
-        Result result = login(req, loginRequest, dbBean);
+        Result result = login(req, loginRequest, dbBean, true);
         if(result.getResultCode() == PublicResultCode.SUCCESS){
             ServletContext context = req.getServletContext();
             String appAttr = APPLICATION_ATTR_WEBUSER + ((Account)req.getSession().getAttribute(SESSION_ATTR_USER)).getPhoneNumber();
             HttpSession preSession = (HttpSession) context.getAttribute(appAttr);
             if(preSession != null && !preSession.getId().equals(req.getSession().getId())){
-                result.setResultCode(PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE);
-                result.setResultDescription(BundleUtil.getString(req, "TipLoginWithPreOffline"));
-                logout(preSession);
+                try {
+                    logout(preSession);
+                    result.setResultCode(PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE);
+                    result.setResultDescription(BundleUtil.getString(req, "TipLoginWithPreOffline"));
+                }catch (IllegalStateException ise){
+                    ise.printStackTrace();
+                }
             }
             context.setAttribute(appAttr, req.getSession());
         }
@@ -84,47 +85,64 @@ public class AccountControl {
     }
 
     public static Result mobileLogin(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
-        Result result = login(req, loginRequest, dbBean);
+        Result result = login(req, loginRequest, dbBean, false);
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             return result;
         MobileLoginResult mobileLoginResult = new MobileLoginResult(result);
-        if(jedis.get(REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber()) != null){
+        if(jedis.get(SecurityUtil.REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber()) != null){
             mobileLoginResult.setResultCode(PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE);
             mobileLoginResult.setResultDescription(BundleUtil.getString(req, "TipLoginWithPreOffline"));
         }
         mobileLoginResult.setToken(SecurityUtil.getMobileToken(loginRequest.getPhoneNumber()));
-        jedis.setex(REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber(), MOBILETOKEN_VALID_HOURS * 3600,
+        jedis.setex(SecurityUtil.REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber(), SecurityUtil.MOBILETOKEN_VALID_HOURS * 3600,
                     mobileLoginResult.getToken());
         return mobileLoginResult;
     }
 
+    public static Result resetPassword(HttpServletRequest req, ResetPasswordRequest resetRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis) {
+        Account account = (Account) dbBean.find(Account.class, resetRequest.getPhoneNumber());
+        if (account == null)
+            return new Result(PublicResultCode.USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
+        if (!SecurityUtil.checkPhoneCaptcha(resetRequest.getPhoneNumber(), resetRequest.getCaptcha(), jedis))
+            return new Result(PublicResultCode.PHONE_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
 
-    public static Result resetPassword(HttpServletRequest req, ResetPasswordRequest resetRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
-        int passwordResult = checkPassword(resetRequest.getNewPassword());
+        Result result = setNewPassword(req, dbBean, account, resetRequest.getNewPassword());
+        if (result.getResultCode() == PublicResultCode.SUCCESS){
+            SecurityUtil.clearPhoneCaptcha(jedis, account.getPhoneNumber());
+            result.setResultDescription(BundleUtil.getString(req, "TipResetPasswordSuccess"));
+        }
+        return result;
+    }
+
+    public static Result webModifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, SubwayTicketDBHelperBean dbBean){
+        Account account = (Account) dbBean.find(Account.class, ((Account)req.getSession().getAttribute(SESSION_ATTR_USER)).getPhoneNumber());
+        return modifyPassword(req, modifyRequest, account, dbBean);
+    }
+
+    public static Result mobileModifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, Account account, SubwayTicketDBHelperBean dbBean){
+        return modifyPassword(req, modifyRequest, account, dbBean);
+    }
+
+    private static Result modifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, Account account, SubwayTicketDBHelperBean dbBean){
+        if(!account.getPassword().equals(modifyRequest.getOldPassword()))
+            return new Result(PublicResultCode.PASSWORD_INCORRECT, BundleUtil.getString(req, "TipOldPasswordIncorrect"));
+        Result result = setNewPassword(req, dbBean, account, modifyRequest.getNewPassword());
+        if(result.getResultCode() == PublicResultCode.SUCCESS)
+            result.setResultDescription(BundleUtil.getString(req, "TipModifyPasswordSuccess"));
+        return result;
+    }
+
+    private static Result setNewPassword(HttpServletRequest req, SubwayTicketDBHelperBean dbBean, Account account, String newPassword){
+        int passwordResult = checkPassword(newPassword);
         switch (passwordResult){
-            case PASSWORD_LENGTH_ILLEGAL:
-                return new Result(PublicResultCode.PASSWORD_LENGTH_ILLEGAL, BundleUtil.getString(req, "TipPasswordLengthIllegal"));
-            case PASSWORD_FORMAT_ILLEGAL:
-                return new Result(PublicResultCode.PASSWORD_FORMAT_ILLEGAL, BundleUtil.getString(req, "TipPasswordFormatIllegal"));
+            case PublicResultCode.PASSWORD_LENGTH_ILLEGAL:
+                return new Result(passwordResult, BundleUtil.getString(req, "TipPasswordLengthIllegal"));
+            case PublicResultCode.PASSWORD_FORMAT_ILLEGAL:
+                return new Result(passwordResult, BundleUtil.getString(req, "TipPasswordFormatIllegal"));
         }
-
-        Account account = null;
-        if(resetRequest.getPhoneNumber() != null) {
-            account = (Account) dbBean.find(Account.class, resetRequest.getPhoneNumber());
-            if(account == null)
-                return new Result(PublicResultCode.USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
-            if(!SecurityUtil.checkPhoneCaptcha(resetRequest.getPhoneNumber(), resetRequest.getCaptcha(), jedis))
-                return new Result(PublicResultCode.PHONE_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
-        }else {
-            account = (Account) dbBean.find(Account.class, ((Account) req.getSession(false).getAttribute(SESSION_ATTR_USER)).getPhoneNumber());
-            if(!account.getPassword().equals(resetRequest.getOldPassword()))
-                return new Result(PublicResultCode.PASSWORD_INCORRECT, BundleUtil.getString(req, "TipOldPasswordIncorrect"));
-        }
-
-        account.setPassword(resetRequest.getNewPassword());
+        account.setPassword(newPassword);
         dbBean.merge(account);
-        SecurityUtil.clearPhoneCaptcha(jedis, resetRequest.getPhoneNumber());
-        return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipResetPasswordSuccess"));
+        return new Result(PublicResultCode.SUCCESS, null);
     }
 
     private static void logout(HttpSession session){

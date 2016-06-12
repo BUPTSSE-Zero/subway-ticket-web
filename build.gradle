@@ -18,7 +18,6 @@ dependencies {
             'com.google.code.gson:gson:2.6.+',
             'javax.servlet:javax.servlet-api:4.+',
             'org.eclipse.persistence:org.eclipse.persistence.jpa:+',
-            'org.eclipse.persistence:org.eclipse.persistence.moxy:+',
             'javax.validation:validation-api:1.1.+',
             'javax.faces:javax.faces-api:+',
             'javax.ejb:ejb-api:3.0',

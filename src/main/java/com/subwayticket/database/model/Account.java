@@ -21,6 +21,10 @@ public class Account {
         this.registerDate = new Date();
     }
 
+    public Account(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
     @Id
     @Column(name = "PhoneNumber", nullable = false, length = 20)
     public String getPhoneNumber() {
