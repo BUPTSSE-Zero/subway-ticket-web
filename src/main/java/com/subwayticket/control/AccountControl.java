@@ -159,4 +159,8 @@ public class AccountControl {
         logout(req.getSession(false));
         req.getSession(true);
     }
+
+    public static void mobileLogout(Account account, Jedis jedis){
+        jedis.del(SecurityUtil.REDIS_KEY_MOBILETOKEN + account.getPhoneNumber());
+    }
 }

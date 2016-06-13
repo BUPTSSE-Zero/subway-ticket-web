@@ -2,6 +2,8 @@ package com.subwayticket.control.mobileapi;
 
 import com.google.gson.Gson;
 import com.subwayticket.util.GsonUtil;
+import com.subwayticket.util.LoggerUtil;
+import org.apache.log4j.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -23,6 +25,7 @@ import java.lang.reflect.Type;
 @Consumes("application/json")
 public class GsonProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
     private static final String DEFAULT_CHARSET = "utf-8";
+    private static final Logger logger = LoggerUtil.getLogger("Mobile API", "MobileAPI.log");
 
     @Override
     public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
@@ -50,7 +53,9 @@ public class GsonProvider implements MessageBodyReader<Object>, MessageBodyWrite
     public void writeTo(Object o, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         OutputStreamWriter writer = new OutputStreamWriter(entityStream, DEFAULT_CHARSET);
         Gson gson = GsonUtil.getGson();
-        writer.write(gson.toJson(o));
+        String jsonStr = gson.toJson(o);
+        logger.info("JSON Output:" + jsonStr);
+        writer.write(jsonStr);
         writer.close();
     }
 }

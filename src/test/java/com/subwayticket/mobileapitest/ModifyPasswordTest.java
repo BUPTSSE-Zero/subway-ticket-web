@@ -28,5 +28,8 @@ public class ModifyPasswordTest {
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/account/modify_password", modifyPasswordRequest,
                                            result.getToken());
         RESTServiceTestUtil.showResponse(response);
+        response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/account/logout", null,
+                                            result.getToken());
+        RESTServiceTestUtil.showResponse(response);
     }
 }

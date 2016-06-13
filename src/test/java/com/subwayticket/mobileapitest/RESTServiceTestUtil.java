@@ -33,6 +33,8 @@ public class RESTServiceTestUtil {
     }
 
     public static Response put(String url, Object jsonEntity, String token){
+        if(jsonEntity == null)
+            return getRequestBuilder(url, token).buildPut(Entity.text("")).invoke();
         return getRequestBuilder(url, token).buildPut(Entity.json(jsonEntity)).invoke();
     }
 
@@ -42,6 +44,8 @@ public class RESTServiceTestUtil {
 
     public static Result showResponse(Response response, Class<? extends Result> entityClass){
         System.out.println("Status Code:" + response.getStatus());
+        if(response.getStatus() == 204)
+            return null;
         Result result = response.readEntity(entityClass);
         System.out.println("Result Code:" + result.getResultCode());
         System.out.println("Result Description:" + result.getResultDescription());

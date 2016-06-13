@@ -89,7 +89,7 @@ public class AccountResource {
         if(result.getResultCode() == PublicResultCode.PASSWORD_INCORRECT)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
-            throw new CheckException(422, result);
+            throw new CheckException(result);
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
@@ -103,7 +103,15 @@ public class AccountResource {
         if(result.getResultCode() == PublicResultCode.USER_NOT_EXIST)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
-            throw new CheckException(422, result);
+            throw new CheckException(result);
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @PUT
+    @Path("/logout")
+    public Response logout(){
+        Account account = authCheck(request);
+        AccountControl.mobileLogout(account, JedisUtil.getJedis());
+        return Response.noContent().build();
     }
 }

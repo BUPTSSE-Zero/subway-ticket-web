@@ -20,23 +20,21 @@ import java.util.Date;
  */
 public class SecurityUtil {
     public static final String REDIS_KEY_PHONE_CAPTCHA_PREFIX = "PhoneCaptcha";
-    public static final int AUTH_CODE_VALID_MINUTES = 30;
-    public static final int AUTH_CODE_INTERVAL_SECONDS = 60;
+    public static final int PHONE_CAPTCHA_VALID_MINUTES = 30;
+    public static final int PHONE_CAPTCHA_INTERVAL_SECONDS = 60;
 
-    public static final int PHONE_CAPTCHA_SEND_FAILED = 100;
-    public static final int PHONE_CAPTCHA_INTERVAL_ILLEGAL = 101;
     public static final String REDIS_KEY_MOBILETOKEN = "MobileToken";
     public static int MOBILETOKEN_VALID_HOURS = 120;
 
     public static Result sendPhoneCaptcha(ServletRequest request, String phoneNumber, Jedis jedis){
         if(phoneNumber == null || phoneNumber.isEmpty())
-            return new Result(PHONE_CAPTCHA_SEND_FAILED, BundleUtil.getString(request, "TipCaptchaSendFailed"));
+            return new Result(PublicResultCode.PHONE_CAPTCHA_SEND_FAILED, BundleUtil.getString(request, "TipCaptchaSendFailed"));
         PhoneCaptcha pc = PhoneCaptcha.fromString(jedis.get(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber));
         if(pc != null){
-            if(new Date().getTime() - pc.getSendTime().getTime() < AUTH_CODE_INTERVAL_SECONDS * 1000)
-                return new Result(PHONE_CAPTCHA_INTERVAL_ILLEGAL, BundleUtil.getString(request, "TipCaptchaIntervalIllegal"));
+            if(new Date().getTime() - pc.getSendTime().getTime() < PHONE_CAPTCHA_INTERVAL_SECONDS * 1000)
+                return new Result(PublicResultCode.PHONE_CAPTCHA_INTERVAL_ILLEGAL, BundleUtil.getString(request, "TipCaptchaIntervalIllegal"));
         }
-        jedis.setex(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber, AUTH_CODE_VALID_MINUTES * 60, new PhoneCaptcha("123456").toString());
+        jedis.setex(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber, PHONE_CAPTCHA_VALID_MINUTES * 60, new PhoneCaptcha("123456").toString());
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(request, "TipCaptchaSendSuccess"));
     }
 

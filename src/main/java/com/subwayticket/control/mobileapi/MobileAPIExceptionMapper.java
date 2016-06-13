@@ -2,6 +2,8 @@ package com.subwayticket.control.mobileapi;
 
 import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
+import com.subwayticket.util.LoggerUtil;
+import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
@@ -19,12 +21,15 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class MobileAPIExceptionMapper implements ExceptionMapper<Exception> {
+    private static final Logger logger = LoggerUtil.getLogger("Mobile API", "MobileAPI.log");
     @Context
     private HttpServletRequest request;
+
 
     @Override
     public Response toResponse(Exception exception) {
         exception.printStackTrace();
+        logger.error("", exception);
         int statusCode = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
         Result result = new Result(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode(), BundleUtil.getString(request, "TipServerInternalError"));
         if(exception instanceof BadRequestException){
