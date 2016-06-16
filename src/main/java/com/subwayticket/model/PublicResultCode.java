@@ -6,6 +6,7 @@ package com.subwayticket.model;
 public class PublicResultCode {
     public static final int SUCCESS = 0;
 
+    /*Account*/
     public static final int PHONE_NUM_EMPTY = 100001;
     public static final int PHONE_NUM_REGISTERED = 100002;
     public static final int PASSWORD_LENGTH_ILLEGAL = 100003;
@@ -19,4 +20,7 @@ public class PublicResultCode {
     public static final int USER_NOT_EXIST = 100202;
     public static final int PASSWORD_INCORRECT = 100203;
     public static final int USER_TOKEN_NOT_MATCH = 100204;
+
+    /*Subway Info*/
+    public static final int CITY_LIST_NOT_FOUND = 100301;
 }

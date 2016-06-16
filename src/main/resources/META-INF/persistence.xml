@@ -5,5 +5,10 @@
         <jta-data-source>jdbc/subwayticketdb</jta-data-source>
         <class>com.subwayticket.database.model.Account</class>
         <class>com.subwayticket.database.model.SystemMessage</class>
+        <class>com.subwayticket.database.model.City</class>
+        <class>com.subwayticket.database.model.SubwayLine</class>
+        <class>com.subwayticket.database.model.StationMessage</class>
+        <class>com.subwayticket.database.model.SubwayStation</class>
+        <class>com.subwayticket.database.model.TicketPrice</class>
     </persistence-unit>
 </persistence>

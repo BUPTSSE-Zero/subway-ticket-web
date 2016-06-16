@@ -1,15 +1,13 @@
 package com.subwayticket.database.model;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
  * Created by shengyun-zhou on 6/8/16.
  */
 @Entity
+@Table(name = "SystemMessage")
 public class SystemMessage {
     private Date releaseTime;
     private String title;
