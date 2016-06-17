@@ -11,6 +11,11 @@ public class TicketPricePK implements Serializable {
     private int subwayStationAid;
     private int subwayStationBid;
 
+    public TicketPricePK(int subwayStationAid, int subwayStationBid) {
+        this.subwayStationAid = subwayStationAid;
+        this.subwayStationBid = subwayStationBid;
+    }
+
     @Column(name = "SubwayStationAID", nullable = false)
     @Id
     public int getSubwayStationAid() {

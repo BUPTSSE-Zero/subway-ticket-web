@@ -13,7 +13,7 @@ public class TicketPrice {
     private int subwayStationBid;
     private SubwayStation subwayStationA;
     private SubwayStation subwayStationB;
-    private int price;
+    private float price;
 
     @Id
     @Column(name = "SubwayStationAID", nullable = false)
@@ -53,14 +53,18 @@ public class TicketPrice {
     public int hashCode() {
         int result = subwayStationAid;
         result = 31 * result + subwayStationBid;
-        result = 31 * result + price;
+        result = 31 * result + (int)price;
         return result;
     }
 
     @Basic
     @Column(name = "Price", nullable = false)
-    public int getPrice() {
+    public float getPrice() {
         return price;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
     }
 
     public void setPrice(int price) {
@@ -84,5 +88,6 @@ public class TicketPrice {
     }
 
     public void setSubwayStationB(SubwayStation subwayStationB) {
-    this.subwayStationB = subwayStationB;
-}}
+        this.subwayStationB = subwayStationB;
+    }
+}

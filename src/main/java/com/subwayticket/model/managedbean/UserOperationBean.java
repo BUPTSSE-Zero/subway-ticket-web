@@ -32,7 +32,7 @@ import java.io.Serializable;
 @SessionScoped
 public class UserOperationBean implements Serializable {
     @EJB
-    private SubwayTicketDBHelperBean dbBean;
+    private SystemDBHelperBean dbBean;
     private HttpServletRequest request;
     private String phoneNumber;
     private String password;

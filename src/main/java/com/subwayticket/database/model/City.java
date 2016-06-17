@@ -13,6 +13,13 @@ public class City {
     private String cityName;
     private transient List<SubwayLine> subwayLineList;
 
+    public City(int cityId) {
+        this.cityId = cityId;
+    }
+
+    public City() {
+    }
+
     @Id
     @Column(name = "CityID", nullable = false)
     public int getCityId() {

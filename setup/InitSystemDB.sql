@@ -112,7 +112,7 @@ CREATE TABLE TicketPrice(
   CONSTRAINT SubwayStationBIDFK FOREIGN KEY (SubwayStationBID) REFERENCES SubwayStation(SubwayStationID)
     ON UPDATE CASCADE ON DELETE CASCADE,
   PRIMARY KEY(SubwayStationAID, SubwayStationBID),
-  Price INT NOT NULL CHECK (Price >= 0)
+  Price FLOAT NOT NULL CHECK (Price >= 0)
 );
 
 /*Please import TicketPrice.csv into the table TicketPrice manually.*/

@@ -1,6 +1,6 @@
 package com.subwayticket.control;
 
-import com.subwayticket.database.control.SubwayTicketDBHelperBean;
+import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.LoginRequest;
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
  * @author buptsse-zero <GGGZ-1101-28@Live.cn>
  */
 public class AccountControl {
-    public static Result register(ServletRequest req, RegisterRequest regReq, SubwayTicketDBHelperBean dbBean, Jedis jedis){
+    public static Result register(ServletRequest req, RegisterRequest regReq, SystemDBHelperBean dbBean, Jedis jedis){
         if(regReq.getPhoneNumber() == null || regReq.getPhoneNumber().isEmpty())
             return new Result(PublicResultCode.PHONE_NUM_EMPTY, BundleUtil.getString(req, "TipPhoneNumEmpty"));
         if(dbBean.find(Account.class, regReq.getPhoneNumber()) != null)
@@ -53,7 +53,7 @@ public class AccountControl {
     public static final String APPLICATION_ATTR_WEBUSER = "appWebUser";
 
 
-    private static Result login(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean, boolean sessionFlag){
+    private static Result login(HttpServletRequest req, LoginRequest loginRequest, SystemDBHelperBean dbBean, boolean sessionFlag){
         Account account = (Account) dbBean.find(Account.class, loginRequest.getPhoneNumber());
         if(account == null)
             return new Result(PublicResultCode.USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
@@ -64,7 +64,7 @@ public class AccountControl {
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipLoginSuccess"));
     }
 
-    public static Result webLogin(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean){
+    public static Result webLogin(HttpServletRequest req, LoginRequest loginRequest, SystemDBHelperBean dbBean){
         Result result = login(req, loginRequest, dbBean, true);
         if(result.getResultCode() == PublicResultCode.SUCCESS){
             ServletContext context = req.getServletContext();
@@ -84,7 +84,7 @@ public class AccountControl {
         return result;
     }
 
-    public static Result mobileLogin(HttpServletRequest req, LoginRequest loginRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis){
+    public static Result mobileLogin(HttpServletRequest req, LoginRequest loginRequest, SystemDBHelperBean dbBean, Jedis jedis){
         Result result = login(req, loginRequest, dbBean, false);
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             return result;
@@ -99,7 +99,7 @@ public class AccountControl {
         return mobileLoginResult;
     }
 
-    public static Result resetPassword(HttpServletRequest req, ResetPasswordRequest resetRequest, SubwayTicketDBHelperBean dbBean, Jedis jedis) {
+    public static Result resetPassword(HttpServletRequest req, ResetPasswordRequest resetRequest, SystemDBHelperBean dbBean, Jedis jedis) {
         Account account = (Account) dbBean.find(Account.class, resetRequest.getPhoneNumber());
         if (account == null)
             return new Result(PublicResultCode.USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
@@ -114,16 +114,16 @@ public class AccountControl {
         return result;
     }
 
-    public static Result webModifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, SubwayTicketDBHelperBean dbBean){
+    public static Result webModifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, SystemDBHelperBean dbBean){
         Account account = (Account) dbBean.find(Account.class, ((Account)req.getSession().getAttribute(SESSION_ATTR_USER)).getPhoneNumber());
         return modifyPassword(req, modifyRequest, account, dbBean);
     }
 
-    public static Result mobileModifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, Account account, SubwayTicketDBHelperBean dbBean){
+    public static Result mobileModifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, Account account, SystemDBHelperBean dbBean){
         return modifyPassword(req, modifyRequest, account, dbBean);
     }
 
-    private static Result modifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, Account account, SubwayTicketDBHelperBean dbBean){
+    private static Result modifyPassword(HttpServletRequest req, ModifyPasswordRequest modifyRequest, Account account, SystemDBHelperBean dbBean){
         if(!account.getPassword().equals(modifyRequest.getOldPassword()))
             return new Result(PublicResultCode.PASSWORD_INCORRECT, BundleUtil.getString(req, "TipOldPasswordIncorrect"));
         Result result = setNewPassword(req, dbBean, account, modifyRequest.getNewPassword());
@@ -132,7 +132,7 @@ public class AccountControl {
         return result;
     }
 
-    private static Result setNewPassword(HttpServletRequest req, SubwayTicketDBHelperBean dbBean, Account account, String newPassword){
+    private static Result setNewPassword(HttpServletRequest req, SystemDBHelperBean dbBean, Account account, String newPassword){
         int passwordResult = checkPassword(newPassword);
         switch (passwordResult){
             case PublicResultCode.PASSWORD_LENGTH_ILLEGAL:

@@ -79,10 +79,12 @@ task initProjectDB(){
 		inputPassword();
 		exec{
 			commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + INIT_SYSTEM_DB_SQL_PATH
-            commandLine 'mysql', '-uroot', '-p' + password, '-e', 'load data local infile \'' + SUBWAY_TICKET_PRICE_CSV +
-                        '\' into table SubwayTicketDB.TicketPrice fields terminated by \',\' optionally enclosed by \'"\' escaped by \'"\' ' +
-                        'lines terminated by \'\\n\'; '
 		}
+        exec{
+            commandLine 'mysql', '-uroot', '-p' + password, '-e', 'load data local infile \'' + SUBWAY_TICKET_PRICE_CSV +
+                    '\' into table SubwayTicketDB.TicketPrice fields terminated by \',\' optionally enclosed by \'"\' escaped by \'"\' ' +
+                    'lines terminated by \'\\n\'; '
+        }
 	}
 }
 

@@ -14,6 +14,14 @@ public class SubwayLine {
     private City city;
     private transient List<SubwayStation> subwayStationList;
 
+    public SubwayLine(int subwayLineId) {
+        this.subwayLineId = subwayLineId;
+    }
+
+    public SubwayLine() {
+    }
+
+
     @Id
     @Column(name = "SubwayLineID", nullable = false)
     public int getSubwayLineId() {

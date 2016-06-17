@@ -2,7 +2,7 @@ package com.subwayticket.control.mobileapi.v1;
 
 import com.subwayticket.control.AccountControl;
 import com.subwayticket.control.mobileapi.CheckException;
-import com.subwayticket.database.control.SubwayTicketDBHelperBean;
+import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.*;
@@ -30,7 +30,7 @@ public class AccountResource {
     @Context
     private HttpServletResponse response;
     @EJB
-    private SubwayTicketDBHelperBean dbBean;
+    private SystemDBHelperBean dbBean;
 
 
     @POST
