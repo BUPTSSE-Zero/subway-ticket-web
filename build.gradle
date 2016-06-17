@@ -51,6 +51,9 @@ ext{
 		ASADMIN_EXEC = 'asadmin.bat'
 	else	//In Linux
 		ASADMIN_EXEC = 'asadmin'
+    mavenURL = 'http://101.200.144.204:16082/nexus/content/repositories/releases'
+    mavenAccount = 'admin'
+    mavenPassword = null
 }
 
 def inputPassword = {
@@ -162,7 +165,49 @@ artifacts {
     }
 }
 
-task mavenInstall(type: Upload) {
+def mavenAuth = {
+    println "\nAuthenticate for remote Maven repository..."
+    if(System.console() == null) {
+        new SwingBuilder().edt {
+            dialog(modal: true, title: 'Remote Maven Repository Authentication', alwaysOnTop: true, resizable: true, locationRelativeTo: null, pack: true, show: true) {
+                vbox {
+                    def urlInput = null;
+                    def accountInput = null;
+                    def passwordInput = null;
+                    hbox{
+                        label(text: "Maven Repository URL:");
+                        urlInput = textField(mavenURL);
+                    }
+                    hbox{
+                        label(text: "Account:");
+                        accountInput = textField(mavenAccount);
+                    }
+                    hbox{
+                        label(text: "Password:");
+                        passwordInput = passwordField();
+                    }
+
+                    button(defaultButton: true, text: 'OK', actionPerformed: {
+                        mavenURL = urlInput.text;
+                        mavenAccount = accountInput.text;
+                        mavenPassword = passwordInput.password;
+                        dispose();
+                    });
+                }
+            }
+        }
+    } else {
+        def temp = System.console().readLine("\nMaven Repository URL(%s):", mavenURL);
+        if(!temp.isEmpty())
+            mavenURL = temp;
+        temp = System.console().readLine("Account(%s):", mavenAccount);
+        if(!temp.isEmpty())
+            mavenAccount = temp;
+        mavenPassword = System.console().readPassword("Password:");
+    }
+}
+
+task mavenLocalInstall(type: Upload) {
     description "Installs the artifacts to the local Maven repository."
     configuration = configurations['archives']
     repositories.mavenDeployer {
@@ -176,6 +221,30 @@ task mavenInstall(type: Upload) {
         pom('models_jar').withXml {
             // Clear dependencies
             asNode().remove(asNode().dependencies.first())
+        }
+    }
+}
+
+task mavenRemoteSync(type: Upload) {
+    description "Syncs the artifacts to the remote Maven repository."
+    configuration = configurations['archives']
+    doFirst {
+        mavenAuth()
+        repositories.mavenDeployer {
+            repository(url: mavenURL) {
+                authentication(userName: '' + mavenAccount,
+                        password: '' + mavenPassword)
+            }
+            addFilter('models_jar') { artifact, file ->
+                artifact.name == 'models_jar'
+            }
+            pom('models_jar').groupId = 'com.subwayticket'
+            pom('models_jar').artifactId = 'subway-ticket-models'
+            pom('models_jar').version = '0.1'
+            pom('models_jar').withXml {
+                // Clear dependencies
+                asNode().remove(asNode().dependencies.first())
+            }
         }
     }
 }
