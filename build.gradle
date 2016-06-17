@@ -2,6 +2,7 @@ import groovy.swing.SwingBuilder
 
 apply plugin: 'java'
 apply plugin: 'war'
+apply plugin: 'maven'
 
 sourceCompatibility = 1.7
 
@@ -83,7 +84,7 @@ task initProjectDB(){
         exec{
             commandLine 'mysql', '-uroot', '-p' + password, '-e', 'load data local infile \'' + SUBWAY_TICKET_PRICE_CSV +
                     '\' into table SubwayTicketDB.TicketPrice fields terminated by \',\' optionally enclosed by \'"\' escaped by \'"\' ' +
-                    'lines terminated by \'\\n\'; '
+                    'lines terminated by \'\\n\' ignore 1 lines (SubwayStationAID, SubwayStationBID, Price); '
         }
 	}
 }
@@ -141,5 +142,40 @@ task deployWebapp(dependsOn: ['build']){
             commandLine ASADMIN_EXEC, '--port', '16048', '--user', 'admin', 'deploy', '--name', WEBAPP_NAME, BUILD_WAR_PATH
         }
         println 'Deploy finished. Please visit http://localhost:16080/' + WEBAPP_NAME
+    }
+}
+
+task modelsJar(type: Jar, dependsOn:classes) {
+    baseName 'subway-ticket-models'
+    from('build/classes/main')
+    include(
+            'com/subwayticket/model/result/*',
+            'com/subwayticket/model/request/*',
+            'com/subwayticket/model/PublicResultCode.class',
+            'com/subwayticket/database/model/*'
+    )
+}
+
+artifacts {
+    archives(modelsJar){
+        name = 'models_jar'
+    }
+}
+
+task mavenInstall(type: Upload) {
+    description "Installs the artifacts to the local Maven repository."
+    configuration = configurations['archives']
+    repositories.mavenDeployer {
+        repository url: "file://${System.properties['user.dir']}/maven-repository"
+        addFilter('models_jar') { artifact, file ->
+            artifact.name == 'models_jar'
+        }
+        pom('models_jar').groupId = 'com.subwayticket'
+        pom('models_jar').artifactId = 'subway-ticket-models'
+        pom('models_jar').version = '0.1'
+        pom('models_jar').withXml {
+            // Clear dependencies
+            asNode().remove(asNode().dependencies.first())
+        }
     }
 }
