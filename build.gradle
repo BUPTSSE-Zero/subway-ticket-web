@@ -45,7 +45,7 @@ ext{
     BUILD_WAR_PATH = 'build/libs/subway-ticket-web.war'
     GLASSFISH_DOMAIN = 'subway-ticket-server'
     WEBAPP_NAME = 'subway-ticket-web'
-    SUBWAY_TICKET_PRICE_CSV = System.getProperties().getProperty("user.dir") + '/setup/TicketPrice.csv'
+    SUBWAY_TICKET_PRICE_CSV = (System.getProperties().getProperty("user.dir") + '/setup/TicketPrice.csv').replace("\\", "/")
     password = null
 	if(System.getProperties().getProperty("os.name").toLowerCase().contains("windows"))		//In Windows
 		ASADMIN_EXEC = 'asadmin.bat'
@@ -85,9 +85,8 @@ task initProjectDB(){
 			commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + INIT_SYSTEM_DB_SQL_PATH
 		}
         exec{
-            commandLine 'mysql', '-uroot', '-p' + password, '-e', 'load data local infile \'' + SUBWAY_TICKET_PRICE_CSV +
-                    '\' into table SubwayTicketDB.TicketPrice fields terminated by \',\' optionally enclosed by \'"\' escaped by \'"\' ' +
-                    'lines terminated by \'\\n\' ignore 1 lines (SubwayStationAID, SubwayStationBID, Price); '
+            commandLine 'mysql', '--local-infile', '-uroot', '-p' + password, '-e', 'load data local infile \'' + SUBWAY_TICKET_PRICE_CSV +
+                    '\' into table SubwayTicketDB.TicketPrice fields terminated by \',\' ignore 1 lines (SubwayStationAID, SubwayStationBID, Price); '
         }
 	}
 }
