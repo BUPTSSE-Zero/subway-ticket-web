@@ -4,16 +4,14 @@ package com.subwayticket.model.managedbean;
  * Created by shenqipingguo on 16-7-2.
  */
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
-import javax.faces.model.SelectItem;
-import javax.faces.model.SelectItemGroup;
 import javax.ejb.EJB;
+import javax.faces.event.ActionEvent;
 
 import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
@@ -21,7 +19,7 @@ import com.subwayticket.database.model.*;
 
 @ManagedBean
 @ViewScoped
-public class BuyTicketBean {
+public class BuyTicketBean implements Serializable{
     @EJB
     private SubwayInfoDBHelperBean subwayInfoDBHelperBean;
     @EJB
@@ -37,6 +35,7 @@ public class BuyTicketBean {
     private List<SubwayStation> startSubwayStationList = new ArrayList<>();
     private List<SubwayStation> endSubwayStationList = new ArrayList<>();
     private float price = 0;
+    private int number = 1;
 
     @PostConstruct
     public void init(){
@@ -95,40 +94,12 @@ public class BuyTicketBean {
         this.price = price;
     }
 
-    public void onCityIdChange(){
-        if(cityId == 0) {
-            subwayLineList = new ArrayList<>();
-            startSubwayLineId = 0;
-            startSubwayStationId = 0;
-            endSubwayStationId = 0;
-            endSubwayLineId = 0;
-            return;
-        }
-        subwayLineList = subwayInfoDBHelperBean.getSubwayLineList(cityId);
+    public int getNumber() {
+        return number;
     }
 
-    public void onStartSubwayLineIdChange(){
-        if(startSubwayLineId == 0){
-            startSubwayStationList = new ArrayList<>();
-            startSubwayStationId = 0;
-            return;
-        }
-        startSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(startSubwayLineId);
-    }
-
-    public void onEndSubwayLineIdChange(){
-        if(endSubwayLineId == 0){
-            endSubwayStationList = new ArrayList<>();
-            endSubwayStationId = 0;
-            return;
-        }
-        endSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(endSubwayLineId);
-    }
-
-    public void onSubwayStationIdChange(){
-        if(endSubwayStationId!=0 && startSubwayStationId!=0){
-            price = subwayInfoDBHelperBean.getTicketPrice(startSubwayStationId, endSubwayStationId).getPrice();
-        }
+    public void setNumber(int number) {
+        this.number = number;
     }
 
     public List<SubwayLine> getSubwayLineList() {
@@ -141,5 +112,53 @@ public class BuyTicketBean {
 
     public List<SubwayStation> getEndSubwayStationList() {
         return endSubwayStationList;
+    }
+
+    public void onCityIdChange(){
+        if(cityId == 0) {
+            subwayLineList = new ArrayList<>();
+            startSubwayLineId = 0;
+            startSubwayStationId = 0;
+            endSubwayStationId = 0;
+            endSubwayLineId = 0;
+            price = 0;
+            return;
+        }
+        price = 0;
+        subwayLineList = subwayInfoDBHelperBean.getSubwayLineList(cityId);
+    }
+
+    public void onStartSubwayLineIdChange(){
+        if(startSubwayLineId == 0){
+            startSubwayStationList = new ArrayList<>();
+            startSubwayStationId = 0;
+            price = 0;
+            return;
+        }
+        price = 0;
+        startSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(startSubwayLineId);
+    }
+
+    public void onEndSubwayLineIdChange(){
+        if(endSubwayLineId == 0){
+            endSubwayStationList = new ArrayList<>();
+            endSubwayStationId = 0;
+            price = 0;
+            return;
+        }
+        price = 0;
+        endSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(endSubwayLineId);
+    }
+
+    public void onSubwayStationIdChange(){
+        if(endSubwayStationId!=0 && startSubwayStationId!=0){
+            price = subwayInfoDBHelperBean.getTicketPrice(startSubwayStationId, endSubwayStationId).getPrice();
+            return;
+        }
+        price = 0;
+    }
+
+    public void confirmAction(ActionEvent actionEvent) {
+
     }
 }
