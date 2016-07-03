@@ -3,10 +3,7 @@ package com.subwayticket.control.mobileapi.v1;
 import com.subwayticket.control.mobileapi.CheckException;
 import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
-import com.subwayticket.database.model.City;
-import com.subwayticket.database.model.SubwayLine;
-import com.subwayticket.database.model.SubwayStation;
-import com.subwayticket.database.model.TicketPrice;
+import com.subwayticket.database.model.*;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.result.*;
 import com.subwayticket.util.BundleUtil;
@@ -44,7 +41,7 @@ public class SubwayInfoResource {
         List<City> cityList = dbBean.findAll(City.class);
         if(cityList == null || cityList.isEmpty())
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
-                    new Result(PublicResultCode.CITY_LIST_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
+                    new Result(PublicResultCode.RESULT_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
         return new CityListResult(PublicResultCode.SUCCESS, "", cityList);
     }
 
@@ -55,7 +52,7 @@ public class SubwayInfoResource {
         List<SubwayLine> subwayLineList = subwayInfoDBBean.getSubwayLineList(cityID);
         if(subwayLineList == null || subwayLineList.isEmpty())
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
-                    new Result(PublicResultCode.CITY_LIST_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
+                    new Result(PublicResultCode.RESULT_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
         return new SubwayLineListResult(PublicResultCode.SUCCESS, "", subwayLineList);
     }
 
@@ -66,7 +63,7 @@ public class SubwayInfoResource {
         List<SubwayStation> subwayStationList = subwayInfoDBBean.getSubwayStationList(subwayLineID);
         if(subwayStationList == null || subwayStationList.isEmpty())
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
-                    new Result(PublicResultCode.CITY_LIST_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
+                    new Result(PublicResultCode.RESULT_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
         return new SubwayStationListResult(PublicResultCode.SUCCESS, "", subwayStationList);
     }
 
@@ -77,7 +74,7 @@ public class SubwayInfoResource {
         TicketPrice ticketPrice = subwayInfoDBBean.getTicketPrice(startStationID, endStationID);
         if(ticketPrice == null)
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
-                    new Result(PublicResultCode.CITY_LIST_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
+                    new Result(PublicResultCode.RESULT_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
         return new TicketPriceResult(PublicResultCode.SUCCESS, "", ticketPrice.getPrice());
     }
 }

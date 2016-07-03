@@ -3,7 +3,31 @@
 ## 云服务器IP
 101.200.144.204
 
-## 格式说明
+## Model Maven
+本项目通过maven的方式使服务端和Androi端共享一些model部分的代码。
+
+使用方式：
+
+① 在Gradle构建脚本中加入maven repository的地址
+```
+repositories {
+	maven{ 
+		...
+		url 'http://101.200.144.204:16082/nexus/content/repositories/releases'
+	}
+}
+```
+
+② Dependency中加入
+```
+dependencies {
+    ...
+    compile 'com.subwayticket:subway-ticket-models:0.+'
+}
+```
+
+
+## API格式说明
 
 url统一格式：`http(s)://${HOST_IP}:16080/subway-ticket-web/mobileapi/${API_VERSION}/${API_NAME}` 
 
@@ -38,12 +62,16 @@ AuthToken：${TOKEN}
 
 `${TOKEN}`为登录时获得的Token。
 
-# 账号部分API
+# 账号相关API
 
 ## 用户注册
 ```
 POST account/register
 ```
+
+### Model Class：
+Request: RegisterRequest
+Return: Result
 
 ### Request JSON Key：
 
@@ -60,6 +88,7 @@ POST account/register
 | 422 | 100003 | 密码过短或过长 |
 | 422 | 100004 | 密码格式不符合要求 |
 | 422 | 100103 | 验证码不正确 |
+| 422 | 100104 | 验证码错误次数已达到3次，该验证码已失效 |
 | 201 | 0      | 注册成功 |
 
 ## 获取验证码
@@ -69,6 +98,11 @@ POST account/register
 ```
 PUT account/phone_captcha
 ```
+
+### Model Class：
+Request: PhoneCaptchaRequest
+Return: Result
+
 ### Request JSON Key：
 + phone_number：手机号
 
@@ -77,13 +111,16 @@ PUT account/phone_captcha
 |------------------|-------------|--------------------|
 | 422 | 100101 | 验证码发送失败 |
 | 422 | 100102 | 再次获取验证码需间隔至少60秒 |
-| 201 | 0      | 验证码发送成功，30分钟内输入有效 |
 
 ## 登录
 
 ```
 PUT account/login
 ```
+
+### Model Class：
+Request: LoginRequest
+Return: MobileLoginResult
 
 ### Request JSON Key：
 + phone_number：手机号
@@ -106,6 +143,10 @@ PUT account/login
 PUT account/reset_password
 ```
 
+### Model Class：
+Request: ResetPasswordRequest
+Return: Result
+
 ### Request JSON Key：
 + phone_number：手机号
 + new_password：新密码
@@ -118,6 +159,7 @@ PUT account/reset_password
 | 422 | 100003 | 密码过短或过长 |
 | 422 | 100004 | 密码格式不符合要求 |
 | 422 | 100103 | 验证码不正确 |
+| 422 | 100104 | 验证码错误次数已达到3次，该验证码已失效 |
 | 201 | 0      | 重置密码成功|
 
 ## 修改密码*
@@ -125,6 +167,10 @@ PUT account/reset_password
 ```
 PUT account/modify_password
 ```
+
+### Model Class：
+Request: ModifyPasswordRequest
+Return: Result
 
 ### Request JSON Key:
 + old_password：原密码
@@ -150,3 +196,66 @@ PUT account/logout
 | Http Status Code | result_code | result_description |
 |------------------|-------------|--------------------|
 | 204 | —/— | —/— |
+
+
+# 获取地铁信息API
+
+## 获取城市列表
+```
+GET subway/city
+```
+
+### Model Class：
+Return: CityListResult
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100301 | 结果未找到 |
+| 200 | 0      | —/— |
+
+
+## 获取指定城市的地铁号线列表
+```
+GET subway/line/{cityID}
+```
+其中cityID为参数，为要查询的城市的ID。
+
+### Model Class：
+Return: SubwayLineListResult
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100301 | 结果未找到 |
+| 200 | 0      | —/— |
+
+## 获取指定地铁号线的地铁站列表
+```
+GET subway/station/{subwayLineID}
+```
+其中subwayLineID为参数，为要查询的地铁号线的ID。
+
+### Model Class：
+Return: SubwayLineListResult
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100301 | 结果未找到 |
+| 200 | 0      | —/— |
+
+## 获取票价
+```
+GET subway/ticket_price/{startStationID}/{endStationID}
+```
+其中startStationID为起始站ID，endStation为终点站ID。
+
+### Model Class：
+Return: TicketPriceResult
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100301 | 结果未找到 |
+| 200 | 0      | —/— |

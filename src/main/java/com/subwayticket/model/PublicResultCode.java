@@ -15,6 +15,7 @@ public class PublicResultCode {
     public static final int PHONE_CAPTCHA_SEND_FAILED = 100101;
     public static final int PHONE_CAPTCHA_INTERVAL_ILLEGAL = 100102;
     public static final int PHONE_CAPTCHA_INCORRECT = 100103;
+    public static final int PHONE_CAPTCHA_INVALIDATE = 100104;
 
     public static final int LOGIN_SUCCESS_WITH_PRE_OFFLINE = 100201;
     public static final int USER_NOT_EXIST = 100202;
@@ -22,5 +23,5 @@ public class PublicResultCode {
     public static final int USER_TOKEN_NOT_MATCH = 100204;
 
     /*Subway Info*/
-    public static final int CITY_LIST_NOT_FOUND = 100301;
+    public static final int RESULT_NOT_FOUND = 100301;
 }

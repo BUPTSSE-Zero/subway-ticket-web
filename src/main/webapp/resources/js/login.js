@@ -15,8 +15,8 @@ function onForgetPasswordSwitch(checked){
 }
 
 function indexHandleLoginResult(xhr, status, args){
-    if(args.login_result == 100) {
-        if(args.login_result == 100)
+    if(args.login_result == 100201) {
+        if(args.login_result == 100201)
             $('#login-tip-modal').openModal({
                 dismissible: false
             });
@@ -24,9 +24,9 @@ function indexHandleLoginResult(xhr, status, args){
 }
 
 function handleLoginResult(xhr, status, args){
-    if(args.login_result == 0 || args.login_result == 100) {
+    if(args.login_result == 0 || args.login_result == 100201) {
         $('#login-modal').closeModal();
-        if(args.login_result == 100)
+        if(args.login_result == 100201)
             $('#login-tip-modal').openModal({
                 dismissible: false
             });

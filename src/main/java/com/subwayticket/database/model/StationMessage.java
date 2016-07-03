@@ -1,6 +1,7 @@
 package com.subwayticket.database.model;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Date;
 
 /**
@@ -13,6 +14,7 @@ public class StationMessage {
     private String publisher;
     private Date releaseTime;
     private String content;
+    private transient List<SubwayStation> stationList;
 
     @Id
     @Column(name = "StationMessageID", nullable = false)
@@ -76,5 +78,14 @@ public class StationMessage {
         result = 31 * result + (releaseTime != null ? releaseTime.hashCode() : 0);
         result = 31 * result + (content != null ? content.hashCode() : 0);
         return result;
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "stationMessage")
+    public List<SubwayStation> getStationList() {
+        return stationList;
+    }
+
+    public void setStationList(List<SubwayStation> stationList) {
+        this.stationList = stationList;
     }
 }

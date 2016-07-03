@@ -71,6 +71,9 @@ CREATE TABLE StationMessage(
   Content TEXT NOT NULL
 ) DEFAULT CHARSET = utf8;
 
+INSERT INTO StationMessage(StationMessageID, Publisher, ReleaseTime, Content)
+      VALUES (1, '北京地铁', CURRENT_TIME, '天通苑北地铁站已被炸毁，该站将永久停用。');
+
 CREATE TABLE SubwayStation(
   SubwayStationID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   SubwayLineID INT NOT NULL,
@@ -83,8 +86,8 @@ CREATE TABLE SubwayStation(
       ON UPDATE CASCADE ON DELETE CASCADE
 ) DEFAULT CHARSET = utf8;
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
-      VALUES (151, 15, '天通苑北');
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, Available, StationMessageID)
+      VALUES (151, 15, '天通苑北', FALSE, 1);
 
 INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
       VALUES (152, 15, '灯市口');

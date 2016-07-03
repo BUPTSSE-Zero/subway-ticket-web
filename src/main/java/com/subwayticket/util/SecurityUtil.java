@@ -20,8 +20,10 @@ import java.util.Date;
  */
 public class SecurityUtil {
     public static final String REDIS_KEY_PHONE_CAPTCHA_PREFIX = "PhoneCaptcha";
+    public static final String REDIS_KEY_PHONE_CAPTCHA_ERROR_TIMES_PREFIX = "PhoneCaptchaErrorTimes";
     public static final int PHONE_CAPTCHA_VALID_MINUTES = 30;
     public static final int PHONE_CAPTCHA_INTERVAL_SECONDS = 60;
+    public static final int PHONE_CAPTCHA_ERROR_TIMES = 3;
 
     public static final String REDIS_KEY_MOBILETOKEN = "MobileToken";
     public static int MOBILETOKEN_VALID_HOURS = 120;
@@ -35,6 +37,7 @@ public class SecurityUtil {
                 return new Result(PublicResultCode.PHONE_CAPTCHA_INTERVAL_ILLEGAL, BundleUtil.getString(request, "TipCaptchaIntervalIllegal"));
         }
         jedis.setex(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber, PHONE_CAPTCHA_VALID_MINUTES * 60, new PhoneCaptcha("123456").toString());
+        jedis.setex(REDIS_KEY_PHONE_CAPTCHA_ERROR_TIMES_PREFIX + phoneNumber, PHONE_CAPTCHA_VALID_MINUTES * 60, Integer.toString(0));
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(request, "TipCaptchaSendSuccess"));
     }
 
@@ -47,8 +50,21 @@ public class SecurityUtil {
         return true;
     }
 
+    public static boolean increasePhoneCaptchaErrorTimes(Jedis jedis, String phoneNumber){
+        String errorTimesStr = jedis.get(REDIS_KEY_PHONE_CAPTCHA_ERROR_TIMES_PREFIX + phoneNumber);
+        if(errorTimesStr == null)
+            return false;
+        int errorTimes = Integer.valueOf(errorTimesStr);
+        errorTimes++;
+        jedis.set(REDIS_KEY_PHONE_CAPTCHA_ERROR_TIMES_PREFIX + phoneNumber, Integer.toString(errorTimes));
+        if(errorTimes >= PHONE_CAPTCHA_ERROR_TIMES)
+            return true;
+        return false;
+    }
+
     public static void clearPhoneCaptcha(Jedis jedis, String phoneNumber){
         jedis.del(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber);
+        jedis.del(REDIS_KEY_PHONE_CAPTCHA_ERROR_TIMES_PREFIX + phoneNumber);
     }
 
     private static Key tokenkey = MacProvider.generateKey();

@@ -1,6 +1,7 @@
 package com.subwayticket.database.model;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -95,5 +96,17 @@ public class SubwayStation {
 
     public void setTicketBList(List<TicketPrice> ticketB) {
         this.ticketBList = ticketB;
+    }
+
+    private StationMessage stationMessage;
+
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "StationMessageID")
+    public StationMessage getStationMessage() {
+        return stationMessage;
+    }
+
+    public void setStationMessage(StationMessage stationMessage) {
+        this.stationMessage = stationMessage;
     }
 }

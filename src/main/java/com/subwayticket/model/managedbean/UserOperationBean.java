@@ -80,8 +80,8 @@ public class UserOperationBean implements Serializable {
             Result result = AccountControl.register(request, new RegisterRequest(phoneNumber, newPassword, captcha),
                     dbBean, JedisUtil.getJedis());
             if (result.getResultCode() == PublicResultCode.SUCCESS) {
-                login();
-                return true;
+                password = newPassword;
+                return login();
             }else{
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
                         result.getResultDescription(), ""));

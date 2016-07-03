@@ -34,8 +34,13 @@ public class AccountControl {
             case PublicResultCode.PASSWORD_FORMAT_ILLEGAL:
                 return new Result(passwordResult, BundleUtil.getString(req, "TipPasswordFormatIllegal"));
         }
-        if(!SecurityUtil.checkPhoneCaptcha(regReq.getPhoneNumber(), regReq.getCaptcha(), jedis))
+        if(!SecurityUtil.checkPhoneCaptcha(regReq.getPhoneNumber(), regReq.getCaptcha(), jedis)) {
+            if(SecurityUtil.increasePhoneCaptchaErrorTimes(jedis, regReq.getPhoneNumber())){
+                SecurityUtil.clearPhoneCaptcha(jedis, regReq.getPhoneNumber());
+                return new Result(PublicResultCode.PHONE_CAPTCHA_INVALIDATE, BundleUtil.getString(req, "TipCaptchaErrorTimesExceed"));
+            }
             return new Result(PublicResultCode.PHONE_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
+        }
 
         Account newUser = new Account(regReq.getPhoneNumber(), regReq.getPassword());
         dbBean.create(newUser);
@@ -103,8 +108,13 @@ public class AccountControl {
         Account account = (Account) dbBean.find(Account.class, resetRequest.getPhoneNumber());
         if (account == null)
             return new Result(PublicResultCode.USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
-        if (!SecurityUtil.checkPhoneCaptcha(resetRequest.getPhoneNumber(), resetRequest.getCaptcha(), jedis))
+        if (!SecurityUtil.checkPhoneCaptcha(resetRequest.getPhoneNumber(), resetRequest.getCaptcha(), jedis)) {
+            if(SecurityUtil.increasePhoneCaptchaErrorTimes(jedis, resetRequest.getPhoneNumber())){
+                SecurityUtil.clearPhoneCaptcha(jedis, resetRequest.getPhoneNumber());
+                return new Result(PublicResultCode.PHONE_CAPTCHA_INVALIDATE, BundleUtil.getString(req, "TipCaptchaErrorTimesExceed"));
+            }
             return new Result(PublicResultCode.PHONE_CAPTCHA_INCORRECT, BundleUtil.getString(req, "TipCaptchaIncorrect"));
+        }
 
         Result result = setNewPassword(req, dbBean, account, resetRequest.getNewPassword());
         if (result.getResultCode() == PublicResultCode.SUCCESS){
