@@ -13,7 +13,53 @@
 
     <h:body>
         <ui:include src="header.xhtml"/>
-        <ui:include src="footer.xhtml"/>
+
+        <ul id="slide-out" class="side-nav fixed" style="margin-top: 64px">
+            <li style="height: 100px"><i class="material-icons large" style="padding-left: 50px;margin-bottom: 0px">perm_identity</i></li>
+            <li><a href="#!"><i class="material-icons left" style="padding-top: 21px">lock_open</i>#{bundle.ModifyPassword}</a></li>
+            <li><a href="#!"><i class="material-icons left" style="padding-top: 21px">settings</i>#{bundle.PurchaseCommonlyUsedSettings}</a></li>
+            <li><a href="#!"><i class="material-icons left" style="padding-top: 21px">content_paste</i>#{bundle.OrderRecord}</a></li>
+        </ul>
+        <a href="#" data-activates="slide-out" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+
+        <div class="container" style="margin-left: 300px">
+            <div class="row">
+                <div class="col s9">
+                    <div class="card">
+                        <div class="card-content">
+                            <span class="card-title">#{bundle.ModifyPassword}</span>
+                            <div class="row">
+                                <h:form styleClass="col s12">
+                                    <div class="row">
+                                        <div class="input-field col s6 offset-l3">
+                                            <i class="material-icons prefix">lock</i>
+                                            <p:password id="old_password" class="validate" required="true" requiredMessage="#{bundle.TipInputPassword}"></p:password>
+                                            <label for="old_password">#{bundle.OldPassword}</label>
+                                        </div>
+                                        <div class="input-field col s6 offset-l3">
+                                            <i class="material-icons prefix">lock</i>
+                                            <p:password id="new_password" class="validate" required="true" requiredMessage="#{bundle.TipInputPassword}" />
+                                            <label for="new_password">#{bundle.ResetPassword}</label>
+                                        </div>
+                                        <div class="input-field col s6 offset-l3">
+                                            <i class="material-icons prefix">lock</i>
+                                            <p:password id="repeat_new_password" class="validate" required="true" requiredMessage="#{bundle.TipPasswordNotMatch}"/>
+                                            <label for="repeat_new_password">#{bundle.RepeatNewPassword}</label>
+                                        </div>
+                                        <div class="card-action col s12">
+                                            <div class="col s4 offset-l4">
+                                                <p:commandButton styleClass="btn waves-light waves-effect" value="#{bundle.ModifyPassword}" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </h:form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </h:body>
 
 </html>

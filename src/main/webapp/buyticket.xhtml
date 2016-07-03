@@ -5,14 +5,70 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
 
     <h:head>
         <title>#{bundle.IndexPageTitle}</title>
     </h:head>
-
     <h:body>
         <ui:include src="header.xhtml"/>
+
+        <div class="container">
+            <h:form>
+                <p:outputLabel for="city" styleClass="selectlabel">#{bundle.City} :</p:outputLabel>
+                <p:selectOneMenu id="city" styleClass="selectform">
+
+                </p:selectOneMenu>
+                <br/>
+                <p:outputLabel for="startnumber" styleClass="selectlabel">#{bundle.StartLineNumber} :</p:outputLabel>
+                <p:selectOneMenu id="startnumber" styleClass="selectform">
+
+                </p:selectOneMenu>
+                <p:outputLabel for="startstation" styleClass="selectlabel">#{bundle.StartSubwayStation} :</p:outputLabel>
+                <p:selectOneMenu id="startstation" styleClass="selectform">
+
+                </p:selectOneMenu>
+                <br/>
+                <p:outputLabel for="endnumber" styleClass="selectlabel">#{bundle.EndLineNumber} :</p:outputLabel>
+                <p:selectOneMenu id="endnumber" styleClass="selectform">
+
+                </p:selectOneMenu>
+                <p:outputLabel for="endstation" styleClass="selectlabel">#{bundle.EndSubwayStation} :</p:outputLabel>
+                <p:selectOneMenu id="endstation" styleClass="selectform">
+
+                </p:selectOneMenu>
+                <br/>
+                <p:outputLabel for="ticketnumber" value="#{bundle.TicketNumber}" styleClass="selectlabel" />
+                <p:spinner id="ticketnumber" min="1"/>
+                <br />
+                <div class="row">
+                    <p:commandButton styleClass="btn waves-effect waves-light col s3 offset-l4" value="#{bundle.Confirm}"/>
+                </div>
+
+            </h:form>
+            <div>
+                <table class="hoverable centered">
+                    <thead>
+                    <tr>
+                        <th>#{bundle.StartSubwayStation}</th>
+                        <th>#{bundle.EndSubwayStation}</th>
+                        <th>#{bundle.TicketPrice}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <p:commandButton value="#{bundle.SubmitOrder}" styleClass="btn waves-light waves-effect"/>
+            </div>
+        </div>
+
         <ui:include src="footer.xhtml"/>
     </h:body>
 

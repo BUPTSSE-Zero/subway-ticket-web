@@ -14,6 +14,15 @@
     <h:body>
         <ui:include src="header.xhtml"/>
 
+        <h:form id="buttonform">
+            <div>
+                <p:link styleClass="waves-light waves-effect btn buyticket-button" outcome="buyticket"><i class="large left material-icons">shopping_cart</i>#{bundle.BuyTicket}</p:link>
+            </div>
+            <div>
+                <p:link styleClass="waves-light waves-effect btn download-button" outcome="mobile-download"><i class="large left material-icons">get_app</i>#{bundle.MobileClientDownload}</p:link>
+            </div>
+        </h:form>
+
         <div id="login-panel" class="row card-panel white">
             <ui:include src="login-register.xhtml"/>
         </div>
