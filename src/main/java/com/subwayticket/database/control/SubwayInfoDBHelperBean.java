@@ -42,14 +42,16 @@ public class SubwayInfoDBHelperBean extends EntityManagerHelper{
         return q.getResultList();
     }
 
-    public TicketPrice getTicketPrice(SubwayStation stationA, SubwayStation stationB){
-        return getTicketPrice(stationA.getSubwayStationId(), stationB.getSubwayStationId());
+    public TicketPrice getTicketPrice(SubwayStation startStation, SubwayStation endStation){
+        return getTicketPrice(startStation.getSubwayStationId(), endStation.getSubwayStationId());
     }
 
-    public TicketPrice getTicketPrice(int subwayStationAID, int subwayStationBID){
-        TicketPrice ticketPrice = (TicketPrice) find(TicketPrice.class, new TicketPricePK(subwayStationAID, subwayStationBID));
+    public TicketPrice getTicketPrice(int startStationID, int endStationBID){
+        TicketPrice ticketPrice = (TicketPrice) find(TicketPrice.class, new TicketPricePK(startStationID, endStationBID));
         if(ticketPrice == null){
-            ticketPrice = (TicketPrice) find(TicketPrice.class, new TicketPricePK(subwayStationBID, subwayStationAID));
+            ticketPrice = (TicketPrice) find(TicketPrice.class, new TicketPricePK(endStationBID, startStationID));
+            if(ticketPrice == null)
+                return null;
         }
         return ticketPrice;
     }

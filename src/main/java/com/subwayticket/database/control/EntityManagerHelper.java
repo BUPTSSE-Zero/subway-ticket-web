@@ -27,7 +27,11 @@ public abstract class EntityManagerHelper {
     public void remove(Object entity) {
         getEntityManager().remove(getEntityManager().merge(entity));
     }
-    
+
+    public void detach(Object entity) {
+        getEntityManager().detach(entity);
+    }
+
     public Object find(Class<?> entityClass, Object id) {
         if(id == null)
             return null;

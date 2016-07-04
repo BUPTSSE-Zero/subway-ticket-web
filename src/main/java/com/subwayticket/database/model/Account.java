@@ -1,6 +1,8 @@
 package com.subwayticket.database.model;
 
 import javax.persistence.*;
+import java.util.List;
+import java.util.List;
 import java.util.Date;
 
 /**
@@ -10,10 +12,11 @@ import java.util.Date;
 @Table(name = "Account")
 public class Account {
     private String phoneNumber;
-    private String password;
+    private transient String password;
     private Date registerDate;
 
-    public Account() {}
+    public Account() {
+    }
 
     public Account(String phoneNumber, String password) {
         this.phoneNumber = phoneNumber;
@@ -76,5 +79,16 @@ public class Account {
         result = 31 * result + (password != null ? password.hashCode() : 0);
         result = 31 * result + (registerDate != null ? registerDate.hashCode() : 0);
         return result;
+    }
+
+    private List<TicketOrder> orderList;
+
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    public List<TicketOrder> getOrderList() {
+        return orderList;
+    }
+
+    public void setOrderList(List<TicketOrder> orderList) {
+        this.orderList = orderList;
     }
 }

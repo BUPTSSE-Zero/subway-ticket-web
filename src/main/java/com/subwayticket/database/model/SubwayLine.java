@@ -63,7 +63,7 @@ public class SubwayLine {
         return result;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "CityID")
     public City getCity() {
         return city;
@@ -73,7 +73,7 @@ public class SubwayLine {
         this.city = city;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "subwayLine")
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "subwayLine")
     public List<SubwayStation> getSubwayStationList() {
         return subwayStationList;
     }

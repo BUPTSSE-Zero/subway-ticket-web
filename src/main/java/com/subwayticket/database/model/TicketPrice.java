@@ -71,7 +71,7 @@ public class TicketPrice {
         this.price = price;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     @PrimaryKeyJoinColumn(name = "SubwayStationAID", referencedColumnName = "SubwayStationID")
     public SubwayStation getSubwayStationA() {
         return subwayStationA;
@@ -81,7 +81,7 @@ public class TicketPrice {
         this.subwayStationA = subwayStationA;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     @PrimaryKeyJoinColumn(name = "SubwayStationBID", referencedColumnName = "SubwayStationID")
     public SubwayStation getSubwayStationB() {
         return subwayStationB;

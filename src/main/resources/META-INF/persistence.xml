@@ -10,5 +10,6 @@
         <class>com.subwayticket.database.model.StationMessage</class>
         <class>com.subwayticket.database.model.SubwayStation</class>
         <class>com.subwayticket.database.model.TicketPrice</class>
+        <class>com.subwayticket.database.model.TicketOrder</class>
     </persistence-unit>
 </persistence>

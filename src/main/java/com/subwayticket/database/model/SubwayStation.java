@@ -14,9 +14,14 @@ public class SubwayStation {
     private String subwayStationName;
     private boolean available;
     private SubwayLine subwayLine;
-
     private transient List<TicketPrice> ticketAList;
     private transient List<TicketPrice> ticketBList;
+
+    public SubwayStation(){}
+
+    public SubwayStation(int subwayStationId){
+        this.subwayStationId = subwayStationId;
+    }
 
     @Id
     @Column(name = "SubwayStationID", nullable = false)
@@ -70,7 +75,7 @@ public class SubwayStation {
         return result;
     }
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "SubwayLineID")
     public SubwayLine getSubwayLine() {
         return subwayLine;
@@ -80,7 +85,7 @@ public class SubwayStation {
         this.subwayLine = subwayLine;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "subwayStationA")
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "subwayStationA")
     public List<TicketPrice> getTicketAList() {
         return ticketAList;
     }
@@ -89,7 +94,7 @@ public class SubwayStation {
         this.ticketAList = ticketStationA;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "subwayStationB")
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "subwayStationB")
     public List<TicketPrice> getTicketBList() {
         return ticketBList;
     }
@@ -100,7 +105,7 @@ public class SubwayStation {
 
     private StationMessage stationMessage;
 
-    @ManyToOne(cascade = CascadeType.ALL, optional = false)
+    @ManyToOne(cascade = CascadeType.REFRESH, optional = false)
     @JoinColumn(name = "StationMessageID")
     public StationMessage getStationMessage() {
         return stationMessage;

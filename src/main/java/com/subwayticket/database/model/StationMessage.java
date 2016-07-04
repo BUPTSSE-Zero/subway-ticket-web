@@ -80,7 +80,7 @@ public class StationMessage {
         return result;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "stationMessage")
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "stationMessage")
     public List<SubwayStation> getStationList() {
         return stationList;
     }

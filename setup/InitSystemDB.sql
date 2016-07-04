@@ -119,3 +119,25 @@ CREATE TABLE TicketPrice(
 );
 
 /*Please import TicketPrice.csv into the table TicketPrice manually.*/
+
+CREATE TABLE TicketOrder(
+  TicketOrderID VARCHAR(30) NOT NULL PRIMARY KEY,
+  TicketOrderTime DATETIME NOT NULL,
+  UserID VARCHAR(20) NOT NULL,
+  CONSTRAINT OrderUserIDFK FOREIGN KEY (UserID) REFERENCES Account(PhoneNumber)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  StartStationID INT NOT NULL,
+  CONSTRAINT OrderStartStationIDFK FOREIGN KEY (StartStationID) REFERENCES SubwayStation(SubwayStationID)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  EndStationID INT NOT NULL,
+  CONSTRAINT OrderEndStationIDFK FOREIGN KEY (EndStationID) REFERENCES SubwayStation(SubwayStationID)
+    ON UPDATE CASCADE ON DELETE CASCADE,
+  TicketPrice FLOAT NOT NULL,
+  DrawAmount INT NOT NULL DEFAULT 0,
+  Amount INT NOT NULL CHECK (Amount >= 1),
+  Status CHAR(1) NOT NULL DEFAULT 'A',
+  TicketKey VARCHAR(15) UNIQUE,
+  Comment VARCHAR(50)
+)
+
+

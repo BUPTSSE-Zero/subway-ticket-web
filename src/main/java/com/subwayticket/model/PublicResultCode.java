@@ -24,4 +24,8 @@ public class PublicResultCode {
 
     /*Subway Info*/
     public static final int RESULT_NOT_FOUND = 100301;
+
+    /*Order*/
+    public static final int ORDER_SUBMIT_ERROR = 100401;
+    public static final int ORDER_SUBMIT_ROUTE_NOT_EXIST = 100402;
 }

@@ -60,7 +60,7 @@ public class City {
         return result;
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "city")
+    @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "city")
     public List<SubwayLine> getSubwayLineList() {
         return subwayLineList;
     }
