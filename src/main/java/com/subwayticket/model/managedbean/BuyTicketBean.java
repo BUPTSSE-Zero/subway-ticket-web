@@ -8,14 +8,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.PostConstruct;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.ejb.EJB;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
+import com.subwayticket.control.AccountControl;
+import com.subwayticket.control.TicketOrderControl;
 import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.*;
+import com.subwayticket.model.PublicResultCode;
+import com.subwayticket.model.result.Result;
+import com.subwayticket.model.request.SubmitOrderRequest;
 
 @ManagedBean
 @ViewScoped
@@ -24,7 +33,7 @@ public class BuyTicketBean implements Serializable{
     private SubwayInfoDBHelperBean subwayInfoDBHelperBean;
     @EJB
     private SystemDBHelperBean systemDBHelperBean;
-
+    private HttpServletRequest request;
     private int cityId = 0;
     private int startSubwayLineId = 0;
     private int endSubwayLineId = 0;
@@ -158,7 +167,33 @@ public class BuyTicketBean implements Serializable{
         price = 0;
     }
 
-    public void confirmAction(ActionEvent actionEvent) {
+    public boolean submit() {
+        request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        Account user = (Account)request.getSession(false).getAttribute(AccountControl.SESSION_ATTR_USER);
+        Result result = TicketOrderControl.submitOrder(request, systemDBHelperBean, subwayInfoDBHelperBean, user,
+                new SubmitOrderRequest(startSubwayStationId, endSubwayStationId, number));
+        if (result.getResultCode() == PublicResultCode.SUCCESS) {
+            return true;
+        }else{
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    result.getResultDescription(), ""));
+            return false;
+        }
+    }
 
+    public double getTotalPrice(){
+        return number * price;
+    }
+
+    public String getStartStationNameFromId(){
+        SubwayStation subwayStation = new SubwayStation(startSubwayStationId);
+        String name = subwayStation.getSubwayStationName();
+        return name;
+    }
+
+    public String getEndStationNameFromId(){
+        SubwayStation subwayStation = new SubwayStation(endSubwayStationId);
+        String name = subwayStation.getSubwayStationName();
+        return name;
     }
 }
