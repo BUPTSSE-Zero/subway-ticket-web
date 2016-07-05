@@ -1,0 +1,38 @@
+/* 
+    Created on : Jul 4, 2016, 9:54:34 AM
+    Author     : Zhou Shengyun <GGGZ-1101-28@Live.cn>
+*/
+
+.ui-icon{
+    text-indent: 0;
+    font-family: 'Material Icons';
+    background: none;
+    color: black;
+    text-transform: none;
+    letter-spacing: normal;
+    /* Support for IE. */
+    font-feature-settings: 'liga';
+}
+
+.ui-icon-close:before{
+    font-size: 16px;
+    content: 'close';
+}
+
+.ui-messages-error-icon, .ui-messages-info-icon{
+    font-family: 'Material Icons';
+    margin-top: -8px;
+    font-size: 24px;
+    background: none;
+    font-feature-settings: 'liga';
+}
+
+.ui-messages-error-icon:before{
+    content: 'cancel';
+}
+
+.ui-messages-info-icon:before{
+    content: 'info';
+}
+
+

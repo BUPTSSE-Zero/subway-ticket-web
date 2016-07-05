@@ -82,10 +82,10 @@ task initProjectDB(){
 		println 'Init project database...'
 		inputPassword();
 		exec{
-			commandLine 'mysql', '-uroot', '-p' + password, '-e', 'source ' + INIT_SYSTEM_DB_SQL_PATH
+			commandLine 'mysql', '--default-character-set=utf8', '-uroot', '-p' + password, '-e', 'source ' + INIT_SYSTEM_DB_SQL_PATH
 		}
         exec{
-            commandLine 'mysql', '--local-infile', '-uroot', '-p' + password, '-e', 'load data local infile \'' + SUBWAY_TICKET_PRICE_CSV +
+            commandLine 'mysql', '--default-character-set=utf8', '--local-infile', '-uroot', '-p' + password, '-e', 'load data local infile \'' + SUBWAY_TICKET_PRICE_CSV +
                     '\' into table SubwayTicketDB.TicketPrice fields terminated by \',\' ignore 1 lines (SubwayStationAID, SubwayStationBID, Price); '
         }
 	}

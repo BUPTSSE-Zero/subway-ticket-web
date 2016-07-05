@@ -7,6 +7,7 @@ import com.subwayticket.database.model.SubwayStation;
 import com.subwayticket.database.model.TicketOrder;
 import com.subwayticket.database.model.TicketPrice;
 import com.subwayticket.model.PublicResultCode;
+import com.subwayticket.model.request.CancelOrderRequest;
 import com.subwayticket.model.request.SubmitOrderRequest;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
@@ -49,4 +50,16 @@ public class TicketOrderControl {
         return new Result(PublicResultCode.ORDER_SUBMIT_ERROR, BundleUtil.getString(req, "TipOrderSubmitError"));
     }
 
+
+    public static Result cancelOrder(ServletRequest req, SystemDBHelperBean dbHelperBean, Account user, CancelOrderRequest cancelOrderRequest){
+        TicketOrder ticketOrder = (TicketOrder) dbHelperBean.find(TicketOrder.class, cancelOrderRequest.getOrderID());
+        if(ticketOrder == null)
+            return new Result(PublicResultCode.ORDER_CANCEL_ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
+        if(!ticketOrder.getUser().getPhoneNumber().equals(user.getPhoneNumber()))
+            return new Result(PublicResultCode.ORDER_CANCEL_ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
+        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_PAY)
+            return new Result(PublicResultCode.ORDER_CANCEL_NOT_CANCELABLE, BundleUtil.getString(req, "TipOrderNotCancelable"));
+        dbHelperBean.remove(ticketOrder);
+        return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderCancelSuccess"));
+    }
 }

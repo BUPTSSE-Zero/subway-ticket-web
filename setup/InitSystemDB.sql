@@ -4,14 +4,14 @@
  */
 
 DROP DATABASE IF EXISTS SubwayTicketDB;
-CREATE DATABASE SubwayTicketDB;
+CREATE DATABASE SubwayTicketDB DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE SubwayTicketDB;
 
 CREATE TABLE Account(
   PhoneNumber VARCHAR(20) NOT NULL PRIMARY KEY,
   Password VARCHAR(20) NOT NULL,
   RegisterDate DATE NOT NULL
-) DEFAULT CHARSET = utf8;
+);
 
 INSERT INTO Account(PhoneNumber, Password, RegisterDate)
           VALUES('123456', '123456', CURRENT_DATE);
@@ -20,7 +20,7 @@ CREATE TABLE SystemMessage(
   ReleaseTime DATETIME NOT NULL PRIMARY KEY,
   Title VARCHAR(40) NOT NULL,
   Content TEXT NOT NULL
-) DEFAULT CHARSET = utf8;
+);
 
 INSERT INTO SystemMessage(ReleaseTime, Title, Content)
           VALUES('2016-6-7 9:03:34', 'SystemMessage1', 'This is system message 1.');
@@ -34,7 +34,7 @@ INSERT INTO SystemMessage(ReleaseTime, Title, Content)
 CREATE TABLE City(
   CityID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
   CityName VARCHAR(40) NOT NULL
-) DEFAULT CHARSET = utf8;
+);
 
 INSERT INTO City(CityID, CityName) VALUES (1, '北京');
 
@@ -44,7 +44,7 @@ CREATE TABLE SubwayLine(
   CONSTRAINT SubwayLineCityIDFK FOREIGN KEY (CityID) REFERENCES City(CityID)
       ON UPDATE CASCADE ON DELETE CASCADE,
   SubwayLineName VARCHAR(20) NOT NULL
-) DEFAULT CHARSET = utf8;
+);
 
 INSERT INTO SubwayLine(SubwayLineID, CityID, SubwayLineName)
       VALUES (11, 1, '一号线');
@@ -69,7 +69,7 @@ CREATE TABLE StationMessage(
   Publisher VARCHAR(30) NOT NULL,
   ReleaseTime DATETIME NOT NULL,
   Content TEXT NOT NULL
-) DEFAULT CHARSET = utf8;
+);
 
 INSERT INTO StationMessage(StationMessageID, Publisher, ReleaseTime, Content)
       VALUES (1, '北京地铁', CURRENT_TIME, '天通苑北地铁站已被炸毁，该站将永久停用。');
@@ -84,7 +84,7 @@ CREATE TABLE SubwayStation(
   StationMessageID INT,
   CONSTRAINT SubwayStationMessageIDFK FOREIGN KEY (StationMessageID) REFERENCES StationMessage(StationMessageID)
       ON UPDATE CASCADE ON DELETE CASCADE
-) DEFAULT CHARSET = utf8;
+);
 
 INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, Available, StationMessageID)
       VALUES (151, 15, '天通苑北', FALSE, 1);
@@ -138,6 +138,6 @@ CREATE TABLE TicketOrder(
   Status CHAR(1) NOT NULL DEFAULT 'A',
   TicketKey VARCHAR(15) UNIQUE,
   Comment VARCHAR(50)
-)
+);
 
 

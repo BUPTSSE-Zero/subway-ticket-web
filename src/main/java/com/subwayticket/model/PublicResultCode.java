@@ -28,4 +28,8 @@ public class PublicResultCode {
     /*Order*/
     public static final int ORDER_SUBMIT_ERROR = 100401;
     public static final int ORDER_SUBMIT_ROUTE_NOT_EXIST = 100402;
+
+    public static final int ORDER_CANCEL_ORDER_NOT_EXIST = 100501;
+    public static final int ORDER_CANCEL_NOT_CANCELABLE = 100502;
+
 }

@@ -6,15 +6,13 @@ import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
+import com.subwayticket.model.request.CancelOrderRequest;
 import com.subwayticket.model.request.SubmitOrderRequest;
 import com.subwayticket.model.result.Result;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,6 +37,17 @@ public class TicketOrderResource {
     public Response submitOrder(SubmitOrderRequest submitOrderRequest){
         Account user = AccountResource.authCheck(request);
         Result result = TicketOrderControl.submitOrder(request, dbBean, subwayInfoDBBean, user, submitOrderRequest);
+        if(result.getResultCode() != PublicResultCode.SUCCESS)
+            throw new CheckException(result);
+        return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @PUT
+    @Path("/cancel")
+    @Consumes("application/json")
+    public Response cancelOrder(CancelOrderRequest cancelOrderRequest){
+        Account user = AccountResource.authCheck(request);
+        Result result = TicketOrderControl.cancelOrder(request, dbBean, user, cancelOrderRequest);
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
