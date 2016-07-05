@@ -7,7 +7,7 @@ public class PublicResultCode {
     public static final int SUCCESS = 0;
 
     /*Account*/
-    public static final int PHONE_NUM_EMPTY = 100001;
+    public static final int PHONE_NUM_INVALID = 100001;
     public static final int PHONE_NUM_REGISTERED = 100002;
     public static final int PASSWORD_LENGTH_ILLEGAL = 100003;
     public static final int PASSWORD_FORMAT_ILLEGAL = 100004;
@@ -31,5 +31,8 @@ public class PublicResultCode {
 
     public static final int ORDER_CANCEL_ORDER_NOT_EXIST = 100501;
     public static final int ORDER_CANCEL_NOT_CANCELABLE = 100502;
+
+    public static final int ORDER_PAY_ORDER_NOT_EXIST = 100601;
+    public static final int ORDER_PAY_NOT_PAYABLE = 100602;
 
 }

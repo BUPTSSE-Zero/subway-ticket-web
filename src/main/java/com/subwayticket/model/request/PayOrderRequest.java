@@ -3,10 +3,10 @@ package com.subwayticket.model.request;
 /**
  * Created by zhou-shengyun on 7/5/16.
  */
-public class CancelOrderRequest {
+public class PayOrderRequest {
     private String orderId;
 
-    public CancelOrderRequest(String orderID) {
+    public PayOrderRequest(String orderID) {
         this.orderId = orderID;
     }
 

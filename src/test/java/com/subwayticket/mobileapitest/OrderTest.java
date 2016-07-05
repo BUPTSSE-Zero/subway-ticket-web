@@ -1,19 +1,17 @@
 package com.subwayticket.mobileapitest;
 
-import com.subwayticket.model.request.CancelOrderRequest;
-import com.subwayticket.model.request.LoginRequest;
-import com.subwayticket.model.request.SubmitOrderRequest;
+import com.subwayticket.model.request.*;
 import com.subwayticket.model.result.MobileLoginResult;
 
 import javax.ws.rs.core.Response;
 import java.util.Scanner;
 
 /**
- * Created by zhou-shengyun on 7/5/16.
+ * Created by zhou-shengyun on 7/4/16.
  */
-public class CancelOrderTest {
+public class OrderTest {
     public static void main(String[] argv) {
-        System.out.println("****Cancel Order Test****");
+        System.out.println("****Order Test****");
         Scanner reader = new Scanner(System.in);
         String phoneNumber = reader.next();
         String password = reader.next();
@@ -24,11 +22,31 @@ public class CancelOrderTest {
             System.out.println("Token:" + result.getToken());
         else
             return;
+
+        int startStationID = reader.nextInt();
+        int endStationID = reader.nextInt();
+        int amount = reader.nextInt();
+        SubmitOrderRequest submitOrderRequest = new SubmitOrderRequest(startStationID, endStationID, amount);
+        response = RESTServiceTestUtil.post(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/submit", submitOrderRequest,
+                result.getToken());
+        RESTServiceTestUtil.showResponse(response);
+
         String orderID = reader.next();
         CancelOrderRequest cancelOrderRequest = new CancelOrderRequest(orderID);
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/cancel", cancelOrderRequest,
                 result.getToken());
         RESTServiceTestUtil.showResponse(response);
+
+        response = RESTServiceTestUtil.post(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/submit", submitOrderRequest,
+                result.getToken());
+        RESTServiceTestUtil.showResponse(response);
+
+        orderID = reader.next();
+        PayOrderRequest payOrderRequest = new PayOrderRequest(orderID);
+        response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/pay", payOrderRequest,
+                result.getToken());
+        RESTServiceTestUtil.showResponse(response);
+
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/account/logout", null,
                 result.getToken());
         RESTServiceTestUtil.showResponse(response);

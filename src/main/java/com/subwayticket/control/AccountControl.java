@@ -24,7 +24,12 @@ import javax.servlet.http.HttpSession;
 public class AccountControl {
     public static Result register(ServletRequest req, RegisterRequest regReq, SystemDBHelperBean dbBean, Jedis jedis){
         if(regReq.getPhoneNumber() == null || regReq.getPhoneNumber().isEmpty())
-            return new Result(PublicResultCode.PHONE_NUM_EMPTY, BundleUtil.getString(req, "TipPhoneNumEmpty"));
+            return new Result(PublicResultCode.PHONE_NUM_INVALID, BundleUtil.getString(req, "TipPhoneNumInvalid"));
+        for(int i = 0; i < regReq.getPhoneNumber().length(); i++){
+            if(regReq.getPhoneNumber().charAt(i) >= '0' && regReq.getPhoneNumber().charAt(i) <= '9')
+                continue;
+            return new Result(PublicResultCode.PHONE_NUM_INVALID, BundleUtil.getString(req, "TipPhoneNumInvalid"));
+        }
         if(dbBean.find(Account.class, regReq.getPhoneNumber()) != null)
             return new Result(PublicResultCode.PHONE_NUM_REGISTERED, BundleUtil.getString(req, "TipPhoneNumRegistered"));
         int passwordResult = checkPassword(regReq.getPassword());

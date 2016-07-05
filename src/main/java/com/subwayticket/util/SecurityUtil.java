@@ -8,12 +8,14 @@ import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.result.Result;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.Base64UrlCodec;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import redis.clients.jedis.Jedis;
 
 import javax.servlet.ServletRequest;
 import java.security.Key;
 import java.util.Date;
+import java.util.Random;
 
 /**
  * @author buptsse-zero <GGGZ-1101-28@Live.cn>
@@ -30,7 +32,12 @@ public class SecurityUtil {
 
     public static Result sendPhoneCaptcha(ServletRequest request, String phoneNumber, Jedis jedis){
         if(phoneNumber == null || phoneNumber.isEmpty())
-            return new Result(PublicResultCode.PHONE_CAPTCHA_SEND_FAILED, BundleUtil.getString(request, "TipCaptchaSendFailed"));
+            return new Result(PublicResultCode.PHONE_NUM_INVALID, BundleUtil.getString(request, "TipPhoneNumInvalid"));
+        for(int i = 0; i < phoneNumber.length(); i++){
+            if(phoneNumber.charAt(i) >= '0' && phoneNumber.charAt(i) <= '9')
+                continue;
+            return new Result(PublicResultCode.PHONE_NUM_INVALID, BundleUtil.getString(request, "TipPhoneNumInvalid"));
+        }
         PhoneCaptcha pc = PhoneCaptcha.fromString(jedis.get(REDIS_KEY_PHONE_CAPTCHA_PREFIX + phoneNumber));
         if(pc != null){
             if(new Date().getTime() - pc.getSendTime().getTime() < PHONE_CAPTCHA_INTERVAL_SECONDS * 1000)
@@ -92,5 +99,25 @@ public class SecurityUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static final int BYTE_ORDER[] = {1, 4, 3, 7, 0, 2, 5, 6};
+    private static final Random RANDOM = new Random();
+    public static String getExtractCode(String phoneNumber){
+        long num = Long.valueOf(phoneNumber);
+        int validByteCount = (int)(Math.log(Long.highestOneBit(num))/Math.log(2)) + 1;
+        validByteCount = (validByteCount % 8 == 0) ? validByteCount / 8 : validByteCount / 8 + 1;
+        byte codeByte[] = new byte[BYTE_ORDER.length];
+        int i;
+        for(i = 0; i < validByteCount && i < codeByte.length; i++){
+            codeByte[BYTE_ORDER[i]] = new Long(num & 0xFF).byteValue();
+            num = num >> 8;
+        }
+        byte ramdonBytes[] = new byte[codeByte.length - i];
+        RANDOM.nextBytes(ramdonBytes);
+        for(int c = 0; i < codeByte.length; i++, c++){
+            codeByte[BYTE_ORDER[i]] = ramdonBytes[c];
+        }
+        return new Base64UrlCodec().encode(codeByte).toUpperCase();
     }
 }
