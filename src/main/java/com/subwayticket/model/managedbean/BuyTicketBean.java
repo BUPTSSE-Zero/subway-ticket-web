@@ -13,8 +13,6 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.ejb.EJB;
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import com.subwayticket.control.AccountControl;
@@ -23,6 +21,7 @@ import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.*;
 import com.subwayticket.model.PublicResultCode;
+import com.subwayticket.model.request.PayOrderRequest;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.model.request.SubmitOrderRequest;
 
@@ -45,6 +44,7 @@ public class BuyTicketBean implements Serializable{
     private List<SubwayStation> endSubwayStationList = new ArrayList<>();
     private float price = 0;
     private int number = 1;
+    private String orderId = "";
 
     @PostConstruct
     public void init(){
@@ -181,19 +181,36 @@ public class BuyTicketBean implements Serializable{
         }
     }
 
+    public boolean pay(){
+        request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        Account user = (Account)request.getSession(false).getAttribute(AccountControl.SESSION_ATTR_USER);
+        Result result = TicketOrderControl.payOrder(request, systemDBHelperBean, user, new PayOrderRequest(orderId));
+        if (result.getResultCode() == PublicResultCode.SUCCESS) {
+            return true;
+        }else{
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    result.getResultDescription(), ""));
+            return false;
+        }
+    }
+
     public double getTotalPrice(){
         return number * price;
     }
 
-    public String getStartStationNameFromId(){
-        SubwayStation subwayStation = new SubwayStation(startSubwayStationId);
-        String name = subwayStation.getSubwayStationName();
-        return name;
+    public String getStartSubwayStationName() {
+        for(SubwayStation subwayStation : startSubwayStationList){
+            if(subwayStation.getSubwayStationId() == startSubwayStationId)
+                return subwayStation.getSubwayStationName();
+        }
+        return "";
     }
 
-    public String getEndStationNameFromId(){
-        SubwayStation subwayStation = new SubwayStation(endSubwayStationId);
-        String name = subwayStation.getSubwayStationName();
-        return name;
+    public String getEndSubwayStationName() {
+        for(SubwayStation subwayStation : endSubwayStationList){
+            if(subwayStation.getSubwayStationId() == endSubwayStationId)
+                return subwayStation.getSubwayStationName();
+        }
+        return "";
     }
 }
