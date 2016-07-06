@@ -4,6 +4,7 @@ import com.subwayticket.database.model.*;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
@@ -14,8 +15,11 @@ import java.util.List;
 
 @Stateless
 public class SubwayInfoDBHelperBean extends EntityManagerHelper{
-    @PersistenceContext(unitName = "SubwayTicketDBPU")
     private EntityManager entityManager;
+
+    public SubwayInfoDBHelperBean(){
+        entityManager = SystemDBHelperBean.initSubwayTicketDBPU();
+    }
 
     @Override
     public EntityManager getEntityManager() {

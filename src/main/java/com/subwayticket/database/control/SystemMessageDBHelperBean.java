@@ -13,7 +13,6 @@ import java.util.List;
  */
 @Stateless(name = "SystemMessageDBHelperEJB")
 public class SystemMessageDBHelperBean extends EntityManagerHelper {
-    @PersistenceContext(unitName = "SubwayTicketDBPU")
     EntityManager entityManager;
 
     @Override
@@ -21,7 +20,9 @@ public class SystemMessageDBHelperBean extends EntityManagerHelper {
         return entityManager;
     }
 
-    public SystemMessageDBHelperBean() {}
+    public SystemMessageDBHelperBean() {
+        entityManager = SystemDBHelperBean.initSubwayTicketDBPU();
+    }
 
     public List<SystemMessage> getLatestMessage(int n){
         Query q = entityManager.createQuery("select sm from SystemMessage sm order by sm.releaseTime desc", SystemMessage.class);

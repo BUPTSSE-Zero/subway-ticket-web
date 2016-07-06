@@ -13,11 +13,15 @@ public abstract class EntityManagerHelper {
     }
     
     public void create(Object entity) {
+        getEntityManager().getTransaction().begin();
         getEntityManager().persist(entity);
+        getEntityManager().getTransaction().commit();
     }
 
     public void merge(Object entity) {
+        getEntityManager().getTransaction().begin();
         getEntityManager().merge(entity);
+        getEntityManager().getTransaction().commit();
     }
 
     public void refresh(Object entity) {
@@ -25,7 +29,9 @@ public abstract class EntityManagerHelper {
     }
     
     public void remove(Object entity) {
+        getEntityManager().getTransaction().begin();
         getEntityManager().remove(getEntityManager().merge(entity));
+        getEntityManager().getTransaction().commit();
     }
 
     public void detach(Object entity) {

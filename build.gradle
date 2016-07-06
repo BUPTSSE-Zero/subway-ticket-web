@@ -41,7 +41,6 @@ dependencies {
 ext{
     CREATE_MYSQL_ACCOUNT_SQL_PATH = 'setup/CreateSystemDBAccount.sql'
 	INIT_SYSTEM_DB_SQL_PATH = 'setup/InitSystemDB.sql'
-    GLASSFISH_RESOURCES_PATH = 'setup/glassfish-resources.xml'
     BUILD_WAR_PATH = 'build/libs/subway-ticket-web.war'
     GLASSFISH_DOMAIN = 'subway-ticket-server'
     WEBAPP_NAME = 'subway-ticket-web'
@@ -132,9 +131,6 @@ task stopWebServer {
 task deployWebapp(dependsOn: ['build']){
     description 'Build and deploy(or redeploy) the web app on Glassfish.'
     doLast {
-        exec {
-            commandLine ASADMIN_EXEC, '--port', '16048', 'add-resources', GLASSFISH_RESOURCES_PATH
-        }
         try {
             exec {
                 commandLine ASADMIN_EXEC, '--port', '16048', '--user', 'admin', 'undeploy', WEBAPP_NAME

@@ -2,6 +2,7 @@ package com.subwayticket.control.listener; /**
  * @author buptsse-zero <GGGZ-1101-28@Live.cn>
  */
 
+import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.util.JedisUtil;
 import com.subwayticket.util.LoggerUtil;
 
@@ -25,6 +26,8 @@ public class WebappListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
+        SystemDBHelperBean.closeSubwayTicketDBPU();
+        System.out.println("Persistence units have been closed.");
     }
 
 }
