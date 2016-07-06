@@ -6,8 +6,8 @@ import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.Account;
 import com.subwayticket.model.PublicResultCode;
-import com.subwayticket.model.request.CancelOrderRequest;
 import com.subwayticket.model.request.PayOrderRequest;
+import com.subwayticket.model.request.RefundOrderRequest;
 import com.subwayticket.model.request.SubmitOrderRequest;
 import com.subwayticket.model.result.Result;
 
@@ -43,12 +43,12 @@ public class TicketOrderResource {
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
-    @PUT
-    @Path("/cancel")
+    @DELETE
+    @Path("/cancel/{orderId}")
     @Consumes("application/json")
-    public Response cancelOrder(CancelOrderRequest cancelOrderRequest){
+    public Response cancelOrder(@PathParam("orderId") String orderId){
         Account user = AccountResource.authCheck(request);
-        Result result = TicketOrderControl.cancelOrder(request, dbBean, user, cancelOrderRequest);
+        Result result = TicketOrderControl.cancelOrder(request, dbBean, user, orderId);
         if(result.getResultCode() == PublicResultCode.ORDER_CANCEL_ORDER_NOT_EXIST)
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
@@ -63,6 +63,19 @@ public class TicketOrderResource {
         Account user = AccountResource.authCheck(request);
         Result result = TicketOrderControl.payOrder(request, dbBean, user, payOrderRequest);
         if(result.getResultCode() == PublicResultCode.ORDER_PAY_ORDER_NOT_EXIST)
+            throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(), result);
+        else if(result.getResultCode() != PublicResultCode.SUCCESS)
+            throw new CheckException(result);
+        return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
+    }
+
+    @PUT
+    @Path("/refund")
+    @Consumes("application/json")
+    public Response refundOrder(RefundOrderRequest refundOrderRequest){
+        Account user = AccountResource.authCheck(request);
+        Result result = TicketOrderControl.refundOrder(request, dbBean, user, refundOrderRequest);
+        if(result.getResultCode() == PublicResultCode.ORDER_REFUND_ORDER_NOT_EXIST)
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);

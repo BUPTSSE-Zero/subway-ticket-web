@@ -7,10 +7,12 @@ import com.subwayticket.database.model.SubwayStation;
 import com.subwayticket.database.model.TicketOrder;
 import com.subwayticket.database.model.TicketPrice;
 import com.subwayticket.model.PublicResultCode;
-import com.subwayticket.model.request.CancelOrderRequest;
 import com.subwayticket.model.request.PayOrderRequest;
+import com.subwayticket.model.request.RefundOrderRequest;
 import com.subwayticket.model.request.SubmitOrderRequest;
+import com.subwayticket.model.result.RefundOrderResult;
 import com.subwayticket.model.result.Result;
+import com.subwayticket.model.result.SubmitOrderResult;
 import com.subwayticket.util.BundleUtil;
 import com.subwayticket.util.SecurityUtil;
 
@@ -45,7 +47,8 @@ public class TicketOrderControl {
             TicketOrder newOrder = new TicketOrder(orderID, date, user, new SubwayStation(submitOrderRequest.getStartStationID()),
                                                    new SubwayStation(submitOrderRequest.getEndStationID()), ticketPrice.getPrice(), submitOrderRequest.getAmount());
             dbHelperBean.create(newOrder);
-            return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"));
+            dbHelperBean.refresh(newOrder);
+            return new SubmitOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"), newOrder);
         }catch (EJBException e){
             e.printStackTrace();
         }
@@ -53,8 +56,8 @@ public class TicketOrderControl {
     }
 
 
-    public static Result cancelOrder(ServletRequest req, SystemDBHelperBean dbHelperBean, Account user, CancelOrderRequest cancelOrderRequest){
-        TicketOrder ticketOrder = (TicketOrder) dbHelperBean.find(TicketOrder.class, cancelOrderRequest.getOrderId());
+    public static Result cancelOrder(ServletRequest req, SystemDBHelperBean dbHelperBean, Account user, String orderId){
+        TicketOrder ticketOrder = (TicketOrder) dbHelperBean.find(TicketOrder.class, orderId);
         if(ticketOrder == null)
             return new Result(PublicResultCode.ORDER_CANCEL_ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
         if(!ticketOrder.getUser().getPhoneNumber().equals(user.getPhoneNumber()))
@@ -78,5 +81,20 @@ public class TicketOrderControl {
         ticketOrder.setTicketKey(SecurityUtil.getExtractCode(user.getPhoneNumber()));
         dbHelperBean.merge(ticketOrder);
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderPaySuccess"));
+    }
+
+    public static Result refundOrder(ServletRequest req, SystemDBHelperBean dbHelperBean, Account user, RefundOrderRequest refundOrderRequest){
+        TicketOrder ticketOrder = (TicketOrder) dbHelperBean.find(TicketOrder.class, refundOrderRequest.getOrderId());
+        if(ticketOrder == null)
+            return new Result(PublicResultCode.ORDER_REFUND_ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
+        if(!ticketOrder.getUser().getPhoneNumber().equals(user.getPhoneNumber()))
+            return new Result(PublicResultCode.ORDER_REFUND_ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
+        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getDrawAmount() >= ticketOrder.getAmount())
+            return new Result(PublicResultCode.ORDER_REFUND_NOT_REFUNDABLE, BundleUtil.getString(req, "TipOrderNotRefundable"));
+        ticketOrder.setStatus(TicketOrder.ORDER_STATUS_REFUNDED);
+        ticketOrder.setTicketKey(null);
+        dbHelperBean.merge(ticketOrder);
+        return new RefundOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderRefundSuccess"),
+                                     ticketOrder.getTicketPrice() * (ticketOrder.getAmount() - ticketOrder.getDrawAmount()));
     }
 }

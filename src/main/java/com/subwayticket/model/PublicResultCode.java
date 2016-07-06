@@ -35,4 +35,6 @@ public class PublicResultCode {
     public static final int ORDER_PAY_ORDER_NOT_EXIST = 100601;
     public static final int ORDER_PAY_NOT_PAYABLE = 100602;
 
+    public static final int ORDER_REFUND_ORDER_NOT_EXIST = 100801;
+    public static final int ORDER_REFUND_NOT_REFUNDABLE = 100802;
 }

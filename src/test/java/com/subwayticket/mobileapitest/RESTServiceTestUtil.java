@@ -28,6 +28,10 @@ public class RESTServiceTestUtil {
         return builder;
     }
 
+    public static Response delete(String url, String token){
+        return getRequestBuilder(url, token).buildDelete().invoke();
+    }
+
     public static Response post(String url, Object jsonEntity, String token){
         return getRequestBuilder(url, token).buildPost(Entity.json(jsonEntity)).invoke();
     }

@@ -16,7 +16,7 @@ public class TicketOrder {
 
     private String ticketOrderId;
     private Date ticketOrderTime;
-    private Account user;
+    private transient Account user;
     private SubwayStation endStation;
     private SubwayStation startStation;
     private float ticketPrice;
