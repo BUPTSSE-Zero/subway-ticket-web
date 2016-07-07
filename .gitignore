@@ -33,3 +33,5 @@ out/
 #Log Files
 logs/*
 *.log
+
+maven-repository/*

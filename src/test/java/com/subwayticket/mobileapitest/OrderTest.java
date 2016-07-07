@@ -3,6 +3,7 @@ package com.subwayticket.mobileapitest;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.*;
 import com.subwayticket.model.result.MobileLoginResult;
+import com.subwayticket.model.result.PayOrderResult;
 import com.subwayticket.model.result.RefundOrderResult;
 import com.subwayticket.model.result.SubmitOrderResult;
 
@@ -57,14 +58,22 @@ public class OrderTest {
         PayOrderRequest payOrderRequest = new PayOrderRequest(orderID);
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/pay", payOrderRequest,
                 result.getToken());
+        PayOrderResult payOrderResult = (PayOrderResult) RESTServiceTestUtil.showResponse(response, PayOrderResult.class);
+        if(payOrderResult.getResultCode() == PublicResultCode.SUCCESS){
+            System.out.println("Extract Code:" + payOrderResult.getExtractCode());
+        }
+
+        String extractCode = reader.next();
+        ExtractTicketRequest extractTicketRequest = new ExtractTicketRequest(extractCode, amount);
+        response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/extract_ticket", extractTicketRequest, null);
         RESTServiceTestUtil.showResponse(response);
 
-        RefundOrderRequest refundOrderRequest = new RefundOrderRequest(orderID);
+        /*RefundOrderRequest refundOrderRequest = new RefundOrderRequest(orderID);
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/refund", refundOrderRequest,
                 result.getToken());
         RefundOrderResult refundOrderResult = (RefundOrderResult) RESTServiceTestUtil.showResponse(response, RefundOrderResult.class);
         if(refundOrderResult.getResultCode() == PublicResultCode.SUCCESS)
-            System.out.println("Refund Amount:" + refundOrderResult.getRefundAmount());
+            System.out.println("Refund Amount:" + refundOrderResult.getRefundAmount());*/
 
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/account/logout", null,
                 result.getToken());

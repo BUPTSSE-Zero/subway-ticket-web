@@ -29,12 +29,13 @@ public class PublicResultCode {
     public static final int ORDER_SUBMIT_ERROR = 100401;
     public static final int ORDER_SUBMIT_ROUTE_NOT_EXIST = 100402;
 
-    public static final int ORDER_CANCEL_ORDER_NOT_EXIST = 100501;
-    public static final int ORDER_CANCEL_NOT_CANCELABLE = 100502;
+    public static final int ORDER_NOT_EXIST = 100410;
+    public static final int ORDER_CANCEL_NOT_CANCELABLE = 100411;
 
-    public static final int ORDER_PAY_ORDER_NOT_EXIST = 100601;
-    public static final int ORDER_PAY_NOT_PAYABLE = 100602;
+    public static final int ORDER_PAY_NOT_PAYABLE = 100420;
 
-    public static final int ORDER_REFUND_ORDER_NOT_EXIST = 100801;
-    public static final int ORDER_REFUND_NOT_REFUNDABLE = 100802;
+    public static final int ORDER_REFUND_NOT_REFUNDABLE = 100430;
+
+    public static final int TICKET_EXTRACT_NOT_EXTRACTABLE = 100440;
+    public static final int TICKET_EXTRACT_AMOUNT_TOO_BIG = 100441;
 }

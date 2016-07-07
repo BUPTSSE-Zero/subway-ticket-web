@@ -170,7 +170,7 @@ public class BuyTicketBean implements Serializable{
     public boolean submit() {
         request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         Account user = (Account)request.getSession(false).getAttribute(AccountControl.SESSION_ATTR_USER);
-        Result result = TicketOrderControl.submitOrder(request, systemDBHelperBean, subwayInfoDBHelperBean, user,
+        Result result = TicketOrderControl.submitOrder(request, subwayInfoDBHelperBean, user,
                 new SubmitOrderRequest(startSubwayStationId, endSubwayStationId, number));
         if (result.getResultCode() == PublicResultCode.SUCCESS) {
             return true;

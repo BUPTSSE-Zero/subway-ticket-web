@@ -80,7 +80,8 @@ public class AccountResource {
     @PUT
     @Path("/modify_password")
     @Consumes("application/json")
-    public Response modifyPassword(ModifyPasswordRequest modifyReq){
+    @Produces("application/json")
+    public Result modifyPassword(ModifyPasswordRequest modifyReq){
         if(modifyReq.getOldPassword() == null || modifyReq.getNewPassword() == null)
             throw new BadRequestException();
         Account account = authCheck(request);
@@ -90,13 +91,14 @@ public class AccountResource {
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
-        return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return result;
     }
 
     @PUT
     @Path("/reset_password")
     @Consumes("application/json")
-    public Response resetPassword(ResetPasswordRequest resetRequest){
+    @Produces("application/json")
+    public Result resetPassword(ResetPasswordRequest resetRequest){
         if(resetRequest.getPhoneNumber() == null || resetRequest.getNewPassword() == null || resetRequest.getCaptcha() == null)
             throw new BadRequestException();
         Result result = AccountControl.resetPassword(request, resetRequest, dbBean, JedisUtil.getJedis());
@@ -104,7 +106,7 @@ public class AccountResource {
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
-        return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
+        return result;
     }
 
     @PUT
