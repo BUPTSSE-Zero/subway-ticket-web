@@ -45,7 +45,7 @@
                         <c:otherwise>
                             <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                                              value="#{bundle.Login}" actionListener="#{userOperationBean.login}"
-                                             update="login_error_message header-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
+                                             update="login_error_message header-panel page-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
                         </c:otherwise>
                     </c:choose>
                 </div>
