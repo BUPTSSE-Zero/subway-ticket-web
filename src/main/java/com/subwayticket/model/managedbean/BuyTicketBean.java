@@ -24,6 +24,7 @@ import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.PayOrderRequest;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.model.request.SubmitOrderRequest;
+import com.subwayticket.model.result.SubmitOrderResult;
 
 @ManagedBean
 @ViewScoped
@@ -173,6 +174,8 @@ public class BuyTicketBean implements Serializable{
         Result result = TicketOrderControl.submitOrder(request, subwayInfoDBHelperBean, user,
                 new SubmitOrderRequest(startSubwayStationId, endSubwayStationId, number));
         if (result.getResultCode() == PublicResultCode.SUCCESS) {
+            SubmitOrderResult submitOrderResult = (SubmitOrderResult)result;
+            orderId = submitOrderResult.getTicketOrder().getTicketOrderId();
             return true;
         }else{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
