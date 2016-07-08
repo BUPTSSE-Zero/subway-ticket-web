@@ -23,7 +23,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -110,9 +109,9 @@ public class TicketOrderResource {
     }
 
     @GET
-    @Path("/order_info/{orderID}")
+    @Path("/order_info/{orderId}")
     @Produces("application/json")
-    public OrderInfoResult getOrderInfo(@PathParam("orderID") String orderID){
+    public OrderInfoResult getOrderInfo(@PathParam("orderId") String orderID){
         Account user = AccountResource.authCheck(request);
         TicketOrder ticketOrder = ticketOrderDBHelperBean.getOrderByOrderID(orderID, user);
         if(ticketOrder == null){
@@ -123,9 +122,9 @@ public class TicketOrderResource {
     }
 
     @GET
-    @Path("/order_list/{status}/{startTimeStamp}/{endTimeStamp}")
+    @Path("/order_list/{status}/{startTimestamp}/{endTimestamp}")
     @Produces("application/json")
-    public OrderListResult getOrderListByDate(@PathParam("status")char status, @PathParam("startTimeStamp")long startTimeStamp, @PathParam("endTimeStamp")long endTimeStamp){
+    public OrderListResult getOrderListByDate(@PathParam("status")char status, @PathParam("startTimestamp")long startTimeStamp, @PathParam("endTimestamp")long endTimeStamp){
         Account user = AccountResource.authCheck(request);
         if(startTimeStamp > endTimeStamp){
             long temp = startTimeStamp;
@@ -141,9 +140,9 @@ public class TicketOrderResource {
     }
 
     @GET
-    @Path("/all_order/{startTimeStamp}/{endTimeStamp}")
+    @Path("/order_list/{startTimestamp}/{endTimestamp}")
     @Produces("application/json")
-    public OrderListResult getAllOrderByDate(@PathParam("startTimeStamp")long startTimeStamp, @PathParam("endTimeStamp")long endTimeStamp){
+    public OrderListResult getAllOrderByDate(@PathParam("startTimestamp")long startTimeStamp, @PathParam("endTimestamp")long endTimeStamp){
         Account user = AccountResource.authCheck(request);
         if(startTimeStamp > endTimeStamp){
             long temp = startTimeStamp;

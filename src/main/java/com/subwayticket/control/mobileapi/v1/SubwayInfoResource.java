@@ -46,10 +46,10 @@ public class SubwayInfoResource {
     }
 
     @GET
-    @Path("/line/{cityID}")
+    @Path("/line/{cityId}")
     @Produces("application/json")
-    public SubwayLineListResult getSubwayLineList(@PathParam("cityID") int cityID){
-        List<SubwayLine> subwayLineList = subwayInfoDBBean.getSubwayLineList(cityID);
+    public SubwayLineListResult getSubwayLineList(@PathParam("cityId") int cityId){
+        List<SubwayLine> subwayLineList = subwayInfoDBBean.getSubwayLineList(cityId);
         if(subwayLineList == null || subwayLineList.isEmpty())
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
                     new Result(PublicResultCode.RESULT_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
@@ -57,10 +57,10 @@ public class SubwayInfoResource {
     }
 
     @GET
-    @Path("/station/{subwayLineID}")
+    @Path("/station/{subwayLineId}")
     @Produces("application/json")
-    public SubwayStationListResult getSubwayStationList(@PathParam("subwayLineID") int subwayLineID){
-        List<SubwayStation> subwayStationList = subwayInfoDBBean.getSubwayStationList(subwayLineID);
+    public SubwayStationListResult getSubwayStationList(@PathParam("subwayLineId") int subwayLineId){
+        List<SubwayStation> subwayStationList = subwayInfoDBBean.getSubwayStationList(subwayLineId);
         if(subwayStationList == null || subwayStationList.isEmpty())
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
                     new Result(PublicResultCode.RESULT_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));
@@ -68,10 +68,10 @@ public class SubwayInfoResource {
     }
 
     @GET
-    @Path("/ticket_price/{startStationID}/{endStationID}")
+    @Path("/ticket_price/{startStationId}/{endStationId}")
     @Produces("application/json")
-    public TicketPriceResult getTicketPrice(@PathParam("startStationID") int startStationID, @PathParam("endStationID") int endStationID){
-        TicketPrice ticketPrice = subwayInfoDBBean.getTicketPrice(startStationID, endStationID);
+    public TicketPriceResult getTicketPrice(@PathParam("startStationId") int startStationId, @PathParam("endStationId") int endStationId){
+        TicketPrice ticketPrice = subwayInfoDBBean.getTicketPrice(startStationId, endStationId);
         if(ticketPrice == null)
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
                     new Result(PublicResultCode.RESULT_NOT_FOUND, BundleUtil.getString(request, "TipResultNotFound")));

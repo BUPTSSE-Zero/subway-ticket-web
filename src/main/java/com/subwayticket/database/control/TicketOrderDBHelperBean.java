@@ -56,7 +56,7 @@ public class TicketOrderDBHelperBean extends EntityManagerHelper {
             return null;
         setDateRange(startDate, endDate);
         Query q = entityManager.createQuery("select t from TicketOrder t where t.user=:user and t.ticketOrderTime between :startDate and :endDate " +
-                                            "order by t.ticketOrderTime");
+                                            "order by t.ticketOrderTime desc");
         q.setParameter("user", user);
         q.setParameter("startDate", startDate);
         q.setParameter("endDate", endDate);
@@ -90,7 +90,7 @@ public class TicketOrderDBHelperBean extends EntityManagerHelper {
     public TicketOrder getOrderByExtractCode(String extractCode){
         if(extractCode == null || extractCode.isEmpty())
             return null;
-        Query q = entityManager.createQuery("select t from TicketOrder t where t.ticketKey = :extractCode", TicketOrder.class);
+        Query q = entityManager.createQuery("select t from TicketOrder t where t.extractCode = :extractCode", TicketOrder.class);
         q.setParameter("extractCode", extractCode);
         try {
             return (TicketOrder) q.getSingleResult();

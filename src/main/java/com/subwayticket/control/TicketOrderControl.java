@@ -37,7 +37,7 @@ public class TicketOrderControl {
             return new Result(PublicResultCode.ORDER_SUBMIT_AMOUNT_ILLEGAL, BundleUtil.getString(req, "TipOrderAmountIllegal"));
         else if(submitOrderRequest.getAmount() > MAX_TICKET_AMOUNT)
             return new Result(PublicResultCode.ORDER_SUBMIT_AMOUNT_EXCESS, BundleUtil.getString(req, "TipOrderAmountExcess"));
-        TicketPrice ticketPrice = subwayInfoDBHelperBean.getTicketPrice(submitOrderRequest.getStartStationID(), submitOrderRequest.getEndStationID());
+        TicketPrice ticketPrice = subwayInfoDBHelperBean.getTicketPrice(submitOrderRequest.getStartStationId(), submitOrderRequest.getEndStationId());
         if(ticketPrice == null)
             return new Result(PublicResultCode.ORDER_SUBMIT_ROUTE_NOT_EXIST, BundleUtil.getString(req, "TipSubwayRouteNotExist"));
         try{
@@ -52,8 +52,8 @@ public class TicketOrderControl {
                 orderID = "ST" + date.getTime() + String.format("%05d", serialNumber);
                 serialNumber++;
             }
-            TicketOrder newOrder = new TicketOrder(orderID, date, user, new SubwayStation(submitOrderRequest.getStartStationID()),
-                                                   new SubwayStation(submitOrderRequest.getEndStationID()), ticketPrice.getPrice(), submitOrderRequest.getAmount());
+            TicketOrder newOrder = new TicketOrder(orderID, date, user, new SubwayStation(submitOrderRequest.getStartStationId()),
+                                                   new SubwayStation(submitOrderRequest.getEndStationId()), ticketPrice.getPrice(), submitOrderRequest.getAmount());
             subwayInfoDBHelperBean.create(newOrder);
             subwayInfoDBHelperBean.refresh(newOrder);
             return new SubmitOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"), newOrder);
@@ -84,11 +84,11 @@ public class TicketOrderControl {
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
         if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_PAY)
             return new Result(PublicResultCode.ORDER_PAY_NOT_PAYABLE, BundleUtil.getString(req, "TipOrderNotPayable"));
-        ticketOrder.setDrawAmount(0);
+        ticketOrder.setExtractAmount(0);
         ticketOrder.setStatus(TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET);
-        ticketOrder.setTicketKey(SecurityUtil.getExtractCode(user.getPhoneNumber()));
+        ticketOrder.setExtractCode(SecurityUtil.getExtractCode(user.getPhoneNumber()));
         dbHelperBean.merge(ticketOrder);
-        return new PayOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderPaySuccess"), ticketOrder.getTicketKey());
+        return new PayOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderPaySuccess"), ticketOrder.getExtractCode());
     }
 
     public static Result refundOrder(ServletRequest req, SystemDBHelperBean dbHelperBean, Account user, RefundOrderRequest refundOrderRequest){
@@ -97,13 +97,13 @@ public class TicketOrderControl {
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
         if(!ticketOrder.getUser().getPhoneNumber().equals(user.getPhoneNumber()))
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
-        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getDrawAmount() >= ticketOrder.getAmount())
+        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getExtractAmount() >= ticketOrder.getAmount())
             return new Result(PublicResultCode.ORDER_REFUND_NOT_REFUNDABLE, BundleUtil.getString(req, "TipOrderNotRefundable"));
         ticketOrder.setStatus(TicketOrder.ORDER_STATUS_REFUNDED);
-        ticketOrder.setTicketKey(null);
+        ticketOrder.setExtractCode(null);
         dbHelperBean.merge(ticketOrder);
         return new RefundOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderRefundSuccess"),
-                                     ticketOrder.getTicketPrice() * (ticketOrder.getAmount() - ticketOrder.getDrawAmount()));
+                                     ticketOrder.getTicketPrice() * (ticketOrder.getAmount() - ticketOrder.getExtractAmount()));
     }
 
     public static Result extractTicket(ServletRequest req, TicketOrderDBHelperBean dbHelperBean, ExtractTicketRequest extractTicketRequest){
@@ -112,15 +112,15 @@ public class TicketOrderControl {
         TicketOrder ticketOrder = dbHelperBean.getOrderByExtractCode(extractTicketRequest.getExtractCode());
         if(ticketOrder == null)
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
-        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getAmount() == ticketOrder.getDrawAmount())
+        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getAmount() == ticketOrder.getExtractAmount())
             return new Result(PublicResultCode.TICKET_EXTRACT_NOT_EXTRACTABLE, BundleUtil.getString(req, "TipExtractTicketNotExtractable"));
-        if(extractTicketRequest.getExtractAmount() > ticketOrder.getAmount() - ticketOrder.getDrawAmount())
+        if(extractTicketRequest.getExtractAmount() > ticketOrder.getAmount() - ticketOrder.getExtractAmount())
             return new Result(PublicResultCode.TICKET_EXTRACT_AMOUNT_EXCESS, BundleUtil.getString(req, "TipExtractTicketAmountExcess"));
 
-        ticketOrder.setDrawAmount(ticketOrder.getDrawAmount() + extractTicketRequest.getExtractAmount());
-        if(ticketOrder.getAmount() == ticketOrder.getDrawAmount()) {
+        ticketOrder.setExtractAmount(ticketOrder.getExtractAmount() + extractTicketRequest.getExtractAmount());
+        if(ticketOrder.getAmount() == ticketOrder.getExtractAmount()) {
             ticketOrder.setStatus(TicketOrder.ORDER_STATUS_FINISHED);
-            ticketOrder.setTicketKey(null);
+            ticketOrder.setExtractCode(null);
         }
         dbHelperBean.merge(ticketOrder);
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipExtractTicketSuccess"));

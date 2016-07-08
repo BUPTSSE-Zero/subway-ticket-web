@@ -6,8 +6,6 @@ import com.subwayticket.model.request.*;
 import com.subwayticket.model.result.*;
 
 import javax.ws.rs.core.Response;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -53,7 +51,7 @@ public class OrderTest {
             System.out.println("Extract Code:" + payOrderResult.getExtractCode());
         }
 
-        ExtractTicketRequest extractTicketRequest = new ExtractTicketRequest(payOrderResult.getExtractCode(), amount - 1);
+        ExtractTicketRequest extractTicketRequest = new ExtractTicketRequest(payOrderResult.getExtractCode(), amount);
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/extract_ticket", extractTicketRequest, null);
         RESTServiceTestUtil.showResponse(response);
 
@@ -76,7 +74,7 @@ public class OrderTest {
             showTicketOrderInfo(t);
         }
 
-        response = RESTServiceTestUtil.get(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/all_order/" + todayStr + '/' + todayStr, result.getToken());
+        response = RESTServiceTestUtil.get(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/order_list/" + todayStr + '/' + todayStr, result.getToken());
         orderListResult = (OrderListResult)RESTServiceTestUtil.showResponse(response, OrderListResult.class);
         System.out.println("\nAll Order:");
         for(TicketOrder t : orderListResult.getTicketOrderList()){
@@ -97,7 +95,7 @@ public class OrderTest {
         System.out.println("End Station:" + ticketOrder.getEndStation().getSubwayStationName());
         System.out.println("Order Time:" + ticketOrder.getTicketOrderTime().toString());
         System.out.println("Amount:" + ticketOrder.getAmount());
-        System.out.println("Draw Amount:" + ticketOrder.getDrawAmount());
+        System.out.println("Draw Amount:" + ticketOrder.getExtractAmount());
         System.out.print("Order Status:");
         switch (ticketOrder.getStatus()){
             case TicketOrder.ORDER_STATUS_NOT_PAY:
@@ -112,8 +110,8 @@ public class OrderTest {
             case TicketOrder.ORDER_STATUS_REFUNDED:
                 System.out.println("refunded");
         }
-        if(ticketOrder.getTicketKey() != null){
-            System.out.println("Extract Code:" + ticketOrder.getTicketKey());
+        if(ticketOrder.getExtractCode() != null){
+            System.out.println("Extract Code:" + ticketOrder.getExtractCode());
         }
     }
 }

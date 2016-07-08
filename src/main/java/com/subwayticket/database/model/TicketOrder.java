@@ -20,10 +20,10 @@ public class TicketOrder {
     private SubwayStation endStation;
     private SubwayStation startStation;
     private float ticketPrice;
-    private int drawAmount;
+    private int extractAmount;
     private int amount;
     private char status;
-    private String ticketKey;
+    private String extractCode;
     private String comment;
 
     public TicketOrder(){}
@@ -41,7 +41,7 @@ public class TicketOrder {
         this.ticketPrice = ticketPrice;
         this.amount = amount;
         this.status = ORDER_STATUS_NOT_PAY;
-        this.drawAmount = 0;
+        this.extractAmount = 0;
     }
 
 
@@ -106,13 +106,13 @@ public class TicketOrder {
     }
 
     @Basic
-    @Column(name = "DrawAmount", nullable = false)
-    public int getDrawAmount() {
-        return drawAmount;
+    @Column(name = "ExtractAmount", nullable = false)
+    public int getExtractAmount() {
+        return extractAmount;
     }
 
-    public void setDrawAmount(int drawAmount) {
-        this.drawAmount = drawAmount;
+    public void setExtractAmount(int drawAmount) {
+        this.extractAmount = drawAmount;
     }
 
     @Basic
@@ -136,13 +136,13 @@ public class TicketOrder {
     }
 
     @Basic
-    @Column(name = "TicketKey", nullable = true, length = 15)
-    public String getTicketKey() {
-        return ticketKey;
+    @Column(name = "ExtractCode", nullable = true, length = 15)
+    public String getExtractCode() {
+        return extractCode;
     }
 
-    public void setTicketKey(String ticketKey) {
-        this.ticketKey = ticketKey;
+    public void setExtractCode(String ticketKey) {
+        this.extractCode = ticketKey;
     }
 
     @Basic
@@ -163,12 +163,12 @@ public class TicketOrder {
         TicketOrder that = (TicketOrder) o;
 
         if (Double.compare(that.ticketPrice, ticketPrice) != 0) return false;
-        if (drawAmount != that.drawAmount) return false;
+        if (extractAmount != that.extractAmount) return false;
         if (amount != that.amount) return false;
         if (ticketOrderId != null ? !ticketOrderId.equals(that.ticketOrderId) : that.ticketOrderId != null)
             return false;
         if (status != that.status) return false;
-        if (ticketKey != null ? !ticketKey.equals(that.ticketKey) : that.ticketKey != null) return false;
+        if (extractCode != null ? !extractCode.equals(that.extractCode) : that.extractCode != null) return false;
         if (comment != null ? !comment.equals(that.comment) : that.comment != null) return false;
 
         return true;
@@ -181,10 +181,10 @@ public class TicketOrder {
         result = ticketOrderId != null ? ticketOrderId.hashCode() : 0;
         temp = Double.doubleToLongBits(ticketPrice);
         result = 31 * result + (int) (temp ^ (temp >>> 32));
-        result = 31 * result + drawAmount;
+        result = 31 * result + extractAmount;
         result = 31 * result + amount;
         result = 31 * result + new Character(status).hashCode();
-        result = 31 * result + (ticketKey != null ? ticketKey.hashCode() : 0);
+        result = 31 * result + (extractCode != null ? extractCode.hashCode() : 0);
         result = 31 * result + (comment != null ? comment.hashCode() : 0);
         return result;
     }

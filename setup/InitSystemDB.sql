@@ -133,10 +133,10 @@ CREATE TABLE TicketOrder(
   CONSTRAINT OrderEndStationIDFK FOREIGN KEY (EndStationID) REFERENCES SubwayStation(SubwayStationID)
     ON UPDATE CASCADE ON DELETE CASCADE,
   TicketPrice FLOAT NOT NULL,
-  DrawAmount INT NOT NULL DEFAULT 0,
+  ExtractAmount INT NOT NULL DEFAULT 0,
   Amount INT NOT NULL CHECK (Amount >= 1),
   Status CHAR(1) NOT NULL DEFAULT 'A',
-  TicketKey VARCHAR(15) UNIQUE,
+  ExtractCode VARCHAR(15) UNIQUE,
   Comment VARCHAR(50)
 );
 

@@ -4,30 +4,30 @@ package com.subwayticket.model.request;
  * Created by zhou-shengyun on 7/4/16.
  */
 public class SubmitOrderRequest {
-    private Integer startStationID;
-    private Integer endStationID;
+    private Integer startStationId;
+    private Integer endStationId;
     private Integer amount;
 
-    public SubmitOrderRequest(Integer startStationID, Integer endStationID, Integer amount) {
-        this.startStationID = startStationID;
-        this.endStationID = endStationID;
+    public SubmitOrderRequest(Integer startStationId, Integer endStationId, Integer amount) {
+        this.startStationId = startStationId;
+        this.endStationId = endStationId;
         this.amount = amount;
     }
 
-    public Integer getStartStationID() {
-        return startStationID;
+    public Integer getStartStationId() {
+        return startStationId;
     }
 
-    public void setStartStationID(Integer startStationID) {
-        this.startStationID = startStationID;
+    public void setStartStationId(Integer startStationId) {
+        this.startStationId = startStationId;
     }
 
-    public Integer getEndStationID() {
-        return endStationID;
+    public Integer getEndStationId() {
+        return endStationId;
     }
 
-    public void setEndStationID(Integer endStationID) {
-        this.endStationID = endStationID;
+    public void setEndStationId(Integer endStationId) {
+        this.endStationId = endStationId;
     }
 
     public Integer getAmount() {
