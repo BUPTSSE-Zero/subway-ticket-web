@@ -37,8 +37,6 @@ public class AccountResource {
     @Path("/register")
     @Consumes("application/json")
     public Response register(RegisterRequest regReq){
-        if(regReq.getPassword() == null || regReq.getPhoneNumber() == null || regReq.getCaptcha() == null)
-            throw new BadRequestException();
         Result result = AccountControl.register(request, regReq, dbBean, JedisUtil.getJedis());
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
@@ -49,8 +47,6 @@ public class AccountResource {
     @Path("/phone_captcha")
     @Consumes("application/json")
     public Response phoneCaptcha(PhoneCaptchaRequest pcReq){
-        if(pcReq.getPhoneNumber() == null)
-            throw new BadRequestException();
         Result result = SecurityUtil.sendPhoneCaptcha(request, pcReq.getPhoneNumber(), JedisUtil.getJedis());
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
@@ -61,8 +57,6 @@ public class AccountResource {
     @Path("/login")
     @Consumes("application/json")
     public Response login(LoginRequest loginRequest){
-        if(loginRequest.getPhoneNumber() == null || loginRequest.getPassword() == null)
-            throw new BadRequestException();
         Result result = AccountControl.mobileLogin(request, loginRequest, dbBean, JedisUtil.getJedis());
         if(result.getResultCode() != PublicResultCode.SUCCESS && result.getResultCode() != PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
@@ -82,8 +76,6 @@ public class AccountResource {
     @Consumes("application/json")
     @Produces("application/json")
     public Result modifyPassword(ModifyPasswordRequest modifyReq){
-        if(modifyReq.getOldPassword() == null || modifyReq.getNewPassword() == null)
-            throw new BadRequestException();
         Account account = authCheck(request);
         account = (Account) dbBean.find(Account.class, account.getPhoneNumber());
         Result result = AccountControl.mobileModifyPassword(request, modifyReq, account, dbBean);
@@ -99,8 +91,6 @@ public class AccountResource {
     @Consumes("application/json")
     @Produces("application/json")
     public Result resetPassword(ResetPasswordRequest resetRequest){
-        if(resetRequest.getPhoneNumber() == null || resetRequest.getNewPassword() == null || resetRequest.getCaptcha() == null)
-            throw new BadRequestException();
         Result result = AccountControl.resetPassword(request, resetRequest, dbBean, JedisUtil.getJedis());
         if(result.getResultCode() == PublicResultCode.USER_NOT_EXIST)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);

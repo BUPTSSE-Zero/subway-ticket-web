@@ -28,6 +28,8 @@ public class PublicResultCode {
     /*Order*/
     public static final int ORDER_SUBMIT_ERROR = 100401;
     public static final int ORDER_SUBMIT_ROUTE_NOT_EXIST = 100402;
+    public static final int ORDER_SUBMIT_AMOUNT_ILLEGAL = 100403;
+    public static final int ORDER_SUBMIT_AMOUNT_EXCESS = 100404;
 
     public static final int ORDER_NOT_EXIST = 100410;
     public static final int ORDER_CANCEL_NOT_CANCELABLE = 100411;
@@ -37,5 +39,6 @@ public class PublicResultCode {
     public static final int ORDER_REFUND_NOT_REFUNDABLE = 100430;
 
     public static final int TICKET_EXTRACT_NOT_EXTRACTABLE = 100440;
-    public static final int TICKET_EXTRACT_AMOUNT_TOO_BIG = 100441;
+    public static final int TICKET_EXTRACT_AMOUNT_ILLEGAL = 100441;
+    public static final int TICKET_EXTRACT_AMOUNT_EXCESS = 100442;
 }

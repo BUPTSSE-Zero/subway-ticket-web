@@ -30,8 +30,13 @@ public class TicketOrderControl {
     private static Object orderGlobalLock = new Object();
     private static long timestamp = 0;
     private static int serialNumber = 0;
+    public static final int MAX_TICKET_AMOUNT = 10;
 
     public static Result submitOrder(ServletRequest req, SubwayInfoDBHelperBean subwayInfoDBHelperBean, Account user, SubmitOrderRequest submitOrderRequest){
+        if(submitOrderRequest.getAmount() <= 0)
+            return new Result(PublicResultCode.ORDER_SUBMIT_AMOUNT_ILLEGAL, BundleUtil.getString(req, "TipOrderAmountIllegal"));
+        else if(submitOrderRequest.getAmount() > MAX_TICKET_AMOUNT)
+            return new Result(PublicResultCode.ORDER_SUBMIT_AMOUNT_EXCESS, BundleUtil.getString(req, "TipOrderAmountExcess"));
         TicketPrice ticketPrice = subwayInfoDBHelperBean.getTicketPrice(submitOrderRequest.getStartStationID(), submitOrderRequest.getEndStationID());
         if(ticketPrice == null)
             return new Result(PublicResultCode.ORDER_SUBMIT_ROUTE_NOT_EXIST, BundleUtil.getString(req, "TipSubwayRouteNotExist"));
@@ -102,13 +107,15 @@ public class TicketOrderControl {
     }
 
     public static Result extractTicket(ServletRequest req, TicketOrderDBHelperBean dbHelperBean, ExtractTicketRequest extractTicketRequest){
+        if(extractTicketRequest.getExtractAmount() <= 0)
+            return new Result(PublicResultCode.TICKET_EXTRACT_AMOUNT_ILLEGAL, BundleUtil.getString(req, "TipExtractTicketAmountIllegal"));
         TicketOrder ticketOrder = dbHelperBean.getOrderByExtractCode(extractTicketRequest.getExtractCode());
         if(ticketOrder == null)
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
         if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getAmount() == ticketOrder.getDrawAmount())
             return new Result(PublicResultCode.TICKET_EXTRACT_NOT_EXTRACTABLE, BundleUtil.getString(req, "TipExtractTicketNotExtractable"));
         if(extractTicketRequest.getExtractAmount() > ticketOrder.getAmount() - ticketOrder.getDrawAmount())
-            return new Result(PublicResultCode.TICKET_EXTRACT_AMOUNT_TOO_BIG, BundleUtil.getString(req, "TipExtractTicketAmountTooBig"));
+            return new Result(PublicResultCode.TICKET_EXTRACT_AMOUNT_EXCESS, BundleUtil.getString(req, "TipExtractTicketAmountExcess"));
 
         ticketOrder.setDrawAmount(ticketOrder.getDrawAmount() + extractTicketRequest.getExtractAmount());
         if(ticketOrder.getAmount() == ticketOrder.getDrawAmount()) {

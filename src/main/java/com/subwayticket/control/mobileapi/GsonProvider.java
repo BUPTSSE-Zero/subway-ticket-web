@@ -5,6 +5,7 @@ import com.subwayticket.util.GsonUtil;
 import com.subwayticket.util.LoggerUtil;
 import org.apache.log4j.Logger;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -15,6 +16,7 @@ import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import java.io.*;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 /**
@@ -36,7 +38,20 @@ public class GsonProvider implements MessageBodyReader<Object>, MessageBodyWrite
     public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
         Gson gson = GsonUtil.getGson();
         Reader inputReader = new InputStreamReader(entityStream, DEFAULT_CHARSET);
-        return gson.fromJson(inputReader, type);
+        Object obj = gson.fromJson(inputReader, type);
+        for(Field f : obj.getClass().getDeclaredFields()){
+            f.setAccessible(true);
+            try{
+                Object targetField = f.get(obj);
+                if(targetField == null)
+                    throw new BadRequestException();
+                if(targetField instanceof String && ((String) targetField).isEmpty())
+                    throw new BadRequestException();
+            }catch (IllegalAccessException iae){
+                iae.printStackTrace();
+            }
+        }
+        return obj;
     }
 
     @Override

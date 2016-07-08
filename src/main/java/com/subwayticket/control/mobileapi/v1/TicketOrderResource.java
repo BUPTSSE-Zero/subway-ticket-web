@@ -6,12 +6,16 @@ import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.control.TicketOrderDBHelperBean;
 import com.subwayticket.database.model.Account;
+import com.subwayticket.database.model.TicketOrder;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.ExtractTicketRequest;
 import com.subwayticket.model.request.PayOrderRequest;
 import com.subwayticket.model.request.RefundOrderRequest;
 import com.subwayticket.model.request.SubmitOrderRequest;
+import com.subwayticket.model.result.OrderInfoResult;
+import com.subwayticket.model.result.OrderListResult;
 import com.subwayticket.model.result.Result;
+import com.subwayticket.util.BundleUtil;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +23,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by zhou-shengyun on 7/4/16.
@@ -100,5 +107,54 @@ public class TicketOrderResource {
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
         return result;
+    }
+
+    @GET
+    @Path("/order_info/{orderID}")
+    @Produces("application/json")
+    public OrderInfoResult getOrderInfo(@PathParam("orderID") String orderID){
+        Account user = AccountResource.authCheck(request);
+        TicketOrder ticketOrder = ticketOrderDBHelperBean.getOrderByOrderID(orderID, user);
+        if(ticketOrder == null){
+            throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
+                            new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(request, "TipOrderNotExist")));
+        }
+        return new OrderInfoResult(PublicResultCode.SUCCESS, "", ticketOrder);
+    }
+
+    @GET
+    @Path("/order_list/{status}/{startTimeStamp}/{endTimeStamp}")
+    @Produces("application/json")
+    public OrderListResult getOrderListByDate(@PathParam("status")char status, @PathParam("startTimeStamp")long startTimeStamp, @PathParam("endTimeStamp")long endTimeStamp){
+        Account user = AccountResource.authCheck(request);
+        if(startTimeStamp > endTimeStamp){
+            long temp = startTimeStamp;
+            startTimeStamp = endTimeStamp;
+            endTimeStamp = startTimeStamp;
+        }
+        List<TicketOrder> ticketOrderList = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(status, user, new Date(startTimeStamp), new Date(endTimeStamp));
+        if(ticketOrderList == null || ticketOrderList.isEmpty()){
+            throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
+                    new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(request, "TipOrderNotExist")));
+        }
+        return new OrderListResult(PublicResultCode.SUCCESS, "", ticketOrderList);
+    }
+
+    @GET
+    @Path("/all_order/{startTimeStamp}/{endTimeStamp}")
+    @Produces("application/json")
+    public OrderListResult getAllOrderByDate(@PathParam("startTimeStamp")long startTimeStamp, @PathParam("endTimeStamp")long endTimeStamp){
+        Account user = AccountResource.authCheck(request);
+        if(startTimeStamp > endTimeStamp){
+            long temp = startTimeStamp;
+            startTimeStamp = endTimeStamp;
+            endTimeStamp = startTimeStamp;
+        }
+        List<TicketOrder> ticketOrderList = ticketOrderDBHelperBean.getAllOrderByDate(user, new Date(startTimeStamp), new Date(endTimeStamp));
+        if(ticketOrderList == null || ticketOrderList.isEmpty()){
+            throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
+                    new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(request, "TipOrderNotExist")));
+        }
+        return new OrderListResult(PublicResultCode.SUCCESS, "", ticketOrderList);
     }
 }

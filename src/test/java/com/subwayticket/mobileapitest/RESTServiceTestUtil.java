@@ -5,7 +5,6 @@ import com.subwayticket.model.result.Result;
 import com.subwayticket.util.SecurityUtil;
 
 import javax.ws.rs.client.*;
-import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 
 /**
@@ -26,6 +25,10 @@ public class RESTServiceTestUtil {
         if(token != null)
             builder.header(SecurityUtil.HEADER_TOKEN_KEY, token);
         return builder;
+    }
+
+    public static Response get(String url, String token){
+        return getRequestBuilder(url, token).buildGet().invoke();
     }
 
     public static Response delete(String url, String token){

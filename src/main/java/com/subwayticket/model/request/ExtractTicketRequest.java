@@ -5,9 +5,9 @@ package com.subwayticket.model.request;
  */
 public class ExtractTicketRequest {
     private String extractCode;
-    private int extractAmount;
+    private Integer extractAmount;
 
-    public ExtractTicketRequest(String extractCode, int extractAmount) {
+    public ExtractTicketRequest(String extractCode, Integer extractAmount) {
         this.extractCode = extractCode;
         this.extractAmount = extractAmount;
     }
@@ -20,11 +20,11 @@ public class ExtractTicketRequest {
         this.extractCode = extractCode;
     }
 
-    public int getExtractAmount() {
+    public Integer getExtractAmount() {
         return extractAmount;
     }
 
-    public void setExtractAmount(int extractAmount) {
+    public void setExtractAmount(Integer extractAmount) {
         this.extractAmount = extractAmount;
     }
 }

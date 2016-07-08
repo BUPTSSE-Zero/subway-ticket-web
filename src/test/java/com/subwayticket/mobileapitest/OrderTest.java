@@ -1,13 +1,13 @@
 package com.subwayticket.mobileapitest;
 
+import com.subwayticket.database.model.TicketOrder;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.*;
-import com.subwayticket.model.result.MobileLoginResult;
-import com.subwayticket.model.result.PayOrderResult;
-import com.subwayticket.model.result.RefundOrderResult;
-import com.subwayticket.model.result.SubmitOrderResult;
+import com.subwayticket.model.result.*;
 
 import javax.ws.rs.core.Response;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -34,28 +34,18 @@ public class OrderTest {
         response = RESTServiceTestUtil.post(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/submit", submitOrderRequest,
                 result.getToken());
         SubmitOrderResult submitOrderResult = (SubmitOrderResult) RESTServiceTestUtil.showResponse(response, SubmitOrderResult.class);
-        if(submitOrderResult.getTicketOrder() != null){
-            System.out.println("Order ID:" + submitOrderResult.getTicketOrder().getTicketOrderId());
-            System.out.println("Start Station:" + submitOrderResult.getTicketOrder().getStartStation().getSubwayStationName());
-            System.out.println("End Station:" + submitOrderResult.getTicketOrder().getEndStation().getSubwayStationName());
-        }
+        showTicketOrderInfo(submitOrderResult.getTicketOrder());
 
-        String orderID = reader.next();
-        response = RESTServiceTestUtil.delete(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/cancel/" + orderID,
+        response = RESTServiceTestUtil.delete(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/cancel/" + submitOrderResult.getTicketOrder().getTicketOrderId(),
                 result.getToken());
         RESTServiceTestUtil.showResponse(response);
 
         response = RESTServiceTestUtil.post(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/submit", submitOrderRequest,
                 result.getToken());
         submitOrderResult = (SubmitOrderResult) RESTServiceTestUtil.showResponse(response, SubmitOrderResult.class);
-        if(submitOrderResult.getTicketOrder() != null){
-            System.out.println("Order ID:" + submitOrderResult.getTicketOrder().getTicketOrderId());
-            System.out.println("Start Station:" + submitOrderResult.getTicketOrder().getStartStation().getSubwayStationName());
-            System.out.println("End Station:" + submitOrderResult.getTicketOrder().getEndStation().getSubwayStationName());
-        }
+        showTicketOrderInfo(submitOrderResult.getTicketOrder());
 
-        orderID = reader.next();
-        PayOrderRequest payOrderRequest = new PayOrderRequest(orderID);
+        PayOrderRequest payOrderRequest = new PayOrderRequest(submitOrderResult.getTicketOrder().getTicketOrderId());
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/pay", payOrderRequest,
                 result.getToken());
         PayOrderResult payOrderResult = (PayOrderResult) RESTServiceTestUtil.showResponse(response, PayOrderResult.class);
@@ -63,8 +53,7 @@ public class OrderTest {
             System.out.println("Extract Code:" + payOrderResult.getExtractCode());
         }
 
-        String extractCode = reader.next();
-        ExtractTicketRequest extractTicketRequest = new ExtractTicketRequest(extractCode, amount);
+        ExtractTicketRequest extractTicketRequest = new ExtractTicketRequest(payOrderResult.getExtractCode(), amount - 1);
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/extract_ticket", extractTicketRequest, null);
         RESTServiceTestUtil.showResponse(response);
 
@@ -75,8 +64,56 @@ public class OrderTest {
         if(refundOrderResult.getResultCode() == PublicResultCode.SUCCESS)
             System.out.println("Refund Amount:" + refundOrderResult.getRefundAmount());*/
 
+        response = RESTServiceTestUtil.get(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/order_info/" + submitOrderResult.getTicketOrder().getTicketOrderId(), result.getToken());
+        OrderInfoResult orderInfoResult = (OrderInfoResult) RESTServiceTestUtil.showResponse(response, OrderInfoResult.class);
+        showTicketOrderInfo(orderInfoResult.getTicketOrder());
+
+        String todayStr = Long.toString(System.currentTimeMillis());
+        response = RESTServiceTestUtil.get(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/order_list/" + TicketOrder.ORDER_STATUS_FINISHED + '/' + todayStr + '/' + todayStr, result.getToken());
+        OrderListResult orderListResult = (OrderListResult)RESTServiceTestUtil.showResponse(response, OrderListResult.class);
+        System.out.println("\nFinished Order List:");
+        for(TicketOrder t : orderListResult.getTicketOrderList()){
+            showTicketOrderInfo(t);
+        }
+
+        response = RESTServiceTestUtil.get(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/all_order/" + todayStr + '/' + todayStr, result.getToken());
+        orderListResult = (OrderListResult)RESTServiceTestUtil.showResponse(response, OrderListResult.class);
+        System.out.println("\nAll Order:");
+        for(TicketOrder t : orderListResult.getTicketOrderList()){
+            showTicketOrderInfo(t);
+        }
+
         response = RESTServiceTestUtil.put(RESTServiceTestUtil.API_BASE_URL_V1 + "/account/logout", null,
                 result.getToken());
         RESTServiceTestUtil.showResponse(response);
+    }
+
+    private static void showTicketOrderInfo(TicketOrder ticketOrder){
+        if(ticketOrder == null)
+            return;
+        System.out.println("--------Ticket Order Info--------");
+        System.out.println("Order ID:" + ticketOrder.getTicketOrderId());
+        System.out.println("Start Station:" + ticketOrder.getStartStation().getSubwayStationName());
+        System.out.println("End Station:" + ticketOrder.getEndStation().getSubwayStationName());
+        System.out.println("Order Time:" + ticketOrder.getTicketOrderTime().toString());
+        System.out.println("Amount:" + ticketOrder.getAmount());
+        System.out.println("Draw Amount:" + ticketOrder.getDrawAmount());
+        System.out.print("Order Status:");
+        switch (ticketOrder.getStatus()){
+            case TicketOrder.ORDER_STATUS_NOT_PAY:
+                System.out.println("not pay");
+                break;
+            case TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET:
+                System.out.println("not draw tickets");
+                break;
+            case TicketOrder.ORDER_STATUS_FINISHED:
+                System.out.println("finished");
+                break;
+            case TicketOrder.ORDER_STATUS_REFUNDED:
+                System.out.println("refunded");
+        }
+        if(ticketOrder.getTicketKey() != null){
+            System.out.println("Extract Code:" + ticketOrder.getTicketKey());
+        }
     }
 }
