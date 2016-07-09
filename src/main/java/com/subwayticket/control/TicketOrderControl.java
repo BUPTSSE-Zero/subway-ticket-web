@@ -3,10 +3,7 @@ package com.subwayticket.control;
 import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.control.TicketOrderDBHelperBean;
-import com.subwayticket.database.model.Account;
-import com.subwayticket.database.model.SubwayStation;
-import com.subwayticket.database.model.TicketOrder;
-import com.subwayticket.database.model.TicketPrice;
+import com.subwayticket.database.model.*;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.ExtractTicketRequest;
 import com.subwayticket.model.request.PayOrderRequest;
@@ -21,6 +18,7 @@ import com.subwayticket.util.SecurityUtil;
 
 import javax.ejb.EJBException;
 import javax.servlet.ServletRequest;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -56,7 +54,23 @@ public class TicketOrderControl {
                                                    new SubwayStation(submitOrderRequest.getEndStationId()), ticketPrice.getPrice(), submitOrderRequest.getAmount());
             subwayInfoDBHelperBean.create(newOrder);
             subwayInfoDBHelperBean.refresh(newOrder);
-            return new SubmitOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"), newOrder);
+            SubmitOrderResult result = new SubmitOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"), newOrder);
+            user = (Account)subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
+            for(HistoryRoute hr : user.getHistoryRouteList()){
+                if(hr.getStartStationId() == submitOrderRequest.getStartStationId() &&
+                        hr.getEndStartionId() == submitOrderRequest.getEndStationId()) {
+                    return result;
+                }
+            }
+            if(user.getHistoryRouteList().size() < 3){
+                subwayInfoDBHelperBean.create(new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
+                        submitOrderRequest.getEndStationId()));
+                return result;
+            }
+            subwayInfoDBHelperBean.remove(user.getHistoryRouteList().get(0));
+            subwayInfoDBHelperBean.create(new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
+                    submitOrderRequest.getEndStationId()));
+            return result;
         }catch (EJBException e){
             e.printStackTrace();
         }

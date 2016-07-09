@@ -34,6 +34,10 @@ public abstract class EntityManagerHelper {
         getEntityManager().getTransaction().commit();
     }
 
+    public boolean containsEntity(Object entity){
+        return getEntityManager().contains(entity);
+    }
+
     public void detach(Object entity) {
         getEntityManager().detach(entity);
     }

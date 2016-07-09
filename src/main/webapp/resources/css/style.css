@@ -1,7 +1,6 @@
 body{
 	background-color: #FCFCFC;
 	padding: 0;
-	position:absolute;
 	top: 0;
 	left: 0;
 	width:100%;
@@ -138,3 +137,76 @@ body{
 	z-index: 10;
 }
 
+#person-center-nav{
+	z-index: -1;
+	margin-top: 60px;
+	padding: 0;
+}
+
+#person-center-nav .collapsible-header{
+	padding: 0 15px;
+}
+
+#person-center-nav .collapsible-header:hover,
+#person-center-nav .collapsible-body a:hover{
+	background-color: rgba(255, 255, 255, 0.05);
+}
+
+#person-center-nav .collapsible-header{
+	font-size: 17px;
+	font-weight: bold;
+}
+
+#person-center-nav .collapsible-header i{
+	font-size: 32px;
+}
+
+#person-center-nav .collapsible-body li,
+#person-center-nav .collapsible-body a{
+	height: 48px;
+	line-height: 48px;
+}
+
+#person-center-nav .collapsible-body li.active{
+	background-color: #7cb342;
+}
+
+#person-center-content{
+	position: absolute;
+	left: 25%;
+	overflow-x: auto;
+	overflow-y: auto;
+	padding: 15px;
+}
+
+#person-center-content hr{
+	height: 2px;
+	border: none;
+	background-color: #BDBDBD;
+	margin-bottom: 15px;
+}
+
+.person-center-index-panel{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 180px;
+	max-width: 70%;
+}
+
+.person-center-modify-password-panel{
+	margin-left: 25px;
+	margin-right: 25px;
+	margin-top: 10px;
+	overflow-x: hidden;
+}
+
+.person-center-modify-password-panel .submit-button{
+	width: 30%;
+}
+
+.person-center-nav-portrait{
+	margin-top: 15px;
+	margin-left: 10px;
+	width: auto;
+	line-height: normal;
+}

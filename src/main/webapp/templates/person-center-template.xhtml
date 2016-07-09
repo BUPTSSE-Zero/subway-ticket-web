@@ -1,0 +1,76 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/templates/main-template.xhtml">
+
+    <ui:define name="head">
+        <f:event type="preRenderView" listener="#{userOperationBean.loginCheck}"/>
+    </ui:define>
+
+    <ui:define name="logout-button">
+        <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
+                         style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
+                         oncomplete="document.location.href = '#{facesContext.externalContext.applicationContextPath}';">
+        </p:commandButton>
+    </ui:define>
+
+    <ui:define name="page-panel-content">
+        <div class="row">
+            <div id="person-center-nav" class="side-nav fixed blue-grey darken-4 white-text col s12 m4 l3">
+                <ul style="margin: 0">
+                    <li>
+                        <table class="person-center-nav-portrait">
+                            <tr>
+                                <td>
+                                    <i class="material-icons cyan-text" style="font-size: 64px">account_circle</i>
+                                </td>
+                                <td>
+                                    <span style="font-size: 18px">#{sessionScope.user.phoneNumber}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </li>
+                    <li>
+                        <ul class="collapsible" data-collapsible="expandable">
+                            <li>
+                                <div class="collapsible-header waves-effect waves-light #{itemAccountSecurityActive}">
+                                    <i class="material-icons red-text">security</i>#{bundle.AccountSecurity}
+                                </div>
+                                <div class="collapsible-body blue-grey darken-4 white-text">
+                                    <ul>
+                                        <li class="#{itemModifyPasswordActive}">
+                                            <h:link class="white-text" outcome="modify-password.xhtml">#{bundle.ModifyPassword}</h:link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header waves-effect waves-light #{itemPreferSettingsActive}">
+                                    <i class="material-icons light-green-text">credit_card</i>
+                                    #{bundle.PurchaseCommonlyUsedSettings}
+                                </div>
+                            </li>
+                            <li>
+                                <div class="collapsible-header waves-effect waves-light #{itemOrderRecordsActive}">
+                                    <i class="material-icons amber-text">content_paste</i>
+                                    #{bundle.OrderRecord}
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="person-center-content" class="col s12 m8 l9">
+                <h5 class="indigo-text">#{personCenterContentTitle}</h5>
+                <p:separator/>
+                <ui:insert name="person-center-content"/>
+            </div>
+
+        </div>
+    </ui:define>
+
+    <ui:define name="page-footer"/>
+</ui:composition>

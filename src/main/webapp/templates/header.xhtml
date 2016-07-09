@@ -5,20 +5,13 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
-
-<f:view>
-    <h:outputScript library="js" name="materialize.js"/>
-    <h:outputStylesheet library="css" name="primefaces.css"/>
-    <h:outputStylesheet library="css" name="material_icon.css"/>
-    <h:outputStylesheet library="css" name="materialize.css"/>
-    <h:outputStylesheet library="css" name="style.css"/>
-</f:view>
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
 
 <nav>
     <div class="nav-wrapper light-blue">
         <div id="titlebar">
-            <span>#{bundle.IndexPageTitle}<i class="material-icons left">payment</i></span>
+            <span>#{bundle.AppName}<i class="material-icons left">payment</i></span>
         </div>
         <ul class="right hide-on-med-and-down">
             <li>
@@ -41,7 +34,7 @@
                                         <li class="waves-effect user-menu-item">
                                             <div>
                                                 <i class="material-icons light-green-text" style="float: left; height: 50px; line-height: 50px">perm_identity</i>
-                                                <p:button styleClass="btn transparent z-depth-0 black-text" outcome="/personal-center.xhtml" value="#{bundle.PersonCenter}"
+                                                <p:button styleClass="btn transparent z-depth-0 black-text" outcome="/person-center/person-center-index.xhtml" value="#{bundle.PersonCenter}"
                                                           style="float: left; height: 50px; line-height: 50px; text-align: left; padding-left: 0"/>
                                             </div>
                                         </li>
@@ -50,10 +43,12 @@
                                             <div>
                                                 <h:form>
                                                     <i class="material-icons red-text user-menu-item-i" style="float: left; height: 50px; line-height: 50px">power_settings_new</i>
-                                                    <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
-                                                                     style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
-                                                                     update="header-panel page-panel">
-                                                    </p:commandButton>
+                                                    <ui:insert name="logout-button">
+                                                        <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
+                                                                         style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
+                                                                         update="header-panel page-panel">
+                                                        </p:commandButton>
+                                                    </ui:insert>
                                                 </h:form>
                                             </div>
                                         </li>

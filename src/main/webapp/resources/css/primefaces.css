@@ -19,6 +19,10 @@
     content: 'close';
 }
 
+.ui-icon-done:before{
+    content: 'done';
+}
+
 .ui-messages-error-icon, .ui-messages-info-icon{
     font-family: 'Material Icons';
     margin-top: -8px;

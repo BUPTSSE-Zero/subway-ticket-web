@@ -59,6 +59,15 @@
         </navigation-case>
     </navigation-rule>
 
+    <navigation-rule>
+        <from-view-id>/*</from-view-id>
+        <navigation-case>
+            <to-view-id>/../</to-view-id>
+            <from-action>redirect_login</from-action>
+            <redirect/>
+        </navigation-case>
+    </navigation-rule>
+
     <factory>
         <exception-handler-factory>
             org.primefaces.application.exceptionhandler.PrimeExceptionHandlerFactory

@@ -26,6 +26,7 @@ import org.primefaces.context.RequestContext;
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.Serializable;
 
 @ManagedBean
@@ -182,5 +183,13 @@ public class UserOperationBean implements Serializable {
         for(int i = 3; i < 7 && i < phoneNumber.length(); i++)
             phoneNumber.setCharAt(i, '*');
         return phoneNumber.toString();
+    }
+
+    public void loginCheck() throws IOException{
+        if(getUserID() == null){
+            FacesContext.getCurrentInstance().getExternalContext().redirect(
+                    FacesContext.getCurrentInstance().getExternalContext().getApplicationContextPath()
+            );
+        }
     }
 }

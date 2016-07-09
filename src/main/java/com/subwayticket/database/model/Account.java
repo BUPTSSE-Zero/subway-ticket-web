@@ -3,6 +3,7 @@ package com.subwayticket.database.model;
 import javax.persistence.*;
 import java.util.List;
 import java.util.List;
+import java.util.List;
 import java.util.Date;
 
 /**
@@ -90,5 +91,49 @@ public class Account {
 
     public void setOrderList(List<TicketOrder> orderList) {
         this.orderList = orderList;
+    }
+
+    private List<PreferCity> preferCityList;
+
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    public List<PreferCity> getPreferCityList() {
+        return preferCityList;
+    }
+
+    public void setPreferCityList(List<PreferCity> preferCityList) {
+        this.preferCityList = preferCityList;
+    }
+
+    private List<PreferSubwayStation> preferSubwayStationList;
+
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    public List<PreferSubwayStation> getPreferSubwayStationList() {
+        return preferSubwayStationList;
+    }
+
+    public void setPreferSubwayStationList(List<PreferSubwayStation> preferSubwayStationList) {
+        this.preferSubwayStationList = preferSubwayStationList;
+    }
+
+    private List<HistoryRoute> historyRouteList;
+
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    public List<HistoryRoute> getHistoryRouteList() {
+        return historyRouteList;
+    }
+
+    public void setHistoryRouteList(List<HistoryRoute> historyRouteList) {
+        this.historyRouteList = historyRouteList;
+    }
+
+    private List<PreferRoute> preferRouteList;
+
+    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    public List<PreferRoute> getPreferRouteList() {
+        return preferRouteList;
+    }
+
+    public void setPreferRouteList(List<PreferRoute> preferRouteList) {
+        this.preferRouteList = preferRouteList;
     }
 }

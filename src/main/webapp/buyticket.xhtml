@@ -1,145 +1,137 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                template="/templates/main-template.xhtml">
 
-    <h:head>
-        <title>#{bundle.IndexPageTitle}</title>
-    </h:head>
-    <h:body>
-        <ui:include src="header.xhtml"/>
-        <p:outputPanel id="page-panel">
-            <div class="container">
-                <h:form id="subwayselectform">
-                    <p:outputLabel for="city" styleClass="selectlabel">#{bundle.City} :</p:outputLabel>
-                    <p:selectOneMenu id="city" styleClass="selectform" value="#{buyTicketBean.cityId}">
-                        <f:selectItem itemLabel="select one" itemValue="0"/>
-                        <c:forEach items="#{buyTicketBean.cities}" var="cname">
-                            <f:selectItem itemLabel="#{cname.cityName}" itemValue="#{cname.cityId}" />
-                        </c:forEach>
-                        <p:ajax event="change" listener="#{buyTicketBean.onCityIdChange}" update="subwayselectform table"/>
-                    </p:selectOneMenu>
-                    <br/>
-                    <p:outputLabel for="startnumber" styleClass="selectlabel">#{bundle.StartLineNumber} :</p:outputLabel>
-                    <p:selectOneMenu id="startnumber" styleClass="selectform" value="#{buyTicketBean.startSubwayLineId}">
-                        <f:selectItem itemLabel="select one" itemValue="0" />
-                        <c:forEach items="#{buyTicketBean.subwayLineList}" var="slname">
-                            <f:selectItem itemLabel="#{slname.subwayLineName}" itemValue="#{slname.subwayLineId}" />
-                        </c:forEach>
-                        <p:ajax event="change" listener="#{buyTicketBean.onStartSubwayLineIdChange}" update="subwayselectform table" />
-                    </p:selectOneMenu>
-                    <p:outputLabel for="startstation" styleClass="selectlabel">#{bundle.StartSubwayStation} :</p:outputLabel>
-                    <p:selectOneMenu id="startstation" styleClass="selectform" value="#{buyTicketBean.startSubwayStationId}">
-                        <f:selectItem itemLabel="select one" itemValue="0" />
-                        <c:forEach items="#{buyTicketBean.startSubwayStationList}" var="sname">
-                            <f:selectItem itemLabel="#{sname.subwayStationName}" itemValue="#{sname.subwayStationId}" itemDisabled="#{!sname.available}"/>
-                        </c:forEach>
-                        <p:ajax event="change" listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" />
-                    </p:selectOneMenu>
-                    <br/>
-                    <p:outputLabel for="endnumber" styleClass="selectlabel">#{bundle.EndLineNumber} :</p:outputLabel>
-                    <p:selectOneMenu id="endnumber" styleClass="selectform" value="#{buyTicketBean.endSubwayLineId}">
-                        <f:selectItem itemLabel="select one" itemValue="0" />
-                        <c:forEach items="#{buyTicketBean.subwayLineList}" var="elname">
-                            <f:selectItem itemLabel="#{elname.subwayLineName}" itemValue="#{elname.subwayLineId}" />
-                        </c:forEach>
-                        <p:ajax event="change" listener="#{buyTicketBean.onEndSubwayLineIdChange}" update="subwayselectform table"/>
-                    </p:selectOneMenu>
-                    <p:outputLabel for="endstation" styleClass="selectlabel">#{bundle.EndSubwayStation} :</p:outputLabel>
-                    <p:selectOneMenu id="endstation" styleClass="selectform" value="#{buyTicketBean.endSubwayStationId}">
-                        <f:selectItem itemLabel="select one" itemValue="0" />
-                        <c:forEach items="#{buyTicketBean.endSubwayStationList}" var="ename">
-                            <f:selectItem itemLabel="#{ename.subwayStationName}" itemValue="#{ename.subwayStationId}" itemDisabled="#{!ename.available}"/>
-                        </c:forEach>
-                        <p:ajax event="change"  listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" />
-                    </p:selectOneMenu>
-                    <br/>
-                    <p:outputLabel value="#{bundle.TicketPrice} : #{buyTicketBean.price}" styleClass="selectlabel" />
-                    <p:outputLabel for="ticketnumber" value="#{bundle.TicketNumber}" styleClass="selectlabel" />
-                    <p:spinner id="ticketnumber" value="#{buyTicketBean.number}" min="1">
-                        <p:ajax update="subwayselectform table"/>
-                    </p:spinner>
-                    <br />
-                    <div align="center">
-                        <p:commandButton actionListener="#{buyTicketBean.submit}" type="submit" styleClass="btn waves-effect waves-light" value="#{bundle.Confirm}" onclick="order.style.display='block'">
-                            <p:ajax update="table"/>
-                        </p:commandButton>
-                    </div>
-
-                </h:form>
-                <div id="order" style="margin-top: 40px; display: none">
-                    <h:form id="table">
-                        <div>
-                            <table class="hoverable centered">
-                                <thead>
-                                <tr>
-                                    <th>#{bundle.StartSubwayStation}</th>
-                                    <th>#{bundle.EndSubwayStation}</th>
-                                    <th>#{bundle.TicketNumber}</th>
-                                    <th>#{bundle.TicketPrice}</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>#{buyTicketBean.startSubwayStationName}</td>
-                                    <td>#{buyTicketBean.endSubwayStationName}</td>
-                                    <td>#{buyTicketBean.number}</td>
-                                    <td>#{buyTicketBean.price}</td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div align="center" style="margin-top: 30px">
-                            <c:choose>
-                                <c:when test="#{not empty userOperationBean.userID}">
-                                    <p:commandButton value="#{bundle.SubmitOrder}" styleClass="waves-light waves-effect btn" onclick="PF('dg1').show();" actionListener="#{buyTicketBean.submit}" type="submit"/>
-                                </c:when>
-                                <c:otherwise>
-                                    <p:commandButton value="#{bundle.Login}" styleClass="waves-effect waves-light btn" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab');order.style.display='none'"/>
-                                </c:otherwise>
-                            </c:choose>
-                        </div>
-                        <p:dialog widgetVar="dg1" modal="true">
-                            <div class="card">
-                                <span class="card-title">#{bundle.TipOrderSubmitSuccess}</span>
-                                <h4>You must pay in 60mins.</h4>
-                                <div class="card-content">
-                                    <table class="hoverable centered">
-                                        <thead>
-                                        <tr>
-                                            <th>#{bundle.StartSubwayStation}</th>
-                                            <th>#{bundle.EndSubwayStation}</th>
-                                            <th>#{bundle.TicketNumber}</th>
-                                            <th>#{bundle.TicketPrice}</th>
-                                            <th>#{bundle.TotalPrice}</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>#{buyTicketBean.startSubwayStationName}</td>
-                                            <td>#{buyTicketBean.endSubwayStationName}</td>
-                                            <td>#{buyTicketBean.number}</td>
-                                            <td>#{buyTicketBean.price}</td>
-                                            <td>#{buyTicketBean.totalPrice}</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div class="card-action">
-                                    <p:commandButton value="#{bundle.ImmediatePayment}" styleClass="btn waves-light waves-effect"/>
-                                    <p:commandButton value="#{bundle.ContinueBuyTicket}" styleClass="btn waves-effect waves-light" ajax="false"/>
-                                </div>
-                            </div>
-                        </p:dialog>
-                    </h:form>
+    <ui:define name="page-panel-content">
+        <div class="container">
+            <h:form id="subwayselectform">
+                <p:outputLabel for="city" styleClass="selectlabel">#{bundle.City} :</p:outputLabel>
+                <p:selectOneMenu id="city" styleClass="selectform" value="#{buyTicketBean.cityId}">
+                    <f:selectItem itemLabel="select one" itemValue="0"/>
+                    <c:forEach items="#{buyTicketBean.cities}" var="cname">
+                        <f:selectItem itemLabel="#{cname.cityName}" itemValue="#{cname.cityId}" />
+                    </c:forEach>
+                    <p:ajax event="change" listener="#{buyTicketBean.onCityIdChange}" update="subwayselectform table"/>
+                </p:selectOneMenu>
+                <br/>
+                <p:outputLabel for="startnumber" styleClass="selectlabel">#{bundle.StartLineNumber} :</p:outputLabel>
+                <p:selectOneMenu id="startnumber" styleClass="selectform" value="#{buyTicketBean.startSubwayLineId}">
+                    <f:selectItem itemLabel="select one" itemValue="0" />
+                    <c:forEach items="#{buyTicketBean.subwayLineList}" var="slname">
+                        <f:selectItem itemLabel="#{slname.subwayLineName}" itemValue="#{slname.subwayLineId}" />
+                    </c:forEach>
+                    <p:ajax event="change" listener="#{buyTicketBean.onStartSubwayLineIdChange}" update="subwayselectform table" />
+                </p:selectOneMenu>
+                <p:outputLabel for="startstation" styleClass="selectlabel">#{bundle.StartSubwayStation} :</p:outputLabel>
+                <p:selectOneMenu id="startstation" styleClass="selectform" value="#{buyTicketBean.startSubwayStationId}">
+                    <f:selectItem itemLabel="select one" itemValue="0" />
+                    <c:forEach items="#{buyTicketBean.startSubwayStationList}" var="sname">
+                        <f:selectItem itemLabel="#{sname.subwayStationName}" itemValue="#{sname.subwayStationId}" itemDisabled="#{!sname.available}"/>
+                    </c:forEach>
+                    <p:ajax event="change" listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" />
+                </p:selectOneMenu>
+                <br/>
+                <p:outputLabel for="endnumber" styleClass="selectlabel">#{bundle.EndLineNumber} :</p:outputLabel>
+                <p:selectOneMenu id="endnumber" styleClass="selectform" value="#{buyTicketBean.endSubwayLineId}">
+                    <f:selectItem itemLabel="select one" itemValue="0" />
+                    <c:forEach items="#{buyTicketBean.subwayLineList}" var="elname">
+                        <f:selectItem itemLabel="#{elname.subwayLineName}" itemValue="#{elname.subwayLineId}" />
+                    </c:forEach>
+                    <p:ajax event="change" listener="#{buyTicketBean.onEndSubwayLineIdChange}" update="subwayselectform table"/>
+                </p:selectOneMenu>
+                <p:outputLabel for="endstation" styleClass="selectlabel">#{bundle.EndSubwayStation} :</p:outputLabel>
+                <p:selectOneMenu id="endstation" styleClass="selectform" value="#{buyTicketBean.endSubwayStationId}">
+                    <f:selectItem itemLabel="select one" itemValue="0" />
+                    <c:forEach items="#{buyTicketBean.endSubwayStationList}" var="ename">
+                        <f:selectItem itemLabel="#{ename.subwayStationName}" itemValue="#{ename.subwayStationId}" itemDisabled="#{!ename.available}"/>
+                    </c:forEach>
+                    <p:ajax event="change"  listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" />
+                </p:selectOneMenu>
+                <br/>
+                <p:outputLabel value="#{bundle.TicketPrice} : #{buyTicketBean.price}" styleClass="selectlabel" />
+                <p:outputLabel for="ticketnumber" value="#{bundle.TicketNumber}" styleClass="selectlabel" />
+                <p:spinner id="ticketnumber" value="#{buyTicketBean.number}" min="1">
+                    <p:ajax update="subwayselectform table"/>
+                </p:spinner>
+                <br />
+                <div align="center">
+                    <p:commandButton actionListener="#{buyTicketBean.submit}" type="submit" styleClass="btn waves-effect waves-light" value="#{bundle.Confirm}" onclick="order.style.display='block'">
+                        <p:ajax update="table"/>
+                    </p:commandButton>
                 </div>
-            </div>
-        </p:outputPanel>
-        <ui:include src="footer.xhtml"/>
-    </h:body>
 
-</html>
+            </h:form>
+            <div id="order" style="margin-top: 40px; display: none">
+                <h:form id="table">
+                    <div>
+                        <table class="hoverable centered">
+                            <thead>
+                            <tr>
+                                <th>#{bundle.StartSubwayStation}</th>
+                                <th>#{bundle.EndSubwayStation}</th>
+                                <th>#{bundle.TicketNumber}</th>
+                                <th>#{bundle.TicketPrice}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>#{buyTicketBean.startSubwayStationName}</td>
+                                <td>#{buyTicketBean.endSubwayStationName}</td>
+                                <td>#{buyTicketBean.number}</td>
+                                <td>#{buyTicketBean.price}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div align="center" style="margin-top: 30px">
+                        <c:choose>
+                            <c:when test="#{not empty userOperationBean.userID}">
+                                <p:commandButton value="#{bundle.SubmitOrder}" styleClass="waves-light waves-effect btn" onclick="PF('dg1').show();" actionListener="#{buyTicketBean.submit}" type="submit"/>
+                            </c:when>
+                            <c:otherwise>
+                                <p:commandButton value="#{bundle.Login}" styleClass="waves-effect waves-light btn" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab');order.style.display='none'"/>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    <p:dialog widgetVar="dg1" modal="true">
+                        <div class="card">
+                            <span class="card-title">#{bundle.TipOrderSubmitSuccess}</span>
+                            <h4>You must pay in 60mins.</h4>
+                            <div class="card-content">
+                                <table class="hoverable centered">
+                                    <thead>
+                                    <tr>
+                                        <th>#{bundle.StartSubwayStation}</th>
+                                        <th>#{bundle.EndSubwayStation}</th>
+                                        <th>#{bundle.TicketNumber}</th>
+                                        <th>#{bundle.TicketPrice}</th>
+                                        <th>#{bundle.TotalPrice}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>#{buyTicketBean.startSubwayStationName}</td>
+                                        <td>#{buyTicketBean.endSubwayStationName}</td>
+                                        <td>#{buyTicketBean.number}</td>
+                                        <td>#{buyTicketBean.price}</td>
+                                        <td>#{buyTicketBean.totalPrice}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="card-action">
+                                <p:commandButton value="#{bundle.ImmediatePayment}" styleClass="btn waves-light waves-effect"/>
+                                <p:commandButton value="#{bundle.ContinueBuyTicket}" styleClass="btn waves-effect waves-light" ajax="false"/>
+                            </div>
+                        </div>
+                    </p:dialog>
+                </h:form>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>
