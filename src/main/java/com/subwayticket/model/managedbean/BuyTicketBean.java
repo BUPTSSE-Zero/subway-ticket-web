@@ -203,8 +203,11 @@ public class BuyTicketBean implements Serializable{
         Account user = (Account)request.getSession(false).getAttribute(AccountControl.SESSION_ATTR_USER);
         Result result = TicketOrderControl.payOrder(request, systemDBHelperBean, user, new PayOrderRequest(orderId));
         if (result.getResultCode() == PublicResultCode.SUCCESS) {
+            RequestContext requestContext = RequestContext.getCurrentInstance();
+            requestContext.addCallbackParam("pay_result", result.getResultCode());
             PayOrderResult payOrderResult = (PayOrderResult)result;
             extractCode = payOrderResult.getExtractCode();
+            requestContext.addCallbackParam("extractCode", extractCode);
             return true;
         }else{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,

@@ -65,6 +65,7 @@
                 </div>
 
             </h:form>
+
             <div id="order" style="margin-top: 40px; display: none">
                 <h:form id="table">
                     <h:outputScript library="js" name="order.js"/>
@@ -98,38 +99,42 @@
                             </c:otherwise>
                         </c:choose>
                     </div>
-                    <p:dialog widgetVar="dg1" modal="true">
-                        <div class="card">
-                            <span class="card-title">#{bundle.TipOrderSubmitSuccess}</span>
-                            <h4>You must pay in 60mins.</h4>
-                            <div class="card-content">
-                                <table class="hoverable centered">
-                                    <thead>
-                                    <tr>
-                                        <th>#{bundle.StartSubwayStation}</th>
-                                        <th>#{bundle.EndSubwayStation}</th>
-                                        <th>#{bundle.TicketNumber}</th>
-                                        <th>#{bundle.TicketPrice}</th>
-                                        <th>#{bundle.TotalPrice}</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>#{buyTicketBean.startSubwayStationName}</td>
-                                        <td>#{buyTicketBean.endSubwayStationName}</td>
-                                        <td>#{buyTicketBean.number}</td>
-                                        <td>#{buyTicketBean.price}</td>
-                                        <td>#{buyTicketBean.totalPrice}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="card-action">
-                                <p:commandButton value="#{bundle.ImmediatePayment}" styleClass="btn waves-light waves-effect"/>
-                                <p:commandButton value="#{bundle.ContinueBuyTicket}" styleClass="btn waves-effect waves-light" ajax="false"/>
+                    <div id="dg" class="modal">
+                        <div class="modal-content">
+                            <div class="card">
+                                <span class="card-title">#{bundle.TipOrderSubmitSuccess}</span>
+                                <h4>You must pay in 60mins.</h4>
+                                <div class="card-content">
+                                    <table class="hoverable centered">
+                                        <thead>
+                                        <tr>
+                                            <th>#{bundle.OrderNumber}</th>
+                                            <th>#{bundle.StartSubwayStation}</th>
+                                            <th>#{bundle.EndSubwayStation}</th>
+                                            <th>#{bundle.TicketNumber}</th>
+                                            <th>#{bundle.TicketPrice}</th>
+                                            <th>#{bundle.TotalPrice}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                            <td>#{buyTicketBean.orderId}</td>
+                                            <td>#{buyTicketBean.startSubwayStationName}</td>
+                                            <td>#{buyTicketBean.endSubwayStationName}</td>
+                                            <td>#{buyTicketBean.number}</td>
+                                            <td>#{buyTicketBean.price}</td>
+                                            <td>#{buyTicketBean.totalPrice}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
-                    </p:dialog>
+                        <div class="modal-footer">
+                            <p:commandButton value="#{bundle.ImmediatePayment}" actionListener="#{buyTicketBean.pay}" styleClass="btn waves-light waves-effect" type="submit" oncomplete="handlePayResult(xhr, status, args)"/>
+                            <p:commandButton value="#{bundle.ContinueBuyTicket}" styleClass="btn waves-effect waves-light" ajax="false"/>
+                        </div>
+                    </div>
                 </h:form>
             </div>
         </div>

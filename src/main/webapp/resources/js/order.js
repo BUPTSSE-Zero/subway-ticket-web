@@ -4,8 +4,23 @@
 
 function handleSubmitResult(xhr, status, args){
     if(args.submit_result == 0){
-        var order = document.getElementById('order');
+        $('#dg').openModal({
+            dismissible: false
+        });
+    }
+    else{
+        alert("Submit failed!", 5);
+    }
+}
+
+function handlePayResult(xhr, status, args){
+    var order = document.getElementById('order');
+    if(args.pay_result == 0){
+        $('#dg').closeModal();
         order.style.display = 'none';
-        Materialize.toast('Submit successfullly!');
+        alert("Pay successfully!\n" + "ExtractCode: " + args.extractCode);
+    }
+    else{
+        alert("Pay failed!");
     }
 }
