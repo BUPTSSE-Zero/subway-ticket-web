@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
+      xmlns:p="http://primefaces.org/ui">
+
+    <cc:interface>
+        <cc:attribute name="orderTime"/>
+        <cc:attribute name="orderCity"/>
+        <cc:attribute name="orderStartLine"/>
+        <cc:attribute name="orderStartStation"/>
+        <cc:attribute name="orderEndLine"/>
+        <cc:attribute name="orderEndStation"/>
+        <cc:attribute name="orderId"/>
+        <cc:attribute name="ticketPrice"/>
+        <cc:attribute name="ticketAmount"/>
+    </cc:interface>
+
+    <cc:implementation>
+        <ul class="collapsible" data-collapsible="accordion">
+            <li>
+                <div class="collapsible-header orange darken-1 white-text order-record-header"
+                     style="height: 40px; line-height: 40px; padding: 0 10px">
+                    <i class="material-icons left">info</i>
+                    <span class="left">#{bundle.NotPay}</span>
+                    <i class="material-icons left">schedule</i>
+                    <h:outputText class="left" value="#{cc.attrs.orderTime}">
+                        <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
+                    </h:outputText>
+                    <i class="material-icons left">location_city</i>
+                    <span class="left">#{cc.attrs.orderCity}</span>
+                    <i class="material-icons left">subway</i>
+                    <span class="left">#{cc.attrs.orderStartLine}-#{cc.attrs.orderStartStation}</span>
+                    <i class="material-icons left">trending_flat</i><span class="left">#{cc.attrs.orderEndLine}-#{cc.attrs.orderEndStation}</span>
+                    <i class="material-icons right">arrow_drop_down_circle</i>
+                </div>
+                <div class="collapsible-body order-record-body">
+                    <ul>
+                        <li style="padding: 0 15px;">
+                            <table>
+                                <thead>
+                                <tr>
+                                    <th data-field="order-id">#{bundle.OrderID}</th>
+                                    <th data-field="ticket-price">#{bundle.TicketPrice}</th>
+                                    <th data-field="ticket-number">#{bundle.TicketNumber}</th>
+                                    <th data-field="total-price">#{bundle.TotalPrice}</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+                                <tr>
+                                    <td>#{cc.attrs.orderId}</td>
+                                    <td>
+                                        <h:outputText value="#{cc.attrs.ticketPrice}">
+                                            <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
+                                        </h:outputText>
+                                    </td>
+                                    <td>#{cc.attrs.ticketAmount}</td>
+                                    <td>
+                                        <h:outputText value="#{cc.attrs.ticketPrice * cc.attrs.ticketAmount}">
+                                            <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
+                                        </h:outputText>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <h:form>
+                                                <p:commandButton styleClass="btn waves-effect waves-light light-green left" type="submit"
+                                                                 value="#{bundle.PayOrder}" style="margin-right: 15px" icon="ui-icon-pay"
+                                                                 actionListener="#{orderBean.payOrder}" oncomplete="onOrderCallback(xhr, status, args)">
+                                                    <f:param name="orderId" value="#{cc.attrs.orderId}"/>
+                                                    <p:confirm message="#{bundle.QueryPayOrder}"/>
+                                                </p:commandButton>
+                                                <p:commandButton styleClass="btn waves-effect waves-light red accent-2 left" type="submit"
+                                                                 actionListener="#{orderBean.cancelOrder}" value="#{bundle.CancelOrder}" icon="ui-icon-cancel"
+                                                                 oncomplete="onOrderCallback(xhr, status, args)">
+                                                    <f:param name="orderId" value="#{cc.attrs.orderId}"/>
+                                                    <p:confirm message="#{bundle.QueryCancelOrder}"/>
+                                                </p:commandButton>
+                                            </h:form>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </cc:implementation>
+
+</html>

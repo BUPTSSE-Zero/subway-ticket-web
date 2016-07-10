@@ -7,6 +7,8 @@
 
     <ui:define name="head">
         <f:event type="preRenderView" listener="#{userOperationBean.loginCheck}"/>
+        <h:outputStylesheet library="css" name="perfect-scrollbar.css"/>
+        <h:outputScript library="js" name="perfect-scrollbar.js"/>
     </ui:define>
 
     <ui:define name="logout-button">
@@ -57,6 +59,13 @@
                                     <i class="material-icons amber-text">content_paste</i>
                                     #{bundle.OrderRecord}
                                 </div>
+                                <div class="collapsible-body blue-grey darken-4 white-text">
+                                    <ul>
+                                        <li class="#{itemNotPayOrderActive}">
+                                            <h:link class="white-text" outcome="not-pay-orders.xhtml">#{bundle.NotPayOrders}</h:link>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                         </ul>
                     </li>
@@ -70,6 +79,9 @@
             </div>
 
         </div>
+        <script type="text/javascript">
+            Ps.initialize(document.getElementById('person-center-nav'));
+        </script>
     </ui:define>
 
     <ui:define name="page-footer"/>

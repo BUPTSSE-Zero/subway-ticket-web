@@ -35,6 +35,34 @@
         <ui:include src="footer.xhtml"/>
     </ui:insert>
 
+    <p:ajaxStatus onstart="$('#ajax-status-dialog').openModal({dismissible: false});return;"
+                  onsuccess="$('#ajax-status-dialog').closeModal();return;"/>
+
+    <div id="ajax-status-dialog" class="modal">
+        <table style="width: auto">
+            <tr>
+                <td>
+                    <div class="preloader-wrapper active" style="margin-right: 10px">
+                        <div class="spinner-layer spinner-light-blue-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"/>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"/>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <h5>#{bundle.TipPleaseWait}</h5>
+                </td>
+            </tr>
+        </table>
+    </div>
+
 </h:body>
 
 </html>

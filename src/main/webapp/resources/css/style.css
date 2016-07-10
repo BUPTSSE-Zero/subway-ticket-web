@@ -29,6 +29,12 @@ body{
 	position: absolute;
 }
 
+#ajax-status-dialog{
+	overflow-y: hidden;
+	padding: 0 15px;
+	width: 400px;
+}
+
 #titlebar{
 	float: left;
 	font-weight: bold;
@@ -106,9 +112,14 @@ body{
 	overflow: hidden;
 }
 
-#login-panel .captcha-button{
-	padding-left: 15px;
-	padding-right: 15px;
+.submit-button .ui-icon{
+	left: 20%;
+	font-weight: normal;
+}
+
+.captcha-button{
+	padding-left: 6px;
+	padding-right: 0;
 	overflow: hidden;
 }
 
@@ -141,6 +152,8 @@ body{
 	z-index: -1;
 	margin-top: 60px;
 	padding: 0;
+	overflow: auto;
+	height: calc(100% - 60px);
 }
 
 #person-center-nav .collapsible-header{
@@ -149,7 +162,7 @@ body{
 
 #person-center-nav .collapsible-header:hover,
 #person-center-nav .collapsible-body a:hover{
-	background-color: rgba(255, 255, 255, 0.05);
+	background-color: rgba(255, 255, 255, 0.15);
 }
 
 #person-center-nav .collapsible-header{
@@ -172,11 +185,11 @@ body{
 }
 
 #person-center-content{
-	position: absolute;
+	position: fixed;
 	left: 25%;
-	overflow-x: auto;
-	overflow-y: auto;
+	overflow: auto;
 	padding: 15px;
+	height: calc(100% - 60px);
 }
 
 #person-center-content hr{
@@ -187,9 +200,9 @@ body{
 }
 
 .person-center-index-panel{
+	width: auto;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 180px;
 	max-width: 70%;
 }
 
@@ -209,4 +222,36 @@ body{
 	margin-left: 10px;
 	width: auto;
 	line-height: normal;
+}
+
+.order-record-header{
+	padding: 10px 0;
+}
+
+.order-record-header,
+.order-record-header i,
+.order-record-header span{
+	height: 40px;
+	line-height: 40px;
+}
+
+.order-record-header i,
+.order-record-header span{
+	margin-right: 10px;
+}
+
+.order-record-body .btn{
+	padding-left: 10px;
+	padding-right: 5px;
+}
+
+.confirm-dialog {
+	width: 600px;
+	height: auto;
+	overflow-y: hidden;
+	padding-left: 10px;
+}
+
+.modal .ui-state-focus{
+	background-color: transparent;
 }

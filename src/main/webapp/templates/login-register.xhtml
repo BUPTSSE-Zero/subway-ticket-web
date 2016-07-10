@@ -40,12 +40,12 @@
                         <c:choose>
                             <c:when test="#{facesContext.viewRoot.viewId == '/index.xhtml'}">
                                 <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" action="#{userOperationBean.login}"
+                                                 value="#{bundle.Login}" action="#{userOperationBean.login}" icon="ui-icon-enter"
                                                  update="login_error_message" oncomplete="indexHandleLoginResult(xhr, status, args)"/>
                             </c:when>
                             <c:otherwise>
                                 <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" actionListener="#{userOperationBean.login}"
+                                                 value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
                                                  update="login_error_message header-panel page-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
                             </c:otherwise>
                         </c:choose>
@@ -83,9 +83,9 @@
                         <p:inputText id="reset_password_captcha" class="validate" value="#{userOperationBean.captcha}"/>
                         <label for="reset_password_captcha">#{bundle.PhoneCaptcha}</label>
                     </div>
-                    <div style="height: 60px; line-height: 60px">
-                        <p:commandLink class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" action="#{userOperationBean.sendCaptcha}"
-                                       update="reset_password_message"/>
+                    <div class="col s6" style="height: 60px; line-height: 60px">
+                        <p:commandButton class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
+                                       icon="ui-icon-send" update="reset_password_message"/>
                     </div>
                 </div>
                 <p:messages id="reset_password_message" autoUpdate="false" closable="true"/>
@@ -94,12 +94,12 @@
                         <c:choose>
                             <c:when test="#{facesContext.viewRoot.viewId == '/index.xhtml'}">
                                 <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" action="#{userOperationBean.loginWithNewPassword}"
+                                                 value="#{bundle.Login}" action="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
                                                  update="reset_password_message" oncomplete="indexHandleLoginResult(xhr, status, args)"/>
                             </c:when>
                             <c:otherwise>
                                 <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}"
+                                                 value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
                                                  update="reset_password_message header-panel page-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
                             </c:otherwise>
                         </c:choose>
@@ -148,10 +148,9 @@
                     <label for="signup_captcha">#{bundle.PhoneCaptcha}</label>
                 </div>
                 <div style="height: 60px; line-height: 60px">
-                    <p:commandLink class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" action="#{userOperationBean.sendCaptcha}"
-                        update="singup_message">
-                        <i class="material-icons left">send</i>
-                    </p:commandLink>
+                    <p:commandButton class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
+                         icon="ui-icon-send" update="singup_message">
+                    </p:commandButton>
                 </div>
             </div>
             <p:messages id="singup_message" autoUpdate="false" closable="true"/>
@@ -159,12 +158,12 @@
                 <ui:insert name="signup-button">
                     <c:choose>
                         <c:when test="#{facesContext.viewRoot.viewId == '/index.xhtml'}">
-                            <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                            <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
                                              value="#{bundle.Register}" action="#{userOperationBean.register}"
                                              update="singup_message"/>
                         </c:when>
                         <c:otherwise>
-                            <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                            <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
                                              value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
                                              update="singup_message header-panel page-panel"/>
                         </c:otherwise>

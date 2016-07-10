@@ -14,13 +14,53 @@
     font-feature-settings: 'liga';
 }
 
+.ui-button-text-icon-left .ui-icon,
+.btn .ui-icon,
+.btn-flat .ui-icon,
+.btn-floating .ui-icon{
+    margin-top: 0;
+    font-size: 1.5em;
+    color: white;
+    position: absolute;
+    top: 0;
+}
+
+.btn-large .ui-icon{
+    left: 20px;
+    font-size: 32px;
+}
+
+.btn-flat .ui-icon{
+    color: black;
+}
+
 .ui-icon-close:before{
     font-size: 16px;
     content: 'close';
 }
 
+.ui-icon-cancel:before{
+    content: 'cancel';
+}
+
+.ui-icon-pay:before{
+    content: 'monetization_on';
+}
+
+.ui-icon-send:before{
+    content: 'send';
+}
+
 .ui-icon-done:before{
     content: 'done';
+}
+
+.ui-icon-enter:before{
+    content: 'input';
+}
+
+.ui-icon-refresh:before{
+    content: 'refresh';
 }
 
 .ui-messages-error-icon, .ui-messages-info-icon{

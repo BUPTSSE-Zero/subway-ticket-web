@@ -1,0 +1,71 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:w="http://xmlns.jcp.org/jsf/composite/widgets"
+                template="/templates/person-center-template.xhtml">
+
+    <ui:param name="itemOrderRecordsActive" value="#{'active'}"/>
+    <ui:param name="itemNotPayOrderActive" value="#{'active'}"/>
+    <ui:param name="personCenterContentTitle" value="#{bundle.NotPayOrders}"/>
+
+    <ui:define name="person-center-content">
+        <h:outputScript library="js" name="order-callback.js"/>
+        <p:outputPanel id="nopay-orders-panel" style="height: calc(100% - 70px)">
+            <c:choose>
+                <c:when test="#{empty orderBean.notPayOrders or orderBean.notPayOrders.size() == 0}">
+                    <div class="valign-wrapper" style="height: 80%">
+                        <h5 class="valign" style="margin: auto">#{bundle.TipNoOrderRecords}</h5>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div>
+                        <h:outputFormat styleClass="left" value="#{bundle.OrderRecordAmount}">
+                            <f:param value="#{orderBean.notPayOrders.size()}"/>
+                        </h:outputFormat>
+                        <span class="right red-text">#{bundle.TipPayOrderWithinAHour}</span>
+                    </div>
+                    <br/>
+                    <c:forEach var="order" items="#{orderBean.notPayOrders}">
+                        <w:notPayOrder orderTime="#{order.ticketOrderTime}" orderCity="#{order.startStation.subwayLine.city.cityName}"
+                                       orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
+                                       orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
+                                       orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
+                                       ticketAmount="#{order.amount}"/>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
+            <h:form>
+                <p:confirmDialog styleClass="modal confirm-dialog"
+                                 global="true" showEffect="fade" hideEffect="fade" closable="false" responsive="true" width="600">
+                    <f:facet name="header">
+                        <h5 class="light-blue-text">#{bundle.Alert}</h5>
+                    </f:facet>
+                    <p:commandButton type="button" styleClass="ui-confirmdialog-yes waves-effect waves-green btn-flat right" value="#{bundle.Ok}"/>
+                    <p:commandButton type="button" styleClass="ui-confirmdialog-no waves-effect waves-red btn-flat right" value="#{bundle.Cancel}"/>
+                </p:confirmDialog>
+                <p:dialog styleClass="modal confirm-dialog" widgetVar="orderCallbackDialog" showHeader="false" closable="false" width="600" responsive="true">
+                    <div>
+                        <h5 class="light-blue-text">#{bundle.Alert}</h5>
+                        <p id="order-callback-msg"/>
+                    </div>
+                    <div class="modal-footer">
+                        <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
+                                         onclick="PF('orderCallbackDialog').hide();return" update="nopay-orders-panel"
+                                         oncomplete="$('.collapsible').collapsible({accordion: false});"/>
+                    </div>
+                </p:dialog>
+            </h:form>
+        </p:outputPanel>
+        <h:form>
+            <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
+                <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
+                                 actionListener="#{orderBean.refreshNotPayOrders}" update="nopay-orders-panel"
+                                 oncomplete="$('.collapsible').collapsible({accordion: false});"/>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

@@ -7,18 +7,20 @@
     <ui:param name="personCenterContentTitle" value="#{bundle.PersonCenter}"/>
 
     <ui:define name="person-center-content">
-        <table class="person-center-index-panel">
-            <tr>
-                <td>
-                    <i class="material-icons green-text" style="font-size: 96px">mood</i>
-                </td>
-                <td>
-                    <p style="font-size: 22px">
-                        #{bundle.TipPersonCenterWelcome}
-                    </p>
-                </td>
-            </tr>
-        </table>
+        <div class="valign-wrapper" style="height: 80%">
+            <table class="valign person-center-index-panel">
+                <tr>
+                    <td>
+                        <i class="material-icons green-text" style="font-size: 96px">mood</i>
+                    </td>
+                    <td>
+                        <p style="font-size: 22px">
+                            #{bundle.TipPersonCenterWelcome}
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </div>
     </ui:define>
 
 </ui:composition>
