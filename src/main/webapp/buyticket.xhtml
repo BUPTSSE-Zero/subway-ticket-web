@@ -15,7 +15,7 @@
                     <c:forEach items="#{buyTicketBean.cities}" var="cname">
                         <f:selectItem itemLabel="#{cname.cityName}" itemValue="#{cname.cityId}" />
                     </c:forEach>
-                    <p:ajax event="change" listener="#{buyTicketBean.onCityIdChange}" update="subwayselectform table"/>
+                    <p:ajax event="change" listener="#{buyTicketBean.onCityIdChange}" update="subwayselectform table" oncomplete="order.style.display='none'"/>
                 </p:selectOneMenu>
                 <br/>
                 <p:outputLabel for="startnumber" styleClass="selectlabel">#{bundle.StartLineNumber} :</p:outputLabel>
@@ -24,7 +24,7 @@
                     <c:forEach items="#{buyTicketBean.subwayLineList}" var="slname">
                         <f:selectItem itemLabel="#{slname.subwayLineName}" itemValue="#{slname.subwayLineId}" />
                     </c:forEach>
-                    <p:ajax event="change" listener="#{buyTicketBean.onStartSubwayLineIdChange}" update="subwayselectform table" />
+                    <p:ajax event="change" listener="#{buyTicketBean.onStartSubwayLineIdChange}" update="subwayselectform table" oncomplete="order.style.display='none'"/>
                 </p:selectOneMenu>
                 <p:outputLabel for="startstation" styleClass="selectlabel">#{bundle.StartSubwayStation} :</p:outputLabel>
                 <p:selectOneMenu id="startstation" styleClass="selectform" value="#{buyTicketBean.startSubwayStationId}">
@@ -32,7 +32,7 @@
                     <c:forEach items="#{buyTicketBean.startSubwayStationList}" var="sname">
                         <f:selectItem itemLabel="#{sname.subwayStationName}" itemValue="#{sname.subwayStationId}" itemDisabled="#{!sname.available}"/>
                     </c:forEach>
-                    <p:ajax event="change" listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" />
+                    <p:ajax event="change" listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" oncomplete="order.style.display='none'"/>
                 </p:selectOneMenu>
                 <br/>
                 <p:outputLabel for="endnumber" styleClass="selectlabel">#{bundle.EndLineNumber} :</p:outputLabel>
@@ -41,7 +41,7 @@
                     <c:forEach items="#{buyTicketBean.subwayLineList}" var="elname">
                         <f:selectItem itemLabel="#{elname.subwayLineName}" itemValue="#{elname.subwayLineId}" />
                     </c:forEach>
-                    <p:ajax event="change" listener="#{buyTicketBean.onEndSubwayLineIdChange}" update="subwayselectform table"/>
+                    <p:ajax event="change" listener="#{buyTicketBean.onEndSubwayLineIdChange}" update="subwayselectform table" oncomplete="order.style.display='none'"/>
                 </p:selectOneMenu>
                 <p:outputLabel for="endstation" styleClass="selectlabel">#{bundle.EndSubwayStation} :</p:outputLabel>
                 <p:selectOneMenu id="endstation" styleClass="selectform" value="#{buyTicketBean.endSubwayStationId}">
@@ -49,7 +49,7 @@
                     <c:forEach items="#{buyTicketBean.endSubwayStationList}" var="ename">
                         <f:selectItem itemLabel="#{ename.subwayStationName}" itemValue="#{ename.subwayStationId}" itemDisabled="#{!ename.available}"/>
                     </c:forEach>
-                    <p:ajax event="change"  listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" />
+                    <p:ajax event="change"  listener="#{buyTicketBean.onSubwayStationIdChange}" update="subwayselectform table" oncomplete="order.style.display='none'"/>
                 </p:selectOneMenu>
                 <br/>
                 <p:outputLabel value="#{bundle.TicketPrice} : #{buyTicketBean.price}" styleClass="selectlabel" />
@@ -59,7 +59,7 @@
                 </p:spinner>
                 <br />
                 <div align="center">
-                    <p:commandButton actionListener="#{buyTicketBean.submit}" type="submit" styleClass="btn waves-effect waves-light" value="#{bundle.Confirm}" onclick="order.style.display='block'">
+                    <p:commandButton type="submit" styleClass="btn waves-effect waves-light" value="#{bundle.Confirm}" onclick="order.style.display='block'" disabled="#{!buyTicketBean.canSubmit}">
                         <p:ajax update="table"/>
                     </p:commandButton>
                 </div>
@@ -67,6 +67,7 @@
             </h:form>
             <div id="order" style="margin-top: 40px; display: none">
                 <h:form id="table">
+                    <h:outputScript library="js" name="order.js"/>
                     <div>
                         <table class="hoverable centered">
                             <thead>
@@ -90,7 +91,7 @@
                     <div align="center" style="margin-top: 30px">
                         <c:choose>
                             <c:when test="#{not empty userOperationBean.userID}">
-                                <p:commandButton value="#{bundle.SubmitOrder}" styleClass="waves-light waves-effect btn" onclick="PF('dg1').show();" actionListener="#{buyTicketBean.submit}" type="submit"/>
+                                <p:commandButton value="#{bundle.SubmitOrder}" styleClass="waves-light waves-effect btn" actionListener="#{buyTicketBean.submit}" type="submit" oncomplete="handleSubmitResult(xhr, status, args)"/>
                             </c:when>
                             <c:otherwise>
                                 <p:commandButton value="#{bundle.Login}" styleClass="waves-effect waves-light btn" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab');order.style.display='none'"/>

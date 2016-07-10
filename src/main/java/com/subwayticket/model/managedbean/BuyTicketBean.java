@@ -1,9 +1,5 @@
 package com.subwayticket.model.managedbean;
 
-/**
- * Created by shenqipingguo on 16-7-2.
- */
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,9 +18,15 @@ import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.*;
 import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.PayOrderRequest;
+import com.subwayticket.model.result.PayOrderResult;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.model.request.SubmitOrderRequest;
 import com.subwayticket.model.result.SubmitOrderResult;
+import org.primefaces.context.RequestContext;
+
+/**
+ * Created by shenqipingguo on 16-7-2.
+ */
 
 @ManagedBean
 @ViewScoped
@@ -46,6 +48,8 @@ public class BuyTicketBean implements Serializable{
     private float price = 0;
     private int number = 1;
     private String orderId = "";
+    private String extractCode = "";
+    private boolean canSubmit = false;
 
     @PostConstruct
     public void init(){
@@ -112,6 +116,18 @@ public class BuyTicketBean implements Serializable{
         this.number = number;
     }
 
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public String getExtractCode() {
+        return extractCode;
+    }
+
+    public boolean isCanSubmit() {
+        return canSubmit;
+    }
+
     public List<SubwayLine> getSubwayLineList() {
         return subwayLineList;
     }
@@ -125,46 +141,42 @@ public class BuyTicketBean implements Serializable{
     }
 
     public void onCityIdChange(){
-        if(cityId == 0) {
-            subwayLineList = new ArrayList<>();
-            startSubwayLineId = 0;
-            startSubwayStationId = 0;
-            endSubwayStationId = 0;
-            endSubwayLineId = 0;
-            price = 0;
-            return;
-        }
+        canSubmit = false;
+        subwayLineList = new ArrayList<>();
+        startSubwayLineId = 0;
+        startSubwayStationId = 0;
+        endSubwayStationId = 0;
+        endSubwayLineId = 0;
         price = 0;
-        subwayLineList = subwayInfoDBHelperBean.getSubwayLineList(cityId);
+        if(cityId != 0)
+            subwayLineList = subwayInfoDBHelperBean.getSubwayLineList(cityId);
     }
 
     public void onStartSubwayLineIdChange(){
-        if(startSubwayLineId == 0){
-            startSubwayStationList = new ArrayList<>();
-            startSubwayStationId = 0;
-            price = 0;
-            return;
-        }
+        canSubmit = false;
+        startSubwayStationList = new ArrayList<>();
+        startSubwayStationId = 0;
         price = 0;
-        startSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(startSubwayLineId);
+        if(startSubwayLineId != 0)
+            startSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(startSubwayLineId);
     }
 
     public void onEndSubwayLineIdChange(){
-        if(endSubwayLineId == 0){
-            endSubwayStationList = new ArrayList<>();
-            endSubwayStationId = 0;
-            price = 0;
-            return;
-        }
+        canSubmit = false;
+        endSubwayStationList = new ArrayList<>();
+        endSubwayStationId = 0;
         price = 0;
-        endSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(endSubwayLineId);
+        if(endSubwayLineId != 0)
+            endSubwayStationList = subwayInfoDBHelperBean.getSubwayStationList(endSubwayLineId);
     }
 
     public void onSubwayStationIdChange(){
-        if(endSubwayStationId!=0 && startSubwayStationId!=0){
+        if(endSubwayStationId!=0 && startSubwayStationId!=0 && endSubwayStationId!=startSubwayStationId){
+            canSubmit = true;
             price = subwayInfoDBHelperBean.getTicketPrice(startSubwayStationId, endSubwayStationId).getPrice();
             return;
         }
+        canSubmit = false;
         price = 0;
     }
 
@@ -174,6 +186,8 @@ public class BuyTicketBean implements Serializable{
         Result result = TicketOrderControl.submitOrder(request, subwayInfoDBHelperBean, user,
                 new SubmitOrderRequest(startSubwayStationId, endSubwayStationId, number));
         if (result.getResultCode() == PublicResultCode.SUCCESS) {
+            RequestContext requestContext = RequestContext.getCurrentInstance();
+            requestContext.addCallbackParam("submit_result", result.getResultCode());
             SubmitOrderResult submitOrderResult = (SubmitOrderResult)result;
             orderId = submitOrderResult.getTicketOrder().getTicketOrderId();
             return true;
@@ -189,6 +203,8 @@ public class BuyTicketBean implements Serializable{
         Account user = (Account)request.getSession(false).getAttribute(AccountControl.SESSION_ATTR_USER);
         Result result = TicketOrderControl.payOrder(request, systemDBHelperBean, user, new PayOrderRequest(orderId));
         if (result.getResultCode() == PublicResultCode.SUCCESS) {
+            PayOrderResult payOrderResult = (PayOrderResult)result;
+            extractCode = payOrderResult.getExtractCode();
             return true;
         }else{
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,

@@ -1,9 +1,5 @@
 package com.subwayticket.model.managedbean;
 
-/**
- * Created by 张炜奇 on 2016/5/14 0014.
- */
-
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -28,6 +24,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.Serializable;
+
+/**
+ * Created by 张炜奇 on 2016/5/14 0014.
+ */
 
 @ManagedBean
 @SessionScoped
