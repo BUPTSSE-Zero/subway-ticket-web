@@ -27,9 +27,7 @@
                     <i class="material-icons left">info</i>
                     <span class="left">#{bundle.NotPay}</span>
                     <i class="material-icons left">schedule</i>
-                    <h:outputText class="left" value="#{cc.attrs.orderTime}">
-                        <f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"/>
-                    </h:outputText>
+                    <span class="left local-time">#{cc.attrs.orderTime}</span>
                     <i class="material-icons left">location_city</i>
                     <span class="left">#{cc.attrs.orderCity}</span>
                     <i class="material-icons left">subway</i>

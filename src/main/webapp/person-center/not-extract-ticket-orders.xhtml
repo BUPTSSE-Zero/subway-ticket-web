@@ -8,14 +8,14 @@
                 template="/templates/person-center-template.xhtml">
 
     <ui:param name="itemOrderRecordsActive" value="#{'active'}"/>
-    <ui:param name="itemNotPayOrderActive" value="#{'active'}"/>
-    <ui:param name="personCenterContentTitle" value="#{bundle.NotPayOrders}"/>
+    <ui:param name="itemNotDrawTicketOrderActive" value="#{'active'}"/>
+    <ui:param name="personCenterContentTitle" value="#{bundle.NotExtractTicketOrders}"/>
 
     <ui:define name="person-center-content">
         <h:outputScript library="js" name="order-callback.js"/>
-        <p:outputPanel id="nopay-orders-panel" style="height: calc(100% - 70px)">
+        <p:outputPanel id="noextract-orders-panel" style="height: calc(100% - 70px)">
             <c:choose>
-                <c:when test="#{empty orderBean.notPayOrders or orderBean.notPayOrders.size() == 0}">
+                <c:when test="#{empty orderBean.notExtractTicketOrders or orderBean.notExtractTicketOrders.size() == 0}">
                     <div class="valign-wrapper" style="height: 80%">
                         <table class="valign" style="width: auto; margin: 0 auto">
                             <tr>
@@ -32,17 +32,18 @@
                 <c:otherwise>
                     <div>
                         <h:outputFormat styleClass="left" value="#{bundle.OrderRecordAmount}">
-                            <f:param value="#{orderBean.notPayOrders.size()}"/>
+                            <f:param value="#{orderBean.notExtractTicketOrders.size()}"/>
                         </h:outputFormat>
-                        <span class="right red-text">#{bundle.TipPayOrderWithinAHour}</span>
+                        <span class="right orange-text darken-1">#{bundle.TipAutoRefundOrder}</span>
                     </div>
                     <br/>
-                    <c:forEach var="order" items="#{orderBean.notPayOrders}">
-                        <w:notPayOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
-                                       orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
-                                       orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
-                                       orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
-                                       ticketAmount="#{order.amount}"/>
+                    <c:forEach var="order" items="#{orderBean.notExtractTicketOrders}">
+                        <w:notExtractTicketOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
+                                                 orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
+                                                 orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
+                                                 orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
+                                                 ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"
+                                                 extractCodeDialog="extractCodeDialog" updateExtractCodePanel=":#{p:component('extract-code-panel')}"/>
                     </c:forEach>
                 </c:otherwise>
             </c:choose>
@@ -59,20 +60,34 @@
                 <p:commandButton type="button" styleClass="ui-confirmdialog-yes waves-effect waves-green btn-flat right" value="#{bundle.Ok}"/>
                 <p:commandButton type="button" styleClass="ui-confirmdialog-no waves-effect waves-red btn-flat right" value="#{bundle.Cancel}"/>
             </p:confirmDialog>
-            <p:dialog styleClass="modal confirm-dialog" widgetVar="orderCallbackDialog" showHeader="false" closable="false" width="600" responsive="true">
+            <p:dialog styleClass="modal confirm-dialog" widgetVar="orderCallbackDialog" showHeader="false" closable="false" width="600" responsive="true"
+                      showEffect="fade" hideEffect="fade">
                 <div>
                     <h5 class="light-blue-text">#{bundle.Alert}</h5>
                     <p id="order-callback-msg"/>
                 </div>
                 <div class="modal-footer">
                     <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
-                                     onclick="PF('orderCallbackDialog').hide();return" update="nopay-orders-panel"
+                                     onclick="PF('orderCallbackDialog').hide();return" update="noextract-orders-panel"
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
+                </div>
+            </p:dialog>
+            <p:dialog id="extract-code-dialog" styleClass="modal confirm-dialog" widgetVar="extractCodeDialog"
+                      responsive="true" width="400" showEffect="fade" hideEffect="fade">
+                <h5 class="light-blue-text">#{bundle.ExtractCode}</h5>
+                <p:outputPanel id="extract-code-panel" style="text-align: center">
+                    <p:barcode value="#{orderBean.selectedNotExtractTicketOrder.extractCode}" type="qr" format="svg"/>
+                    <br/>
+                    <span>#{orderBean.selectedNotExtractTicketOrder.extractCode}</span>
+                </p:outputPanel>
+                <div class="modal-footer">
+                    <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}" type="button"
+                                     onclick="PF('extractCodeDialog').hide();return"/>
                 </div>
             </p:dialog>
             <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
                 <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
-                                 actionListener="#{orderBean.refreshNotPayOrders}" update="nopay-orders-panel"
+                                 actionListener="#{orderBean.refreshNotExtractTicketOrders}" update="noextract-orders-panel"
                                  oncomplete="$('.collapsible').collapsible({accordion: false});"/>
             </div>
         </h:form>

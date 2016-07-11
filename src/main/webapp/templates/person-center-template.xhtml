@@ -6,7 +6,6 @@
                 template="/templates/main-template.xhtml">
 
     <ui:define name="head">
-        <f:event type="preRenderView" listener="#{userOperationBean.loginCheck}"/>
         <h:outputStylesheet library="css" name="perfect-scrollbar.css"/>
         <h:outputScript library="js" name="perfect-scrollbar.js"/>
     </ui:define>
@@ -63,6 +62,11 @@
                                     <ul>
                                         <li class="#{itemNotPayOrderActive}">
                                             <h:link class="white-text" outcome="not-pay-orders.xhtml">#{bundle.NotPayOrders}</h:link>
+                                        </li>
+                                    </ul>
+                                    <ul>
+                                        <li class="#{itemNotDrawTicketOrderActive}">
+                                            <h:link class="white-text" outcome="not-extract-ticket-orders.xhtml">#{bundle.NotExtractTicketOrders}</h:link>
                                         </li>
                                     </ul>
                                 </div>

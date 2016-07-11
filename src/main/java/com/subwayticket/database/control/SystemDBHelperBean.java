@@ -9,12 +9,16 @@ import javax.persistence.*;
 @Stateless(name = "SubwayTicketDBHelperEJB")
 public class SystemDBHelperBean extends EntityManagerHelper {
     private EntityManager entityManager;
+
+    private static EntityManager publicEntityManager = null;
     private static EntityManagerFactory subwayTicketDBPUEMF = Persistence.createEntityManagerFactory("SubwayTicketDBPU");
 
     public static EntityManager initSubwayTicketDBPU(){
-        EntityManager entityManager = subwayTicketDBPUEMF.createEntityManager();
-        entityManager.setFlushMode(FlushModeType.COMMIT);
-        return entityManager;
+        if(publicEntityManager == null) {
+            publicEntityManager = subwayTicketDBPUEMF.createEntityManager();
+            publicEntityManager.setFlushMode(FlushModeType.COMMIT);
+        }
+        return publicEntityManager;
     }
 
     public static void closeSubwayTicketDBPU(){

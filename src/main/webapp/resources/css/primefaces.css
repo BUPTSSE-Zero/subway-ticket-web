@@ -63,6 +63,10 @@
     content: 'refresh';
 }
 
+.ui-icon-image:before{
+    content: 'image';
+}
+
 .ui-messages-error-icon, .ui-messages-info-icon{
     font-family: 'Material Icons';
     margin-top: -8px;

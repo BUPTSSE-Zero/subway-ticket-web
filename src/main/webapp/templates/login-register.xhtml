@@ -85,7 +85,7 @@
                     </div>
                     <div class="col s6" style="height: 60px; line-height: 60px">
                         <p:commandButton class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
-                                       icon="ui-icon-send" update="reset_password_message"/>
+                                       icon="ui-icon-send" update="reset_password_message" partialSubmit="true" process="reset_password_phone_number"/>
                     </div>
                 </div>
                 <p:messages id="reset_password_message" autoUpdate="false" closable="true"/>
@@ -149,7 +149,7 @@
                 </div>
                 <div style="height: 60px; line-height: 60px">
                     <p:commandButton class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
-                         icon="ui-icon-send" update="singup_message">
+                         icon="ui-icon-send" update="singup_message" partialSubmit="true" process="signup_phone_number">
                     </p:commandButton>
                 </div>
             </div>

@@ -26,6 +26,7 @@ dependencies {
             'io.jsonwebtoken:jjwt:+',
             'javax.ws.rs:javax.ws.rs-api:+',
             'org.glassfish.jersey.containers:jersey-container-servlet:2.+',
+            'net.glxn:qrgen:+',
     )
 
     providedRuntime 'javax.servlet:javax.servlet-api:4.+'
