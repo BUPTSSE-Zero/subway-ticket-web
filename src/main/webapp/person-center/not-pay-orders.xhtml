@@ -51,25 +51,25 @@
 
     <ui:define name="page-footer">
         <h:form>
-            <p:confirmDialog styleClass="modal confirm-dialog"
-                             global="true" showEffect="fade" hideEffect="fade" closable="false" responsive="true" width="600">
+            <p:confirmDialog styleClass="confirm-dialog"
+                    global="true" showEffect="fade" hideEffect="fade" closable="false" responsive="true" width="600">
                 <f:facet name="header">
                     <h5 class="light-blue-text">#{bundle.Alert}</h5>
                 </f:facet>
                 <p:commandButton type="button" styleClass="ui-confirmdialog-yes waves-effect waves-green btn-flat right" value="#{bundle.Ok}"/>
                 <p:commandButton type="button" styleClass="ui-confirmdialog-no waves-effect waves-red btn-flat right" value="#{bundle.Cancel}"/>
             </p:confirmDialog>
-            <p:dialog styleClass="modal confirm-dialog" widgetVar="orderCallbackDialog" showHeader="false" closable="false" width="600" responsive="true">
-                <div>
+            <div id="order-callback-dialog" class="modal" style="width: 600px;">
+                <div class="modal-content">
                     <h5 class="light-blue-text">#{bundle.Alert}</h5>
                     <p id="order-callback-msg"/>
                 </div>
                 <div class="modal-footer">
                     <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
-                                     onclick="PF('orderCallbackDialog').hide();return" update="nopay-orders-panel"
+                                     onclick="$('#order-callback-dialog').closeModal();return;" update="nopay-orders-panel"
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                 </div>
-            </p:dialog>
+            </div>
             <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
                 <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
                                  actionListener="#{orderBean.refreshNotPayOrders}" update="nopay-orders-panel"

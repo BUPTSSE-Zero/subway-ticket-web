@@ -6,6 +6,7 @@
                 template="/templates/main-template.xhtml">
 
     <ui:define name="head">
+        <f:event type="preRenderView" listener="#{userOperationBean.loginCheck}"/>
         <h:outputStylesheet library="css" name="perfect-scrollbar.css"/>
         <h:outputScript library="js" name="perfect-scrollbar.js"/>
     </ui:define>
@@ -70,6 +71,12 @@
                                         </li>
                                     </ul>
                                 </div>
+                            </li>
+                            <li>
+                                <a href="../buyticket.xhtml" class="collapsible-header waves-effect waves-light white-text">
+                                    <i class="material-icons teal-text">arrow_back</i>
+                                    #{bundle.BackToBuyTicket}
+                                </a>
                             </li>
                         </ul>
                     </li>

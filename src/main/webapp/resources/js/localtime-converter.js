@@ -25,7 +25,7 @@ function updateAllDate(){
             if(!('0' <= $(this).text()[i] && $(this).text()[i] <= '9'))
                 return true;
         }
-        $(this).text(new Date(parseInt($(this).text())).toLocaleString());
+        $(this).text(toDateString(parseInt($(this).text())));
     });
 }
 

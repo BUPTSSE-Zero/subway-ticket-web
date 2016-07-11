@@ -4,5 +4,7 @@
 
 function onOrderCallback(xhr, status, args){
     $('#order-callback-msg').text(args.result_description);
-    PF('orderCallbackDialog').show();
+    $('#order-callback-dialog').openModal({
+        dismissible: false,
+    });
 }

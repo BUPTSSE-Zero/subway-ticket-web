@@ -83,4 +83,8 @@
     content: 'info';
 }
 
+.ui-dialog-mask{
+    background-color: black;
+    opacity: 0.5;
+}
 

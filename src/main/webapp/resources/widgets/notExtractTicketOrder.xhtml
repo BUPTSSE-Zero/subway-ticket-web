@@ -81,7 +81,7 @@
                                                     <p:commandButton styleClass="btn waves-effect waves-light cyan left" type="submit"
                                                                      value="#{bundle.ViewExtractQRCode}" style="margin-right: 15px" icon="ui-icon-image"
                                                                      actionListener="#{orderBean.selectNotExtractTicketOrder}" update="#{cc.attrs.updateExtractCodePanel}"
-                                                                     onsuccess="PF('#{cc.attrs.extractCodeDialog}').show();return">
+                                                                     onsuccess="$('##{cc.attrs.extractCodeDialog}').openModal();return;">
                                                         <f:param name="orderId" value="#{cc.attrs.orderId}"/>
                                                     </p:commandButton>
                                                     <p:commandButton styleClass="btn waves-effect waves-light red accent-2 left" type="submit"
