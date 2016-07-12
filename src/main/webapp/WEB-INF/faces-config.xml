@@ -9,6 +9,10 @@
             <base-name>bundle.string</base-name>
             <var>bundle</var>
         </resource-bundle>
+        <locale-config>
+            <default-locale>zh_CN</default-locale>
+            <supported-locale>zh_CN</supported-locale>
+        </locale-config>
         <el-resolver>
             org.primefaces.application.exceptionhandler.PrimeExceptionHandlerELResolver
         </el-resolver>

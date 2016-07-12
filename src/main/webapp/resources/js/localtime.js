@@ -8,15 +8,23 @@ function numFormat(num) {
     return num;
 }
 
-function toDateString(timestamp){
-    var date = new Date(timestamp);
+function toDateString(date){
     var Y = date.getFullYear();
     var M = numFormat(date.getMonth() + 1);
     var D = numFormat(date.getDate());
+    return Y + '-' + M + '-' + D;
+}
+
+function toTimeString(date) {
     var h = numFormat(date.getHours());
     var m = numFormat(date.getMinutes());
     var s = numFormat(date.getSeconds());
-    return Y + '-' + M + '-' + D + ' ' + h + ':' + m + ':' + s;
+    return h + ':' + m + ':' + s;
+}
+
+function toDateTimeString(timestamp){
+    var date = new Date(timestamp);
+    return toDateString(date) + ' ' + toTimeString(date);
 }
 
 function updateAllDate(){
@@ -25,12 +33,12 @@ function updateAllDate(){
             if(!('0' <= $(this).text()[i] && $(this).text()[i] <= '9'))
                 return true;
         }
-        $(this).text(toDateString(parseInt($(this).text())));
+        $(this).text(toDateTimeString(parseInt($(this).text())));
     });
 }
 
 $().ready(function(){
     updateAllDate();
-})
+});
 
 

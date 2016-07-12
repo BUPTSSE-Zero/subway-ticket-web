@@ -11,7 +11,7 @@
 <h:head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"></meta>
     <h:outputScript library="js" name="materialize.js"/>
-    <h:outputScript library="js" name="localtime-converter.js"/>
+    <h:outputScript library="js" name="localtime.js"/>
     <title>#{bundle.AppName}</title>
     <ui:insert name="head"/>
 </h:head>
@@ -36,7 +36,7 @@
         <ui:include src="footer.xhtml"/>
     </ui:insert>
 
-    <p:ajaxStatus onstart="$('#ajax-status-dialog').openModal({dismissible: false});return;"
+    <p:ajaxStatus onstart="$('#ajax-status-dialog').openModal({dismissible: false, in_duration: 50, out_duration: 100});return;"
                   oncomplete="$('#ajax-status-dialog').closeModal();updateAllDate();return;"/>
 
     <div id="ajax-status-dialog" class="modal">

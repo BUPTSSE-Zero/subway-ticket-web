@@ -126,11 +126,6 @@ public class TicketOrderResource {
     @Produces("application/json")
     public OrderListResult getOrderListByDate(@PathParam("status")char status, @PathParam("startTimestamp")long startTimeStamp, @PathParam("endTimestamp")long endTimeStamp){
         Account user = AccountResource.authCheck(request);
-        if(startTimeStamp > endTimeStamp){
-            long temp = startTimeStamp;
-            startTimeStamp = endTimeStamp;
-            endTimeStamp = startTimeStamp;
-        }
         List<TicketOrder> ticketOrderList = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(status, user, new Date(startTimeStamp), new Date(endTimeStamp));
         if(ticketOrderList == null || ticketOrderList.isEmpty()){
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),

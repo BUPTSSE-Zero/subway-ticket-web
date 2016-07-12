@@ -14,11 +14,15 @@ import org.primefaces.context.RequestContext;
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
-import javax.faces.view.ViewScoped;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,17 +40,24 @@ public class OrderBean implements Serializable {
     private Account user;
     private List<TicketOrder> notPayOrders;
     private List<TicketOrder> notExtractTicketOrders;
+    private List<TicketOrder> historyTicketOrders;
+    private List<TicketOrder> currentTicketOrders;
     private TicketOrder selectedNotExtractTicketOrder;
+    private SimpleDateFormat sdf;
+    private Date startDate;
+    private Date endDate;
 
     @PostConstruct
     private void init(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
+        sdf = new SimpleDateFormat("yyyy-MM-dd", FacesContext.getCurrentInstance().getViewRoot().getLocale());
         user = (Account) session.getAttribute(AccountControl.SESSION_ATTR_USER);
     }
 
     public List<TicketOrder> getNotPayOrders(){
         if(notPayOrders == null)
             refreshNotPayOrders();
+        currentTicketOrders = notPayOrders;
         return notPayOrders;
     }
 
@@ -62,7 +73,6 @@ public class OrderBean implements Serializable {
         Result result = TicketOrderControl.payOrder((ServletRequest)context.getExternalContext().getRequest(),
                         systemDBHelperBean, user, new PayOrderRequest(orderId));
         sendOrderOperResult(result);
-        refreshNotPayOrders();
     }
 
     public void cancelOrder(){
@@ -71,7 +81,6 @@ public class OrderBean implements Serializable {
         Result result = TicketOrderControl.cancelOrder((ServletRequest)context.getExternalContext().getRequest(),
                 systemDBHelperBean, user, orderId);
         sendOrderOperResult(result);
-        refreshNotPayOrders();
     }
 
     public void refreshNotPayOrders(){
@@ -80,12 +89,13 @@ public class OrderBean implements Serializable {
 
     public List<TicketOrder> getNotExtractTicketOrders() {
         if(notExtractTicketOrders == null)
-            refreshNotExtractTicketOrders();;
+            refreshNotExtractTicketOrders();
+        currentTicketOrders = notExtractTicketOrders;
         return notExtractTicketOrders;
     }
 
     public void refreshNotExtractTicketOrders(){
-        notExtractTicketOrders = ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET, user);
+        notExtractTicketOrders = ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET, user);
     }
 
     public void refundOrder(){
@@ -94,17 +104,16 @@ public class OrderBean implements Serializable {
         Result result = TicketOrderControl.refundOrder((ServletRequest)context.getExternalContext().getRequest(),
                 systemDBHelperBean, user, new RefundOrderRequest(orderId));
         sendOrderOperResult(result);
-        refreshNotPayOrders();
     }
 
     public void selectNotExtractTicketOrder(){
         FacesContext context = FacesContext.getCurrentInstance();
         String orderId = context.getExternalContext().getRequestParameterMap().get("orderId");
-        if(notExtractTicketOrders == null || notExtractTicketOrders.isEmpty()){
+        if(currentTicketOrders == null || currentTicketOrders.isEmpty()){
             selectedNotExtractTicketOrder = null;
             return;
         }
-        for(TicketOrder to : notExtractTicketOrders){
+        for(TicketOrder to : currentTicketOrders){
             if(to.getTicketOrderId().equals(orderId)){
                 selectedNotExtractTicketOrder = to;
                 return;
@@ -115,5 +124,48 @@ public class OrderBean implements Serializable {
 
     public TicketOrder getSelectedNotExtractTicketOrder() {
         return selectedNotExtractTicketOrder;
+    }
+
+    private String getCurrentDate(){
+        return sdf.format(new Date());
+    }
+
+    public String getStartDate(){
+        return getCurrentDate();
+    }
+
+    public void setStartDate(String dateStr){
+        try {
+            startDate = sdf.parse(dateStr);
+        }catch (ParseException pe){
+            pe.printStackTrace();
+            startDate = null;
+        }
+    }
+
+    public String getEndDate(){
+        return getCurrentDate();
+    }
+
+    public void setEndDate(String dateStr){
+        try {
+            endDate = sdf.parse(dateStr);
+        }catch (ParseException pe){
+            pe.printStackTrace();
+            endDate = null;
+        }
+    }
+
+    public List<TicketOrder> getHistoryTicketOrders() {
+        currentTicketOrders = historyTicketOrders;
+        return historyTicketOrders;
+    }
+
+    public void refreshHistoryTicketOrders() {
+        if(startDate == null || endDate == null){
+            historyTicketOrders = null;
+            return;
+        }
+        historyTicketOrders = ticketOrderDBHelperBean.getAllOrderByDate(user, startDate, endDate);
     }
 }

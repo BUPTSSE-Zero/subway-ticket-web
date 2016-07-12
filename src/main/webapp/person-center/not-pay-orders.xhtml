@@ -15,7 +15,7 @@
         <h:outputScript library="js" name="order-callback.js"/>
         <p:outputPanel id="nopay-orders-panel" style="height: calc(100% - 70px)">
             <c:choose>
-                <c:when test="#{empty orderBean.notPayOrders or orderBean.notPayOrders.size() == 0}">
+                <c:when test="#{empty orderBean.notPayOrders}">
                     <div class="valign-wrapper" style="height: 80%">
                         <table class="valign" style="width: auto; margin: 0 auto">
                             <tr>
@@ -66,6 +66,7 @@
                 </div>
                 <div class="modal-footer">
                     <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
+                                     actionListener="#{orderBean.refreshNotPayOrders}"
                                      onclick="$('#order-callback-dialog').closeModal();return;" update="nopay-orders-panel"
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                 </div>

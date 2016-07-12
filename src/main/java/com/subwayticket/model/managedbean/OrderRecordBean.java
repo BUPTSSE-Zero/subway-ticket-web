@@ -132,7 +132,7 @@ public class OrderRecordBean implements Serializable {
     public void onDateChange() {
         switch(orderStatus){
             case TicketOrder.ORDER_STATUS_NOT_PAY:NotPayTicketOrderListByDate = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(TicketOrder.ORDER_STATUS_NOT_PAY, user, startDate, endDate);break;
-            case TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET:NotDrawTicketOrderListByDate = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET, user, startDate, endDate);break;
+            case TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET:NotDrawTicketOrderListByDate = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET, user, startDate, endDate);break;
             case TicketOrder.ORDER_STATUS_FINISHED:FinishTicketOrderListByDate = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(TicketOrder.ORDER_STATUS_FINISHED, user, startDate, endDate);break;
             case TicketOrder.ORDER_STATUS_REFUNDED:RefundTicketOrderListByDate = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(TicketOrder.ORDER_STATUS_REFUNDED, user, startDate, endDate);break;
             case HISTORY_ORDER: ticketOrderList = ticketOrderDBHelperBean.getAllOrderByDate(user, startDate, endDate);break;
@@ -151,8 +151,8 @@ public class OrderRecordBean implements Serializable {
         endDate = new Date();
         startDate = new Date();
         startDate.setDate(startDate.getDay() - 10);
-        NotDrawTicketOrderListByDate = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET, user, startDate, endDate);
-        orderStatus = TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET;
+        NotDrawTicketOrderListByDate = ticketOrderDBHelperBean.getAllOrderByStatusAndDate(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET, user, startDate, endDate);
+        orderStatus = TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET;
     }
 
     public void onFinishStatusClick(){

@@ -10,7 +10,7 @@ import java.util.Date;
 @Table(name = "TicketOrder")
 public class TicketOrder {
     public static final char ORDER_STATUS_NOT_PAY = 'A';
-    public static final char ORDER_STATUS_NOT_DRAW_TICKET = 'B';
+    public static final char ORDER_STATUS_NOT_EXTRACT_TICKET = 'B';
     public static final char ORDER_STATUS_FINISHED = 'C';
     public static final char ORDER_STATUS_REFUNDED = 'D';
 

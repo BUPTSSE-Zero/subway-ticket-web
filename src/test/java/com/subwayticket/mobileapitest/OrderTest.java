@@ -101,7 +101,7 @@ public class OrderTest {
             case TicketOrder.ORDER_STATUS_NOT_PAY:
                 System.out.println("not pay");
                 break;
-            case TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET:
+            case TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET:
                 System.out.println("not draw tickets");
                 break;
             case TicketOrder.ORDER_STATUS_FINISHED:

@@ -49,6 +49,17 @@ public class TicketOrderDBHelperBean extends EntityManagerHelper {
         endDate.setHours(23);
         endDate.setMinutes(59);
         endDate.setSeconds(59);
+        if(startDate.after(endDate)){
+            int tempYear = endDate.getYear();
+            int tempMonth = endDate.getMonth();
+            int tempDate = endDate.getDate();
+            endDate.setYear(startDate.getYear());
+            endDate.setMonth(startDate.getMonth());
+            endDate.setDate(startDate.getDate());
+            startDate.setYear(tempYear);
+            startDate.setMonth(tempMonth);
+            startDate.setDate(tempDate);
+        }
     }
 
     public List<TicketOrder> getAllOrderByDate(Account user, Date startDate, Date endDate){

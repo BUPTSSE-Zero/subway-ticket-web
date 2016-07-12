@@ -1,0 +1,159 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:w="http://xmlns.jcp.org/jsf/composite/widgets"
+                template="/templates/person-center-template.xhtml">
+
+    <ui:param name="itemOrderRecordsActive" value="#{'active'}"/>
+    <ui:param name="itemHistoryOrderActive" value="#{'active'}"/>
+    <ui:param name="personCenterContentTitle" value="#{bundle.HistoryOrders}"/>
+
+    <ui:define name="person-center-content">
+        <h:outputScript library="js" name="materialize-datepicker-i18n.js"/>
+        <h:outputScript library="js" name="order-callback.js"/>
+        <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="OrderStatus"/>
+        <div class="row" style="margin-bottom: 0">
+            <h:form class="col s12">
+                <div class="row" style="margin-bottom: 0">
+                    <div class="input-field col s4">
+                        <i class="material-icons prefix">date_range</i>
+                        <label for="start-date">#{bundle.StartDate}</label>
+                        <p:inputText id="start-date" type="date" class="datepicker" value="#{orderBean.startDate}"/>
+                    </div>
+                    <div class="input-field col s4">
+                        <label for="end-date">#{bundle.EndDate}</label>
+                        <p:inputText id="end-date" type="date" class="datepicker" value="#{orderBean.endDate}"/>
+                    </div>
+                    <div class="input-field col">
+                        <p:commandButton styleClass="btn light-blue waves-effect waves-light" icon="ui-icon-search"
+                                    value="#{bundle.SearchOrder}" actionListener="#{orderBean.refreshHistoryTicketOrders}"
+                                    update="history-orders-panel" oncomplete="$('.collapsible').collapsible({accordion: false});"/>
+                    </div>
+                </div>
+            </h:form>
+        </div>
+        <div class="card-panel amber lighten-4 z-depth-0">
+          <span class="black-text">
+              #{bundle.Tip}<br/>
+              1.#{bundle.TipPayOrderWithinAHour}<br/>
+              2.#{bundle.TipAutoRefundOrder}
+          </span>
+        </div>
+        <p:outputPanel id="history-orders-panel" style="height: calc(100% - 270px)">
+            <c:choose>
+                <c:when test="#{orderBean.historyTicketOrders eq null}"/>
+                <c:when test="#{empty orderBean.historyTicketOrders}">
+                    <div class="valign-wrapper" style="height: 60%">
+                        <table class="valign" style="width: auto; margin: 0 auto">
+                            <tr>
+                                <td>
+                                    <i class="material-icons green-text" style="font-size: 64px">info_outline</i>
+                                </td>
+                                <td>
+                                    <h5>#{bundle.TipNoOrderRecords}</h5>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <div>
+                        <h:outputFormat styleClass="left" value="#{bundle.OrderRecordAmount}">
+                            <f:param value="#{orderBean.historyTicketOrders.size()}"/>
+                        </h:outputFormat>
+                    </div>
+                    <br/>
+                    <c:forEach var="order" items="#{orderBean.historyTicketOrders}">
+                        <c:choose>
+                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_NOT_PAY}">
+                                <w:notPayOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
+                                               orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
+                                               orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
+                                               orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
+                                               ticketAmount="#{order.amount}"/>
+                            </c:when>
+                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_NOT_EXTRACT_TICKET}">
+                                <w:notExtractTicketOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
+                                                         orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
+                                                         orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
+                                                         orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
+                                                         ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"
+                                                         extractCodeDialog="extract-code-dialog" updateExtractCodePanel=":#{p:component('extract-code-panel')}"/>
+                            </c:when>
+                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_FINISHED}">
+                                <w:finishedOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
+                                               orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
+                                               orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
+                                               orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
+                                               ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"/>
+                            </c:when>
+                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_REFUNDED}">
+                                <w:refundedOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
+                                                 orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
+                                                 orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
+                                                 orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
+                                                 ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"/>
+                            </c:when>
+                        </c:choose>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
+        </p:outputPanel>
+        <script type="text/javascript">
+            var settings = $.datepicker.regional['#{facesContext.viewRoot.locale.language}-#{facesContext.viewRoot.locale.country}'];
+            if(!settings){
+                $('.datepicker').pickadate($.datepicker.regional['default']);
+            }else{
+                $('.datepicker').pickadate(settings);
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="page-footer">
+        <h:form>
+            <p:confirmDialog styleClass="confirm-dialog"
+                             global="true" showEffect="fade" hideEffect="fade" closable="false" responsive="true" width="600">
+                <f:facet name="header">
+                    <h5 class="light-blue-text">#{bundle.Alert}</h5>
+                </f:facet>
+                <p:commandButton type="button" styleClass="ui-confirmdialog-yes waves-effect waves-green btn-flat right" value="#{bundle.Ok}"/>
+                <p:commandButton type="button" styleClass="ui-confirmdialog-no waves-effect waves-red btn-flat right" value="#{bundle.Cancel}"/>
+            </p:confirmDialog>
+            <div id="order-callback-dialog" class="modal" style="width: 600px;">
+                <div class="modal-content">
+                    <h5 class="light-blue-text">#{bundle.Alert}</h5>
+                    <p id="order-callback-msg"/>
+                </div>
+                <div class="modal-footer">
+                    <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
+                                     actionListener="#{orderBean.refreshHistoryTicketOrders}"
+                                     onclick="$('#order-callback-dialog').closeModal();return;" update="history-orders-panel"
+                                     oncomplete="$('.collapsible').collapsible({accordion: false});"/>
+                </div>
+            </div>
+            <div id="extract-code-dialog" class="modal" style="width: 400px">
+                <div class="modal-content">
+                    <h5 class="light-blue-text">#{bundle.ExtractCode}</h5>
+                    <p:outputPanel id="extract-code-panel" style="text-align: center">
+                        <p:barcode value="#{orderBean.selectedNotExtractTicketOrder.extractCode}" type="qr" format="svg"/>
+                        <br/>
+                        <span>#{orderBean.selectedNotExtractTicketOrder.extractCode}</span>
+                    </p:outputPanel>
+                </div>
+                <div class="modal-footer">
+                    <a class="waves-effect waves-green btn-flat" type="button"
+                                     onclick="$('#extract-code-dialog').closeModal();return;">#{bundle.Close}</a>
+                </div>
+            </div>
+            <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
+                <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
+                                 actionListener="#{orderBean.refreshHistoryTicketOrders}" update="history-orders-panel"
+                                 oncomplete="$('.collapsible').collapsible({accordion: false});"/>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

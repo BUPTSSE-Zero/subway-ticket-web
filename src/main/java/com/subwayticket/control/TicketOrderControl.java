@@ -18,7 +18,6 @@ import com.subwayticket.util.SecurityUtil;
 
 import javax.ejb.EJBException;
 import javax.servlet.ServletRequest;
-import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -99,7 +98,7 @@ public class TicketOrderControl {
         if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_PAY)
             return new Result(PublicResultCode.ORDER_PAY_NOT_PAYABLE, BundleUtil.getString(req, "TipOrderNotPayable"));
         ticketOrder.setExtractAmount(0);
-        ticketOrder.setStatus(TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET);
+        ticketOrder.setStatus(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET);
         ticketOrder.setExtractCode(SecurityUtil.getExtractCode(user.getPhoneNumber()));
         dbHelperBean.merge(ticketOrder);
         return new PayOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderPaySuccess"), ticketOrder.getExtractCode());
@@ -111,7 +110,7 @@ public class TicketOrderControl {
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
         if(!ticketOrder.getUser().getPhoneNumber().equals(user.getPhoneNumber()))
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
-        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getExtractAmount() >= ticketOrder.getAmount())
+        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET || ticketOrder.getExtractAmount() >= ticketOrder.getAmount())
             return new Result(PublicResultCode.ORDER_REFUND_NOT_REFUNDABLE, BundleUtil.getString(req, "TipOrderNotRefundable"));
         ticketOrder.setStatus(TicketOrder.ORDER_STATUS_REFUNDED);
         ticketOrder.setExtractCode(null);
@@ -126,7 +125,7 @@ public class TicketOrderControl {
         TicketOrder ticketOrder = dbHelperBean.getOrderByExtractCode(extractTicketRequest.getExtractCode());
         if(ticketOrder == null)
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
-        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_DRAW_TICKET || ticketOrder.getAmount() == ticketOrder.getExtractAmount())
+        if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET || ticketOrder.getAmount() == ticketOrder.getExtractAmount())
             return new Result(PublicResultCode.TICKET_EXTRACT_NOT_EXTRACTABLE, BundleUtil.getString(req, "TipExtractTicketNotExtractable"));
         if(extractTicketRequest.getExtractAmount() > ticketOrder.getAmount() - ticketOrder.getExtractAmount())
             return new Result(PublicResultCode.TICKET_EXTRACT_AMOUNT_EXCESS, BundleUtil.getString(req, "TipExtractTicketAmountExcess"));
