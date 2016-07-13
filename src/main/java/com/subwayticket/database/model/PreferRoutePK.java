@@ -34,11 +34,11 @@ public class PreferRoutePK implements Serializable {
 
     @Column(name = "EndStartionID", nullable = false)
     @Id
-    public int getEndStartionId() {
+    public int getEndStationId() {
         return endStartionId;
     }
 
-    public void setEndStartionId(int endStartionId) {
+    public void setEndStationId(int endStartionId) {
         this.endStartionId = endStartionId;
     }
 

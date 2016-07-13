@@ -12,6 +12,13 @@ public class PreferSubwayStation {
     private String userId;
     private int stationId;
 
+    public PreferSubwayStation(){}
+
+    public PreferSubwayStation(String userId, int stationId){
+        this.userId = userId;
+        this.stationId = stationId;
+    }
+
     @Id
     @Column(name = "UserID", nullable = false, length = 20)
     public String getUserId() {

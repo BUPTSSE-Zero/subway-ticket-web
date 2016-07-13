@@ -12,6 +12,13 @@ public class PreferCity {
     private String userId;
     private int cityId;
 
+    public PreferCity(){}
+
+    public PreferCity(String userId, int cityId){
+        this.userId = userId;
+        this.cityId = cityId;
+    }
+
     @Id
     @Column(name = "UserID", nullable = false, length = 20)
     public String getUserId() {

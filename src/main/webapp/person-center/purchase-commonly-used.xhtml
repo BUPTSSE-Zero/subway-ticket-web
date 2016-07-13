@@ -1,0 +1,168 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                template="/templates/person-center-template.xhtml">
+
+    <ui:param name="itemPreferSettingsActive" value="#{'active'}"/>
+    <ui:param name="personCenterContentTitle" value="#{bundle.PurchaseCommonlyUsedSettings}"/>
+
+    <ui:define name="person-center-content">
+        <p:panelGrid columns="2" layout="grid" style="height:350px; border: hidden">
+            <p:outputPanel>
+                <h:form id="preferCityForm">
+                    <c:choose>
+                        <c:when test="#{preferenceBean.displayPreferCities}">
+                            <div align="center">
+                                <p:dataList style="height: 300px" value="#{preferenceBean.preferCities}" var="prefercity" type="unordered">
+                                    <f:facet name="header">
+                                        #{bundle.PreferCity}
+                                    </f:facet>
+                                    #{prefercity.city.cityName}
+                                </p:dataList>
+                                <br/>
+                                <p:commandButton value="#{bundle.ChangeSettings}" actionListener="#{preferenceBean.onChangePreferCitiesClicked}" update="preferCityForm" />
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div align="center">
+                                <p:pickList id="preferCityPickList" value="#{preferenceBean.cities}" var="city"
+                                            itemLabel="#{city.cityName}" itemValue="#{city}" converter="cityConverter"
+                                            showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains">
+                                    <f:facet name="sourceCaption">#{bundle.City}</f:facet>
+                                    <f:facet name="targetCaption">#{bundle.PreferCity}</f:facet>
+                                    <p:ajax event="transfer" listener="#{preferenceBean.onPreferCitiesTransfer}" update="preferCityForm"/>
+                                </p:pickList>
+                                <br/>
+                                <p:commandButton value="#{bundle.Confirm}" actionListener="#{preferenceBean.onConfirmPreferCitiesChange}" update="preferCityForm" />
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </h:form>
+            </p:outputPanel>
+            <p:outputPanel>
+                <h:form id="preferSubwayStationForm">
+                    <c:choose>
+                        <c:when test="#{preferenceBean.displayPreferSubwayStations}">
+                            <div align="center">
+                                <p:dataList style="height: 300px" value="#{preferenceBean.preferSubwayStations}" var="prefersubwaystation" type="unordered">
+                                    <f:facet name="header">
+                                        #{bundle.PreferSubwayStation}
+                                    </f:facet>
+                                    #{prefersubwaystation.subwayStation.subwayLine.city.cityName}-#{prefersubwaystation.subwayStation.subwayLine.subwayLineName}-#{prefersubwaystation.subwayStation.subwayStationName}
+                                </p:dataList>
+                                <br/>
+                                <p:commandButton value="#{bundle.ChangeSettings}" actionListener="#{preferenceBean.onChangePreferSubwayStationsClicked}" update="preferSubwayStationForm" />
+                            </div>
+                        </c:when>
+                        <c:otherwise>
+                            <div align="center">
+                                <p:pickList id="preferSubwayStationPickList" value="#{preferenceBean.subwayStations}" var="subwaystation"
+                                            itemLabel="#{subwaystation.subwayLine.city.cityName}-#{subwaystation.subwayLine.subwayLineName}-#{subwaystation.subwayStationName}" itemValue="#{subwaystation}" converter="subwayStationConverter"
+                                            showSourceFilter="true" showTargetFilter="true" filterMatchMode="contains">
+                                    <f:facet name="sourceCaption">#{bundle.SubwayStation}</f:facet>
+                                    <f:facet name="targetCaption">#{bundle.PreferSubwayStation}</f:facet>
+                                    <p:ajax event="transfer" listener="#{preferenceBean.onPreferSubwayStationsTransfer}" update="preferSubwayStationForm"/>
+                                </p:pickList>
+                                <br/>
+                                <p:commandButton value="#{bundle.Confirm}" actionListener="#{preferenceBean.onConfirmPreferSubwayStationsChange}" update="preferSubwayStationForm" />
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
+                </h:form>
+            </p:outputPanel>
+        </p:panelGrid>
+        <br/>
+        <h:form id="preferRouteForm">
+            <c:choose>
+                <c:when test="#{preferenceBean.displayPreferRoutes}">
+                    <div align="center">
+                        <p:dataList value="#{preferenceBean.preferRoutes}" var="preferroute" type="unordered">
+                            <f:facet name="header">
+                                #{bundle.PreferRoute}
+                            </f:facet>
+                            #{preferroute.startStation.subwayStationName}-------#{preferroute.endStation.subwayStationName}
+                        </p:dataList>
+                        <br/>
+                        <p:commandButton value="#{bundle.ChangeSettings}" actionListener="#{preferenceBean.onChangePreferRoutesClicked}" update="preferRouteForm" />
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <p:panelGrid columns="2" layout="grid" style="height: 400px">
+                        <p:outputPanel>
+                            <p:outputLabel for="city" styleClass="selectlabel">#{bundle.City} :</p:outputLabel>
+                            <p:selectOneMenu id="city" styleClass="selectform" value="#{preferenceBean.cityId}">
+                                <f:selectItem itemLabel="select one" itemValue="0"/>
+                                <c:forEach items="#{preferenceBean.cityList}" var="cname">
+                                    <f:selectItem itemLabel="#{cname.cityName}" itemValue="#{cname.cityId}" />
+                                </c:forEach>
+                                <p:ajax event="change" listener="#{preferenceBean.onCityIdChange}" update="preferRouteForm" />
+                            </p:selectOneMenu>
+                            <br/>
+                            <p:outputLabel for="startnumber" styleClass="selectlabel">#{bundle.StartLineNumber} :</p:outputLabel>
+                            <p:selectOneMenu id="startnumber" styleClass="selectform" value="#{preferenceBean.startSubwayLineId}">
+                                <f:selectItem itemLabel="select one" itemValue="0" />
+                                <c:forEach items="#{preferenceBean.subwayLineList}" var="slname">
+                                    <f:selectItem itemLabel="#{slname.subwayLineName}" itemValue="#{slname.subwayLineId}" />
+                                </c:forEach>
+                                <p:ajax event="change" listener="#{preferenceBean.onStartSubwayLineIdChange}" update="preferRouteForm" />
+                            </p:selectOneMenu>
+                            <br/>
+                            <p:outputLabel for="startstation" styleClass="selectlabel">#{bundle.StartSubwayStation} :</p:outputLabel>
+                            <p:selectOneMenu id="startstation" styleClass="selectform" value="#{preferenceBean.startSubwayStationId}">
+                                <f:selectItem itemLabel="select one" itemValue="0" />
+                                <c:forEach items="#{preferenceBean.startSubwayStationList}" var="sname">
+                                    <f:selectItem itemLabel="#{sname.subwayStationName}" itemValue="#{sname.subwayStationId}" itemDisabled="#{!sname.available}"/>
+                                </c:forEach>
+                                <p:ajax event="change" listener="#{preferenceBean.onSubwayStationIdChange}" update="preferRouteForm" />
+                            </p:selectOneMenu>
+                            <br/>
+                            <p:outputLabel for="endnumber" styleClass="selectlabel">#{bundle.EndLineNumber} :</p:outputLabel>
+                            <p:selectOneMenu id="endnumber" styleClass="selectform" value="#{preferenceBean.endSubwayLineId}">
+                                <f:selectItem itemLabel="select one" itemValue="0" />
+                                <c:forEach items="#{preferenceBean.subwayLineList}" var="elname">
+                                    <f:selectItem itemLabel="#{elname.subwayLineName}" itemValue="#{elname.subwayLineId}" />
+                                </c:forEach>
+                                <p:ajax event="change" listener="#{preferenceBean.onEndSubwayLineIdChange}" update="preferRouteForm" />
+                            </p:selectOneMenu>
+                            <br/>
+                            <p:outputLabel for="endstation" styleClass="selectlabel">#{bundle.EndSubwayStation} :</p:outputLabel>
+                            <p:selectOneMenu id="endstation" styleClass="selectform" value="#{preferenceBean.endSubwayStationId}">
+                                <f:selectItem itemLabel="select one" itemValue="0" />
+                                <c:forEach items="#{preferenceBean.endSubwayStationList}" var="ename">
+                                    <f:selectItem itemLabel="#{ename.subwayStationName}" itemValue="#{ename.subwayStationId}" itemDisabled="#{!ename.available}"/>
+                                </c:forEach>
+                                <p:ajax event="change"  listener="#{preferenceBean.onSubwayStationIdChange}" update="preferRouteForm" />
+                            </p:selectOneMenu>
+                            <br />
+                            <div align="center">
+                                <p:commandButton type="submit" styleClass="btn waves-effect waves-light" value="#{bundle.Add}" disabled="#{!preferenceBean.canSubmit}"
+                                                 actionListener="#{preferenceBean.onAddClicked}" update="preferRouteForm"/>
+                            </div>
+                        </p:outputPanel>
+                        <p:outputPanel>
+                            <div align="center">
+                                <p:orderList style="height: 335px" value="#{preferenceBean.preferRoutes}" var="preferroute" controlsLocation="none"
+                                             itemLabel="#{preferroute.startStation.subwayStationName}------#{preferroute.endStation.subwayStationName}" itemValue="#{preferroute}" converter="preferRouteConverter">
+                                    <p:ajax event="select" listener="#{preferenceBean.onSelect}"/>
+                                    <f:facet name="caption">#{bundle.PreferRoute}</f:facet>
+                                </p:orderList>
+                            </div>
+                            <div align="center">
+                                <p:commandButton type="submit" styleClass="btn waves-effect waves-light" value="#{bundle.Delete}"
+                                                 actionListener="#{preferenceBean.onDeleteClicked}" update="preferRouteForm"/>
+                            </div>
+                        </p:outputPanel>
+                    </p:panelGrid>
+                    <br/>
+                    <div align="center">
+                        <p:commandButton value="#{bundle.Confirm}" actionListener="#{preferenceBean.onConfirmPreferRoutesChange}" update="preferRouteForm" />
+                    </div>
+                </c:otherwise>
+            </c:choose>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

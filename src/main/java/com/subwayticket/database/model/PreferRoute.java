@@ -11,7 +11,21 @@ import javax.persistence.*;
 public class PreferRoute {
     private String userId;
     private int startStationId;
-    private int endStartionId;
+    private int endStationId;
+
+    public PreferRoute(){}
+
+    public PreferRoute(String userId, int startStationId, int endStationId){
+        this.userId = userId;
+        this.startStationId = startStationId;
+        this.endStationId = endStationId;
+    }
+
+    public PreferRoute(PreferRoute preferRoute){
+        this.userId = preferRoute.getUserId();
+        this.startStationId = preferRoute.getStartStationId();
+        this.endStationId = preferRoute.getEndStationId();
+    }
 
     @Id
     @Column(name = "UserID", nullable = false, length = 20)
@@ -35,12 +49,12 @@ public class PreferRoute {
 
     @Id
     @Column(name = "EndStationID", nullable = false)
-    public int getEndStartionId() {
-        return endStartionId;
+    public int getEndStationId() {
+        return endStationId;
     }
 
-    public void setEndStartionId(int endStartionId) {
-        this.endStartionId = endStartionId;
+    public void setEndStationId(int endStationId) {
+        this.endStationId = endStationId;
     }
 
     @Override
@@ -51,7 +65,7 @@ public class PreferRoute {
         PreferRoute that = (PreferRoute) o;
 
         if (startStationId != that.startStationId) return false;
-        if (endStartionId != that.endStartionId) return false;
+        if (endStationId != that.endStationId) return false;
         if (userId != null ? !userId.equals(that.userId) : that.userId != null) return false;
 
         return true;
@@ -61,7 +75,7 @@ public class PreferRoute {
     public int hashCode() {
         int result = userId != null ? userId.hashCode() : 0;
         result = 31 * result + startStationId;
-        result = 31 * result + endStartionId;
+        result = 31 * result + endStationId;
         return result;
     }
 
