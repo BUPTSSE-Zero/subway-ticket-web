@@ -10,11 +10,24 @@
 
 ① 在Gradle构建脚本中加入maven repository的地址
 ```
-repositories {
-	maven{ 
-		...
-		url 'http://101.200.144.204:16082/nexus/content/repositories/releases'
-	}
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url 'http://101.200.144.204:16082/nexus/content/repositories/releases'
+        }
+    }
+}
+```
+
+```
+allprojects {
+    repositories {
+        jcenter()
+        maven {
+            url 'http://101.200.144.204:16082/nexus/content/repositories/releases'
+        }
+    }
 }
 ```
 
@@ -55,7 +68,7 @@ JSON中时间格式统一为`yyyy-MM-dd HH:mm:ss`，时区为`Asia/Shanghai`。
 | 401 | 401 | Token无效或已过期 |
 | 500 | 500 | 服务器内部错误 |
 
-对于需要认证后才能使用的API会以** * **来标识，要使用这些API，需要在HTTP Header中加入如下认证字段：
+对于需要认证后才能使用的API会以 <b>*</b> 来标识，要使用这些API，需要在HTTP Header中加入如下认证字段：
 
 ```
 AuthToken：${TOKEN}
