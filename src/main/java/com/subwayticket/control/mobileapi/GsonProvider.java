@@ -39,6 +39,7 @@ public class GsonProvider implements MessageBodyReader<Object>, MessageBodyWrite
         Gson gson = GsonUtil.getGson();
         Reader inputReader = new InputStreamReader(entityStream, DEFAULT_CHARSET);
         Object obj = gson.fromJson(inputReader, type);
+        logger.info("JSON Output:" + gson.toJson(obj));
         for(Field f : obj.getClass().getDeclaredFields()){
             f.setAccessible(true);
             try{
@@ -69,7 +70,7 @@ public class GsonProvider implements MessageBodyReader<Object>, MessageBodyWrite
         OutputStreamWriter writer = new OutputStreamWriter(entityStream, DEFAULT_CHARSET);
         Gson gson = GsonUtil.getGson();
         String jsonStr = gson.toJson(o);
-        logger.info("JSON Output:" + jsonStr);
+        logger.info("JSON Input:" + jsonStr);
         writer.write(jsonStr);
         writer.close();
     }

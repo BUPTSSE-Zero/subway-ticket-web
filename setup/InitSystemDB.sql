@@ -80,32 +80,33 @@ CREATE TABLE SubwayStation(
   CONSTRAINT SubwayStationSubwayLineIDFK FOREIGN KEY (SubwayLineID) REFERENCES SubwayLine(SubwayLineID)
       ON UPDATE CASCADE ON DELETE CASCADE,
   SubwayStationName VARCHAR(30) NOT NULL,
+  SubwayStationEnglishName VARCHAR(50),
   Available BOOLEAN NOT NULL DEFAULT TRUE,
   StationMessageID INT,
   CONSTRAINT SubwayStationMessageIDFK FOREIGN KEY (StationMessageID) REFERENCES StationMessage(StationMessageID)
       ON UPDATE CASCADE ON DELETE CASCADE
 );
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, Available, StationMessageID)
-      VALUES (151, 15, '天通苑北', FALSE, 1);
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, SubwayStationEnglishName, Available, StationMessageID)
+      VALUES (151, 15, '天通苑北', 'TianTongYuanBei', FALSE, 1);
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
-      VALUES (152, 15, '灯市口');
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, SubwayStationEnglishName)
+      VALUES (152, 15, '灯市口', 'DengShiKou');
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
-      VALUES (1131, 113, '五道口');
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, SubwayStationEnglishName)
+      VALUES (1131, 113, '五道口', 'WuDaoKou');
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
-      VALUES (121, 12, '安定门');
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, SubwayStationEnglishName)
+      VALUES (121, 12, '安定门', 'AnDingMen');
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
-      VALUES (111, 11, '五棵松');
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, SubwayStationEnglishName)
+      VALUES (111, 11, '五棵松', 'WuKeSong');
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
-      VALUES (1101, 110, '安贞门');
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, SubwayStationEnglishName)
+      VALUES (1101, 110, '安贞门', 'AnZhenMen');
 
-INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName)
-      VALUES (181, 18, '什刹海');
+INSERT INTO SubwayStation(SubwayStationID, SubwayLineID, SubwayStationName, SubwayStationEnglishName)
+      VALUES (181, 18, '什刹海', 'ShiChaHai');
 
 CREATE TABLE TicketPrice(
   SubwayStationAID INT NOT NULL,

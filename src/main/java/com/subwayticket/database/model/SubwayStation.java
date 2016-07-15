@@ -12,6 +12,8 @@ import java.util.List;
 public class SubwayStation {
     private int subwayStationId;
     private String subwayStationName;
+    private String subwayStationEnglishName;
+    private String subwayStationAbbrName;
     private boolean available;
     private SubwayLine subwayLine;
     private transient List<TicketPrice> ticketAList;
@@ -41,6 +43,28 @@ public class SubwayStation {
 
     public void setSubwayStationName(String subwayStationName) {
         this.subwayStationName = subwayStationName;
+    }
+
+    @Basic
+    @Column(name = "SubwayStationEnglishName", nullable = false, length = 50)
+    public String getSubwayStationEnglishName() {
+        return subwayStationEnglishName;
+    }
+
+    public void setSubwayStationEnglishName(String subwayStationEnglishName) {
+        this.subwayStationEnglishName = subwayStationEnglishName;
+    }
+
+    @Transient
+    public String getSubwayStationAbbrName() {
+        if(subwayStationAbbrName == null){
+            subwayStationAbbrName = "";
+            for(char c : subwayStationEnglishName.toCharArray()){
+                if('A' <= c && c <= 'Z')
+                    subwayStationAbbrName += (char)(c - 'A' + 'a');
+            }
+        }
+        return subwayStationAbbrName;
     }
 
     @Basic
@@ -113,5 +137,10 @@ public class SubwayStation {
 
     public void setStationMessage(StationMessage stationMessage) {
         this.stationMessage = stationMessage;
+    }
+
+    @Transient
+    public String getDisplayName(){
+        return subwayLine.getSubwayLineName() + '-' + subwayStationName;
     }
 }

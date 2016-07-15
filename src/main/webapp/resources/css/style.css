@@ -228,6 +228,9 @@ body{
 	padding: 10px 0;
 }
 
+.station-msg-header,
+.station-msg-header i,
+.station-msg-header span,
 .order-record-header,
 .order-record-header i,
 .order-record-header span{
@@ -235,6 +238,8 @@ body{
 	line-height: 40px;
 }
 
+.station-msg-header i,
+.station-msg-header span,
 .order-record-header i,
 .order-record-header span{
 	margin-right: 10px;
@@ -254,4 +259,25 @@ body{
 .confirm-dialog .ui-state-focus,
 .modal .ui-state-focus{
 	background-color: transparent;
+}
+
+.ui-autocomplete label{
+	left: 0;
+}
+
+.select-item-disable{
+	color: rgba(0,0,0,0.3);
+}
+
+.select-item-disable:hover{
+	background-color: transparent;
+}
+
+.station-autocomplete .ui-icon-triangle-1-s:before{
+	color: #ff8f00;
+	content: 'star_rate';
+}
+
+.prefer-button .ui-icon{
+	color: #ff8f00;
 }

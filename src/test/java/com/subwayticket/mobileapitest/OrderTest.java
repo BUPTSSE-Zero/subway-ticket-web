@@ -91,8 +91,12 @@ public class OrderTest {
             return;
         System.out.println("--------Ticket Order Info--------");
         System.out.println("Order ID:" + ticketOrder.getTicketOrderId());
-        System.out.println("Start Station:" + ticketOrder.getStartStation().getSubwayStationName());
-        System.out.println("End Station:" + ticketOrder.getEndStation().getSubwayStationName());
+        System.out.println("Start Station:" + ticketOrder.getStartStation().getSubwayLine().getCity().getCityName() + ' ' +
+                ticketOrder.getStartStation().getSubwayLine().getSubwayLineName() + '-' +
+                ticketOrder.getStartStation().getSubwayStationName());
+        System.out.println("End Station:" + ticketOrder.getEndStation().getSubwayLine().getCity().getCityName() + ' ' +
+                ticketOrder.getEndStation().getSubwayLine().getSubwayLineName() + '-' +
+                ticketOrder.getEndStation().getSubwayStationName());
         System.out.println("Order Time:" + ticketOrder.getTicketOrderTime().toString());
         System.out.println("Amount:" + ticketOrder.getAmount());
         System.out.println("Draw Amount:" + ticketOrder.getExtractAmount());

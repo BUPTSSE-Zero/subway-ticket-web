@@ -23,7 +23,7 @@ function toTimeString(date) {
 }
 
 function toDateTimeString(timestamp){
-    var date = new Date(timestamp);
+    var date = new Date(parseInt(timestamp));
     return toDateString(date) + ' ' + toTimeString(date);
 }
 
@@ -33,7 +33,7 @@ function updateAllDate(){
             if(!('0' <= $(this).text()[i] && $(this).text()[i] <= '9'))
                 return true;
         }
-        $(this).text(toDateTimeString(parseInt($(this).text())));
+        $(this).text(toDateTimeString($(this).text()));
     });
 }
 

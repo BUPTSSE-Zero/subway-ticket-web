@@ -48,7 +48,7 @@ public class OrderBean implements Serializable {
     private Date endDate;
 
     @PostConstruct
-    private void init(){
+    public void init(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         sdf = new SimpleDateFormat("yyyy-MM-dd", FacesContext.getCurrentInstance().getViewRoot().getLocale());
         user = (Account) session.getAttribute(AccountControl.SESSION_ATTR_USER);
