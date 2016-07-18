@@ -2,13 +2,19 @@ package com.subwayticket.model.managedbean;
 
 import com.subwayticket.control.AccountControl;
 import com.subwayticket.control.TicketOrderControl;
+import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.control.TicketOrderDBHelperBean;
 import com.subwayticket.database.model.Account;
+import com.subwayticket.database.model.SubwayStation;
 import com.subwayticket.database.model.TicketOrder;
+import com.subwayticket.database.model.TicketPrice;
+import com.subwayticket.model.PublicResultCode;
 import com.subwayticket.model.request.PayOrderRequest;
 import com.subwayticket.model.request.RefundOrderRequest;
+import com.subwayticket.model.request.SubmitOrderRequest;
 import com.subwayticket.model.result.Result;
+import com.subwayticket.model.result.SubmitOrderResult;
 import org.primefaces.context.RequestContext;
 
 import javax.annotation.PostConstruct;
@@ -36,6 +42,8 @@ public class OrderBean implements Serializable {
     private TicketOrderDBHelperBean ticketOrderDBHelperBean;
     @EJB
     private SystemDBHelperBean systemDBHelperBean;
+    @EJB
+    private SubwayInfoDBHelperBean subwayInfoDBHelperBean;
 
     private Account user;
     private List<TicketOrder> notPayOrders;
@@ -47,11 +55,23 @@ public class OrderBean implements Serializable {
     private Date startDate;
     private Date endDate;
 
+    private TicketOrder submitedOrder;
+
     @PostConstruct
     public void init(){
-        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         sdf = new SimpleDateFormat("yyyy-MM-dd", FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        findUser();
+    }
+
+    public void findUser(){
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         user = (Account) session.getAttribute(AccountControl.SESSION_ATTR_USER);
+        if(user != null)
+            user = (Account)systemDBHelperBean.find(Account.class, user.getPhoneNumber());
+    }
+
+    public void refreshUser(){
+        systemDBHelperBean.refresh(user);
     }
 
     public List<TicketOrder> getNotPayOrders(){
@@ -67,19 +87,17 @@ public class OrderBean implements Serializable {
         requestContext.addCallbackParam("result_description", result.getResultDescription());
     }
 
-    public void payOrder(){
+    public void payOrder(TicketOrder order){
         FacesContext context = FacesContext.getCurrentInstance();
-        String orderId = context.getExternalContext().getRequestParameterMap().get("orderId");
         Result result = TicketOrderControl.payOrder((ServletRequest)context.getExternalContext().getRequest(),
-                        systemDBHelperBean, user, new PayOrderRequest(orderId));
+                        systemDBHelperBean, user, new PayOrderRequest(order.getTicketOrderId()));
         sendOrderOperResult(result);
     }
 
-    public void cancelOrder(){
+    public void cancelOrder(TicketOrder order){
         FacesContext context = FacesContext.getCurrentInstance();
-        String orderId = context.getExternalContext().getRequestParameterMap().get("orderId");
         Result result = TicketOrderControl.cancelOrder((ServletRequest)context.getExternalContext().getRequest(),
-                systemDBHelperBean, user, orderId);
+                systemDBHelperBean, user, order.getTicketOrderId());
         sendOrderOperResult(result);
     }
 
@@ -98,28 +116,15 @@ public class OrderBean implements Serializable {
         notExtractTicketOrders = ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET, user);
     }
 
-    public void refundOrder(){
+    public void refundOrder(TicketOrder order){
         FacesContext context = FacesContext.getCurrentInstance();
-        String orderId = context.getExternalContext().getRequestParameterMap().get("orderId");
         Result result = TicketOrderControl.refundOrder((ServletRequest)context.getExternalContext().getRequest(),
-                systemDBHelperBean, user, new RefundOrderRequest(orderId));
+                systemDBHelperBean, user, new RefundOrderRequest(order.getTicketOrderId()));
         sendOrderOperResult(result);
     }
 
-    public void selectNotExtractTicketOrder(){
-        FacesContext context = FacesContext.getCurrentInstance();
-        String orderId = context.getExternalContext().getRequestParameterMap().get("orderId");
-        if(currentTicketOrders == null || currentTicketOrders.isEmpty()){
-            selectedNotExtractTicketOrder = null;
-            return;
-        }
-        for(TicketOrder to : currentTicketOrders){
-            if(to.getTicketOrderId().equals(orderId)){
-                selectedNotExtractTicketOrder = to;
-                return;
-            }
-        }
-        selectedNotExtractTicketOrder = null;
+    public void selectNotExtractTicketOrder(TicketOrder to){
+        selectedNotExtractTicketOrder = to;
     }
 
     public TicketOrder getSelectedNotExtractTicketOrder() {
@@ -167,5 +172,21 @@ public class OrderBean implements Serializable {
             return;
         }
         historyTicketOrders = ticketOrderDBHelperBean.getAllOrderByDate(user, startDate, endDate);
+    }
+
+    public TicketOrder getSubmitedOrder() {
+        return submitedOrder;
+    }
+
+    public void submitOrder(SubwayStation startStation, SubwayStation endStation, TicketPrice tp){
+        submitedOrder = null;
+        FacesContext context = FacesContext.getCurrentInstance();
+        int buyTicketAmount = Integer.valueOf(context.getExternalContext().getRequestParameterMap().get("ticketAmount"));
+        Result result = TicketOrderControl.submitOrder((ServletRequest)context.getExternalContext().getRequest(),
+                subwayInfoDBHelperBean, user, new SubmitOrderRequest(startStation.getSubwayStationId(), endStation.getSubwayStationId(), buyTicketAmount));
+        sendOrderOperResult(result);
+        if(result.getResultCode() == PublicResultCode.SUCCESS){
+            submitedOrder = ((SubmitOrderResult)result).getTicketOrder();
+        }
     }
 }

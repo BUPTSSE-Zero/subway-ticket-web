@@ -8,9 +8,9 @@ function initStationMessage(className){
             $(this).addClass('select-item-disable');
         }
         if($(this).attr('station-msg')){
-            $(this).append('<i class="material-icons right red-text" ' +
+            $(this).append('<a class="btn-floating btn-flat transparent waves-effect" ' +
                 'onclick="showStationMsg(\'' + $(this).attr('station-msg') + '\', ' + $(this).attr('station-msg-time') + ',\'' +
-                $(this).attr('station-msg-publisher') + '\')">info</i>');
+                $(this).attr('station-msg-publisher') + '\')"><i class="material-icons red-text">info</i></a>');
         }
     })
 }

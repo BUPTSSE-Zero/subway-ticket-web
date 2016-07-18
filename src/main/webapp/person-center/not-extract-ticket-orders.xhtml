@@ -38,11 +38,7 @@
                     </div>
                     <br/>
                     <c:forEach var="order" items="#{orderBean.notExtractTicketOrders}">
-                        <w:notExtractTicketOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
-                                                 orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
-                                                 orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
-                                                 orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
-                                                 ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"
+                        <w:notExtractTicketOrder ticketOrder="#{order}"
                                                  extractCodeDialog="extract-code-dialog" updateExtractCodePanel=":#{p:component('extract-code-panel')}"/>
                     </c:forEach>
                 </c:otherwise>

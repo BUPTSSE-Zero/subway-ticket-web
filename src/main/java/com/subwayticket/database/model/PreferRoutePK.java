@@ -12,6 +12,15 @@ public class PreferRoutePK implements Serializable {
     private int startStationId;
     private int endStartionId;
 
+    public PreferRoutePK() {}
+
+    public PreferRoutePK(String userId, int startStationId, int endStartionId) {
+        this.userId = userId;
+        this.startStationId = startStationId;
+        this.endStartionId = endStartionId;
+    }
+
+
     @Column(name = "UserID", nullable = false, length = 20)
     @Id
     public String getUserId() {

@@ -8,18 +8,9 @@
       xmlns:p="http://primefaces.org/ui">
 
     <cc:interface>
-        <cc:attribute name="orderTime"/>
-        <cc:attribute name="orderCity"/>
-        <cc:attribute name="orderStartLine"/>
-        <cc:attribute name="orderStartStation"/>
-        <cc:attribute name="orderEndLine"/>
-        <cc:attribute name="orderEndStation"/>
-        <cc:attribute name="orderId"/>
-        <cc:attribute name="ticketPrice"/>
-        <cc:attribute name="ticketAmount"/>
-        <cc:attribute name="extractAmount"/>
-        <cc:attribute name="extractCodeDialog"/>
-        <cc:attribute name="updateExtractCodePanel"/>
+        <cc:attribute name="ticketOrder" type="com.subwayticket.database.model.TicketOrder" required="true"/>
+        <cc:attribute name="extractCodeDialog" required="true"/>
+        <cc:attribute name="updateExtractCodePanel" required="true"/>
     </cc:interface>
 
     <cc:implementation>
@@ -30,12 +21,13 @@
                     <i class="material-icons left">info</i>
                     <span class="left">#{bundle.NotExtractTicket}</span>
                     <i class="material-icons left">schedule</i>
-                    <span class="left local-time">#{cc.attrs.orderTime}</span>
+                    <span class="left local-time">#{cc.attrs.ticketOrder.ticketOrderTime.time}</span>
                     <i class="material-icons left">location_city</i>
-                    <span class="left">#{cc.attrs.orderCity}</span>
+                    <span class="left">#{cc.attrs.ticketOrder.startStation.subwayLine.city.cityName}</span>
                     <i class="material-icons left">subway</i>
-                    <span class="left">#{cc.attrs.orderStartLine}-#{cc.attrs.orderStartStation}</span>
-                    <i class="material-icons left">trending_flat</i><span class="left">#{cc.attrs.orderEndLine}-#{cc.attrs.orderEndStation}</span>
+                    <span class="left">#{cc.attrs.ticketOrder.startStation.displayName}</span>
+                    <i class="material-icons left">trending_flat</i>
+                    <span class="left">#{cc.attrs.ticketOrder.endStation.displayName}</span>
                     <i class="material-icons right">arrow_drop_down_circle</i>
                 </div>
                 <div class="collapsible-body order-record-body">
@@ -55,21 +47,21 @@
 
                                 <tbody>
                                     <tr>
-                                        <td>#{cc.attrs.orderId}</td>
+                                        <td>#{cc.attrs.ticketOrder.ticketOrderId}</td>
                                         <td>
-                                            <h:outputText value="#{cc.attrs.ticketPrice}">
+                                            <h:outputText value="#{cc.attrs.ticketOrder.ticketPrice}">
                                                 <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
                                             </h:outputText>
                                         </td>
-                                        <td>#{cc.attrs.ticketAmount}</td>
+                                        <td>#{cc.attrs.ticketOrder.amount}</td>
                                         <td>
-                                            <h:outputText value="#{cc.attrs.ticketPrice * cc.attrs.ticketAmount}">
+                                            <h:outputText value="#{cc.attrs.ticketOrder.ticketPrice * cc.attrs.ticketOrder.amount}">
                                                 <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
                                             </h:outputText>
                                         </td>
-                                        <td>#{cc.attrs.extractAmount}</td>
-                                        <td>#{cc.attrs.ticketAmount - cc.attrs.extractAmount} /
-                                            <h:outputText value="#{(cc.attrs.ticketAmount - cc.attrs.extractAmount) * cc.attrs.ticketPrice}">
+                                        <td>#{cc.attrs.ticketOrder.extractAmount}</td>
+                                        <td>#{cc.attrs.ticketOrder.amount - cc.attrs.ticketOrder.extractAmount} /
+                                            <h:outputText value="#{(cc.attrs.ticketOrder.amount - cc.attrs.ticketOrder.extractAmount) * cc.attrs.ticketOrder.ticketPrice}">
                                                 <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
                                             </h:outputText>
                                         </td>
@@ -80,14 +72,12 @@
                                                 <h:form>
                                                     <p:commandButton styleClass="btn waves-effect waves-light cyan left" type="submit"
                                                                      value="#{bundle.ViewExtractQRCode}" style="margin-right: 15px" icon="ui-icon-image"
-                                                                     actionListener="#{orderBean.selectNotExtractTicketOrder}" update="#{cc.attrs.updateExtractCodePanel}"
+                                                                     actionListener="#{orderBean.selectNotExtractTicketOrder(cc.attrs.ticketOrder)}" update="#{cc.attrs.updateExtractCodePanel}"
                                                                      onsuccess="$('##{cc.attrs.extractCodeDialog}').openModal();return;">
-                                                        <f:param name="orderId" value="#{cc.attrs.orderId}"/>
                                                     </p:commandButton>
                                                     <p:commandButton styleClass="btn waves-effect waves-light red accent-2 left" type="submit"
-                                                                     actionListener="#{orderBean.refundOrder}" value="#{bundle.RefundOrder}" icon="ui-icon-cancel"
+                                                                     actionListener="#{orderBean.refundOrder(cc.attrs.ticketOrder)}" value="#{bundle.RefundOrder}" icon="ui-icon-cancel"
                                                                      oncomplete="onOrderCallback(xhr, status, args)">
-                                                        <f:param name="orderId" value="#{cc.attrs.orderId}"/>
                                                         <p:confirm message="#{bundle.QueryRefundOrder}"/>
                                                     </p:commandButton>
                                                 </h:form>

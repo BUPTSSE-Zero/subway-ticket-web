@@ -85,6 +85,14 @@
     content: 'star';
 }
 
+.ui-icon-add:before{
+    content: 'add';
+}
+
+.ui-icon-remove:before{
+    content: 'remove';
+}
+
 .ui-icon-triangle-1-s:before{
     content: 'arrow_drop_down';
 }

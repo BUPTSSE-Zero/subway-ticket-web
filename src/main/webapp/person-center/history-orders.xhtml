@@ -28,7 +28,7 @@
                         <p:inputText id="end-date" type="date" class="datepicker" value="#{orderBean.endDate}"/>
                     </div>
                     <div class="input-field col">
-                        <p:commandButton styleClass="btn light-blue waves-effect waves-light" icon="ui-icon-search"
+                        <p:commandButton styleClass="btn light-green waves-effect waves-light" icon="ui-icon-search"
                                     value="#{bundle.SearchOrder}" actionListener="#{orderBean.refreshHistoryTicketOrders}"
                                     update="history-orders-panel" oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                     </div>
@@ -69,33 +69,17 @@
                     <c:forEach var="order" items="#{orderBean.historyTicketOrders}">
                         <c:choose>
                             <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_NOT_PAY}">
-                                <w:notPayOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
-                                               orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
-                                               orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
-                                               orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
-                                               ticketAmount="#{order.amount}"/>
+                                <w:notPayOrder ticketOrder="#{order}"/>
                             </c:when>
                             <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_NOT_EXTRACT_TICKET}">
-                                <w:notExtractTicketOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
-                                                         orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
-                                                         orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
-                                                         orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
-                                                         ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"
+                                <w:notExtractTicketOrder ticketOrder="#{order}"
                                                          extractCodeDialog="extract-code-dialog" updateExtractCodePanel=":#{p:component('extract-code-panel')}"/>
                             </c:when>
                             <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_FINISHED}">
-                                <w:finishedOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
-                                               orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
-                                               orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
-                                               orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
-                                               ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"/>
+                                <w:finishedOrder ticketOrder="#{order}"/>
                             </c:when>
                             <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_REFUNDED}">
-                                <w:refundedOrder orderTime="#{order.ticketOrderTime.time}" orderCity="#{order.startStation.subwayLine.city.cityName}"
-                                                 orderStartLine="#{order.startStation.subwayLine.subwayLineName}" orderStartStation="#{order.startStation.subwayStationName}"
-                                                 orderEndLine="#{order.endStation.subwayLine.subwayLineName}" orderEndStation="#{order.endStation.subwayStationName}"
-                                                 orderId="#{order.ticketOrderId}" ticketPrice="#{order.ticketPrice}"
-                                                 ticketAmount="#{order.amount}" extractAmount="#{order.extractAmount}"/>
+                                <w:refundedOrder ticketOrder="#{order}"/>
                             </c:when>
                         </c:choose>
                     </c:forEach>

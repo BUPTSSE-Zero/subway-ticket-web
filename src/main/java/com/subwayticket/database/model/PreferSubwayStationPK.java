@@ -11,6 +11,13 @@ public class PreferSubwayStationPK implements Serializable {
     private String userId;
     private int stationId;
 
+    public PreferSubwayStationPK() {}
+
+    public PreferSubwayStationPK(String userId, int stationId) {
+        this.userId = userId;
+        this.stationId = stationId;
+    }
+
     @Column(name = "UserID", nullable = false, length = 20)
     @Id
     public String getUserId() {
