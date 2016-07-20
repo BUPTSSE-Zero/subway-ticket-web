@@ -1,6 +1,7 @@
 package com.subwayticket.database.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by zhou-shengyun on 7/8/16.
@@ -8,10 +9,14 @@ import javax.persistence.*;
 @Entity
 @Table(name = "PreferRoute")
 @IdClass(PreferRoutePK.class)
-public class PreferRoute {
+public class PreferRoute implements Comparable<PreferRoute>{
     private String userId;
     private int startStationId;
     private int endStationId;
+    private Account user;
+    private SubwayStation startStation;
+    private SubwayStation endStation;
+    private Date addTime;
 
     public PreferRoute(){}
 
@@ -19,12 +24,7 @@ public class PreferRoute {
         this.userId = userId;
         this.startStationId = startStationId;
         this.endStationId = endStationId;
-    }
-
-    public PreferRoute(PreferRoute preferRoute){
-        this.userId = preferRoute.getUserId();
-        this.startStationId = preferRoute.getStartStationId();
-        this.endStationId = preferRoute.getEndStationId();
+        this.addTime = new Date();
     }
 
     @Id
@@ -79,8 +79,6 @@ public class PreferRoute {
         return result;
     }
 
-    private Account user;
-
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "UserID", referencedColumnName = "PhoneNumber")
     public Account getUser() {
@@ -90,8 +88,6 @@ public class PreferRoute {
     public void setUser(Account user) {
         this.user = user;
     }
-
-    private SubwayStation startStation;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "StartStationID", referencedColumnName = "SubwayStationID")
@@ -103,8 +99,6 @@ public class PreferRoute {
         this.startStation = startStation;
     }
 
-    private SubwayStation endStation;
-
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "EndStationID", referencedColumnName = "SubwayStationID")
     public SubwayStation getEndStation() {
@@ -113,5 +107,24 @@ public class PreferRoute {
 
     public void setEndStation(SubwayStation endStation) {
         this.endStation = endStation;
+    }
+
+    @Basic
+    @Column(name = "AddTime", nullable = false)
+    public Date getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
+    }
+
+    @Override
+    public int compareTo(PreferRoute o) {
+        if(this.addTime.before(o.addTime))
+            return -1;
+        else if(this.addTime.after(o.addTime))
+            return 1;
+        return 0;
     }
 }

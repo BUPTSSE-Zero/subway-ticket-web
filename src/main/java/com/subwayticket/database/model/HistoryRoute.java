@@ -1,6 +1,7 @@
 package com.subwayticket.database.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by zhou-shengyun on 7/8/16.
@@ -8,10 +9,14 @@ import javax.persistence.*;
 @Entity
 @Table(name = "HistoryRoute")
 @IdClass(HistoryRoutePK.class)
-public class HistoryRoute {
+public class HistoryRoute implements Comparable<HistoryRoute> {
     private String userId;
     private int startStationId;
     private int endStartionId;
+    private Account user;
+    private SubwayStation startStation;
+    private SubwayStation endStation;
+    private Date addTime;
 
     public HistoryRoute(){}
 
@@ -19,8 +24,8 @@ public class HistoryRoute {
         this.userId = userId;
         this.startStationId = startStationId;
         this.endStartionId = endStartionId;
+        this.addTime = new Date();
     }
-
 
     @Id
     @Column(name = "UserID", nullable = false, length = 20)
@@ -74,8 +79,6 @@ public class HistoryRoute {
         return result;
     }
 
-    private Account user;
-
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "UserID", referencedColumnName = "PhoneNumber")
     public Account getUser() {
@@ -85,8 +88,6 @@ public class HistoryRoute {
     public void setUser(Account user) {
         this.user = user;
     }
-
-    private SubwayStation startStation;
 
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "StartStationID", referencedColumnName = "SubwayStationID")
@@ -98,8 +99,6 @@ public class HistoryRoute {
         this.startStation = startStation;
     }
 
-    private SubwayStation endStation;
-
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "EndStationID", referencedColumnName = "SubwayStationID")
     public SubwayStation getEndStation() {
@@ -108,5 +107,24 @@ public class HistoryRoute {
 
     public void setEndStation(SubwayStation endStation) {
         this.endStation = endStation;
+    }
+
+    @Basic
+    @Column(name = "AddTime", nullable = false)
+    public Date getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
+    }
+
+    @Override
+    public int compareTo(HistoryRoute o) {
+        if(this.addTime.before(o.addTime))
+            return -1;
+        else if(this.addTime.after(o.addTime))
+            return 1;
+        return 0;
     }
 }

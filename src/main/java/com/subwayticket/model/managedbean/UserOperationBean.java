@@ -95,15 +95,19 @@ public class UserOperationBean implements Serializable {
         return false;
     }
 
+    private void sendResult(Result result){
+        RequestContext requestContext = RequestContext.getCurrentInstance();
+        requestContext.addCallbackParam("result_code", result.getResultCode());
+        requestContext.addCallbackParam("result_description", result.getResultDescription());
+    }
 
     public boolean login(){
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
         try {
             Result result = AccountControl.webLogin(request, new LoginRequest(phoneNumber, password), dbBean);
+            sendResult(result);
             if (result.getResultCode() == PublicResultCode.SUCCESS || result.getResultCode() == PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE) {
-                RequestContext requestContext = RequestContext.getCurrentInstance();
-                requestContext.addCallbackParam("login_result", result.getResultCode());
                 setCaptcha("");
                 setPassword("");
                 setPhoneNumber("");

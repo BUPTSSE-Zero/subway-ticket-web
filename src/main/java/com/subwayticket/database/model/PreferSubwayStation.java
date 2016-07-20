@@ -1,6 +1,7 @@
 package com.subwayticket.database.model;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by zhou-shengyun on 7/8/16.
@@ -8,15 +9,19 @@ import javax.persistence.*;
 @Entity
 @Table(name = "PreferSubwayStation")
 @IdClass(PreferSubwayStationPK.class)
-public class PreferSubwayStation {
+public class PreferSubwayStation implements Comparable<PreferSubwayStation> {
     private String userId;
     private int stationId;
+    private Account user;
+    private SubwayStation subwayStation;
+    private Date addTime;
 
     public PreferSubwayStation(){}
 
     public PreferSubwayStation(String userId, int stationId){
         this.userId = userId;
         this.stationId = stationId;
+        this.addTime = new Date();
     }
 
     @Id
@@ -59,8 +64,6 @@ public class PreferSubwayStation {
         return result;
     }
 
-    private Account user;
-
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "UserID", referencedColumnName = "PhoneNumber")
     public Account getUser() {
@@ -71,8 +74,6 @@ public class PreferSubwayStation {
         this.user = user;
     }
 
-    private SubwayStation subwayStation;
-
     @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY, optional = false)
     @PrimaryKeyJoinColumn(name = "StationID", referencedColumnName = "SubwayStationID")
     public SubwayStation getSubwayStation() {
@@ -81,5 +82,24 @@ public class PreferSubwayStation {
 
     public void setSubwayStation(SubwayStation subwayStation) {
         this.subwayStation = subwayStation;
+    }
+
+    @Basic
+    @Column(name = "AddTime", nullable = false)
+    public Date getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
+    }
+
+    @Override
+    public int compareTo(PreferSubwayStation o) {
+        if(this.addTime.before(o.addTime))
+            return -1;
+        else if(this.addTime.after(o.addTime))
+            return 1;
+        return 0;
     }
 }

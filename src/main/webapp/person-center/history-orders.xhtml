@@ -14,7 +14,7 @@
     <ui:define name="person-center-content">
         <h:outputScript library="js" name="materialize-datepicker-i18n.js"/>
         <h:outputScript library="js" name="order-callback.js"/>
-        <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="OrderStatus"/>
+        <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="orderStatus"/>
         <div class="row" style="margin-bottom: 0">
             <h:form class="col s12">
                 <div class="row" style="margin-bottom: 0">
@@ -68,17 +68,17 @@
                     <br/>
                     <c:forEach var="order" items="#{orderBean.historyTicketOrders}">
                         <c:choose>
-                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_NOT_PAY}">
+                            <c:when test="#{order.status eq orderStatus.ORDER_STATUS_NOT_PAY}">
                                 <w:notPayOrder ticketOrder="#{order}"/>
                             </c:when>
-                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_NOT_EXTRACT_TICKET}">
+                            <c:when test="#{order.status eq orderStatus.ORDER_STATUS_NOT_EXTRACT_TICKET}">
                                 <w:notExtractTicketOrder ticketOrder="#{order}"
                                                          extractCodeDialog="extract-code-dialog" updateExtractCodePanel=":#{p:component('extract-code-panel')}"/>
                             </c:when>
-                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_FINISHED}">
+                            <c:when test="#{order.status eq orderStatus.ORDER_STATUS_FINISHED}">
                                 <w:finishedOrder ticketOrder="#{order}"/>
                             </c:when>
-                            <c:when test="#{order.status eq OrderStatus.ORDER_STATUS_REFUNDED}">
+                            <c:when test="#{order.status eq orderStatus.ORDER_STATUS_REFUNDED}">
                                 <w:refundedOrder ticketOrder="#{order}"/>
                             </c:when>
                         </c:choose>

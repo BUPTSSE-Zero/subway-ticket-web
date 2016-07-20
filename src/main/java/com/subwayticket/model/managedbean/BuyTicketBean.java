@@ -80,6 +80,12 @@ public class BuyTicketBean implements Serializable{
         }
     }
 
+    public TicketPrice searchTicketPrice(SubwayStation startStation, SubwayStation endStation){
+        if(startStation == null || endStation == null)
+            return null;
+        return subwayInfoDBHelperBean.getTicketPrice(startStation, endStation);
+    }
+
     public TicketPrice getTicketPrice() {
         return ticketPrice;
     }

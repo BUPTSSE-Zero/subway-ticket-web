@@ -2,21 +2,22 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:c="http://java.sun.com/jsp/jstl/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
     <cc:interface>
         <cc:attribute name="startStation" required="true" type="com.subwayticket.database.model.SubwayStation"/>
         <cc:attribute name="endStation" required="true" type="com.subwayticket.database.model.SubwayStation"/>
         <cc:attribute name="ticketPrice" required="true" type="com.subwayticket.database.model.TicketPrice"/>
         <cc:attribute name="preferButtonUpdate"/>
+        <cc:attribute name="submitUpdate"/>
     </cc:interface>
 
     <cc:implementation>
-        <table>
+        <table id="#{cc.attrs.id}">
             <thead>
             <tr>
                 <th data-field="start_station">#{bundle.StartSubwayStation}</th>
@@ -97,24 +98,11 @@
                     </h:outputText>
                 </td>
                 <td>
-                    <p:importConstants type="com.subwayticket.control.TicketOrderControl" var="orderControl"/>
-                    <script type="text/javascript">
-                        function onTicketAmountChange(ticketprice, delta){
-                            var ticketAmount = parseInt($('##{cc.attrs.id}-ticketamount').text()) + delta;
-                            if(ticketAmount &lt;= 0)
-                                ticketAmount = 1;
-                            else if(ticketAmount > #{orderControl.MAX_TICKET_AMOUNT})
-                                ticketAmount = #{orderControl.MAX_TICKET_AMOUNT};
-                            $('##{cc.attrs.id}-ticketamount').text(ticketAmount);
-                            $('##{cc.attrs.id}-totalprice').text((ticketprice * ticketAmount).toFixed(2));
-                            $('##{cc.attrs.id}-ticketamount-hinput').val(ticketAmount);
-                        }
-                    </script>
                     <span id="#{cc.attrs.id}-ticketamount">1</span>
-                    <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange(#{cc.attrs.ticketPrice.price}, -1)">
+                    <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{cc.attrs.id}', #{cc.attrs.ticketPrice.price}, -1)">
                         <i class="material-icons red-text">remove</i>
                     </a>
-                    <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange(#{cc.attrs.ticketPrice.price}, 1)">
+                    <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{cc.attrs.id}', #{cc.attrs.ticketPrice.price}, 1)">
                         <i class="material-icons light-green-text">add</i>
                     </a>
                 </td>
@@ -166,7 +154,10 @@
                                 <input type="hidden" id="#{cc.attrs.id}-ticketamount-hinput" name="ticketAmount" value="1"/>
                                 <p:commandButton styleClass="btn green darken-1 waves-effect waves-light right" icon="ui-icon-done" type="submit"
                                                  actionListener="#{orderBean.submitOrder(cc.attrs.startStation, cc.attrs.endStation, cc.attrs.ticketPrice)}"
-                                                 value="#{bundle.SubmitOrder}"/>
+                                                 update="#{cc.attrs.submitUpdate}" oncomplete="onSubmitOrderCallback(xhr, status, args);$('.collapsible').collapsible({accordion: false});"
+                                                 value="#{bundle.SubmitOrder}">
+                                    <f:actionListener binding="#{preferBean.refreshUser()}"/>
+                                </p:commandButton>
                             </h:form>
                         </td>
                     </tr>

@@ -27,7 +27,6 @@ import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -98,6 +97,10 @@ public class OrderBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         Result result = TicketOrderControl.cancelOrder((ServletRequest)context.getExternalContext().getRequest(),
                 systemDBHelperBean, user, order.getTicketOrderId());
+        if(submitedOrder != null && submitedOrder.getTicketOrderId().equals(order.getTicketOrderId())
+                && result.getResultCode() == PublicResultCode.SUCCESS){
+            submitedOrder = null;
+        }
         sendOrderOperResult(result);
     }
 

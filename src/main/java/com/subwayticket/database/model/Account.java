@@ -93,17 +93,6 @@ public class Account {
         this.orderList = orderList;
     }
 
-    private List<PreferCity> preferCityList;
-
-    @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
-    public List<PreferCity> getPreferCityList() {
-        return preferCityList;
-    }
-
-    public void setPreferCityList(List<PreferCity> preferCityList) {
-        this.preferCityList = preferCityList;
-    }
-
     private List<PreferSubwayStation> preferSubwayStationList;
 
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")

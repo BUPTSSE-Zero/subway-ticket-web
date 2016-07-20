@@ -10,7 +10,32 @@
     <ui:define name="login-button">
         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                          value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
-                         update="normal-buyticket-panel login_error_message header-panel" oncomplete="handleLoginResult(xhr, status, args)">
+                         update="login_error_message header-panel #{p:component('buyticket-panel')}"
+                         oncomplete="handleLoginResult(xhr, status, args)">
+            <f:actionListener binding="#{buyTicketBean.findUser()}"/>
+            <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
+            <f:actionListener binding="#{preferBean.findUser()}"/>
+            <f:actionListener binding="#{orderBean.findUser()}"/>
+        </p:commandButton>
+    </ui:define>
+
+    <ui:define name="signup-button">
+        <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
+                         value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
+                         update="singup_message header-panel #{p:component('buyticket-panel')}"
+                         oncomplete="handleLoginResult(xhr, status, args)">
+            <f:actionListener binding="#{buyTicketBean.findUser()}"/>
+            <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
+            <f:actionListener binding="#{preferBean.findUser()}"/>
+            <f:actionListener binding="#{orderBean.findUser()}"/>
+        </p:commandButton>
+    </ui:define>
+
+    <ui:define name="reset-password-button">
+        <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                         value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
+                         update="reset_password_message header-panel #{p:component('buyticket-panel')}"
+                         oncomplete="handleLoginResult(xhr, status, args)">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
             <f:actionListener binding="#{preferBean.findUser()}"/>
@@ -21,7 +46,7 @@
     <ui:define name="logout-button">
         <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
                          style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
-                         update="normal-buyticket-panel header-panel">
+                         update="header-panel #{p:component('buyticket-panel')} ">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
             <f:actionListener binding="#{preferBean.findUser()}"/>
@@ -32,12 +57,25 @@
     <ui:define name="page-panel-content">
         <h:outputScript library="js" name="station-msg.js"/>
         <h:outputScript library="js" name="order-callback.js"/>
+        <p:importConstants type="com.subwayticket.control.TicketOrderControl" var="orderControl"/>
         <script type="text/javascript">
             $(document).ready(function() {
                 $('select').material_select();
             });
+            function onTicketAmountChange(baseid, ticketprice, delta){
+                var ticketAmount = parseInt($('#' + baseid + '-ticketamount').text()) + delta;
+                if(ticketAmount &lt;= 0)
+                    ticketAmount = 1;
+                else if(ticketAmount > #{orderControl.MAX_TICKET_AMOUNT})
+                    ticketAmount = #{orderControl.MAX_TICKET_AMOUNT};
+                $('#' + baseid + '-ticketamount').text(ticketAmount);
+                $('#' + baseid + '-totalprice').text((ticketprice * ticketAmount).toFixed(2));
+                $('#' + baseid + '-ticketamount-hinput').val(ticketAmount);
+            }
         </script>
-        <div style="padding: 15px 7%">
+        <div style="padding: 15px 7% 45px 7%">
+            <h5 class="indigo-text">#{bundle.NormalBuyTicket}</h5>
+            <p:separator/>
             <div class="row" style="margin-bottom: 0">
                 <h:form class="col s12">
                     <div class="row" style="margin-bottom: 0">
@@ -81,7 +119,7 @@
                         <div class="input-field col s2" style="text-align: right">
                             <p:commandButton styleClass="btn light-green waves-effect waves-light" icon="ui-icon-search" value="#{bundle.Search}"
                                              style="padding-left: 20px; padding-right: 10px"
-                                             update="select-station-msg normal-buyticket-panel"
+                                             update="select-station-msg #{p:component('normal-buyticket-panel')}"
                                              actionListener="#{buyTicketBean.searchTicketPrice}"/>
                         </div>
                     </div>
@@ -89,13 +127,84 @@
                 </h:form>
             </div>
 
-            <p:outputPanel id="normal-buyticket-panel">
-                <c:if test="#{not empty buyTicketBean.ticketPrice}">
-                    <w:buyTicketTable id="normal-buyticket-table" endStation="#{buyTicketBean.endStation}"
-                                      startStation="#{buyTicketBean.startStation}"
-                                      ticketPrice="#{buyTicketBean.ticketPrice}"
-                                      preferButtonUpdate="normal-buyticket-panel"/>
-                </c:if>
+            <p:outputPanel id="buyticket-panel">
+                <p:outputPanel id="normal-buyticket-panel">
+                    <c:if test="#{not empty buyTicketBean.ticketPrice}">
+                        <w:buyTicketTable endStation="#{buyTicketBean.endStation}"
+                                          startStation="#{buyTicketBean.startStation}"
+                                          ticketPrice="#{buyTicketBean.ticketPrice}"
+                                          preferButtonUpdate="#{p:component('buyticket-panel')}"
+                                          submitUpdate="#{p:component('submitted-order-detail-panel')} #{p:component('buyticket-panel')}"/>
+                    </c:if>
+                </p:outputPanel>
+
+                <h5 class="indigo-text" style="margin-top: 50px">#{bundle.PreferRoute}</h5>
+                <p:separator/>
+                <c:choose>
+                    <c:when test="#{empty sessionScope.user or preferBean.preferRouteList.size() eq 0}">
+                        <table style="width:auto; margin: auto">
+                            <tr>
+                                <td>
+                                    <i class="material-icons cyan-text" style="font-size: 64px">info_outline</i>
+                                </td>
+                                <td>
+                                    <p style="font-size: 22px">
+                                        <c:choose>
+                                            <c:when test="#{empty sessionScope.user}">
+                                                #{bundle.TipViewAfterLogin}
+                                            </c:when>
+                                            <c:otherwise>
+                                                #{bundle.TipNoPreferRoute}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <w:quickBuyTicket routeRecordType="prefer" preferRouteList="#{preferBean.preferRouteList}"
+                                          preferButtonUpdate="#{p:component('buyticket-panel')}"
+                                          submitUpdate="#{p:component('submitted-order-detail-panel')} #{p:component('buyticket-panel')}"/>
+                        <script>
+                            $('.collapsible').collapsible({accordion : true});
+                        </script>
+                    </c:otherwise>
+                </c:choose>
+
+                <h5 class="indigo-text" style="margin-top: 50px">#{bundle.HistoryRoute}</h5>
+                <p:separator/>
+                <c:choose>
+                    <c:when test="#{empty sessionScope.user or preferBean.historyRouteList.size() eq 0}">
+                        <table style="width:auto; margin: auto">
+                            <tr>
+                                <td>
+                                    <i class="material-icons teal-text" style="font-size: 64px">info_outline</i>
+                                </td>
+                                <td>
+                                    <p style="font-size: 22px">
+                                        <c:choose>
+                                            <c:when test="#{empty sessionScope.user}">
+                                                #{bundle.TipViewAfterLogin}
+                                            </c:when>
+                                            <c:otherwise>
+                                                #{bundle.TipNoHistoryRoute}
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </c:when>
+                    <c:otherwise>
+                        <w:quickBuyTicket routeRecordType="history" historyRouteList="#{preferBean.historyRouteList}"
+                                          preferButtonUpdate="#{p:component('buyticket-panel')}"
+                                          submitUpdate="#{p:component('submitted-order-detail-panel')} #{p:component('buyticket-panel')}"/>
+                        <script>
+                            $('.collapsible').collapsible({accordion : true});
+                        </script>
+                    </c:otherwise>
+                </c:choose>
             </p:outputPanel>
         </div>
 
@@ -124,15 +233,59 @@
             <a class="ui-confirmdialog-yes waves-effect waves-green btn-flat right">#{bundle.Ok}</a>
             <a class="ui-confirmdialog-no waves-effect waves-red btn-flat right">#{bundle.Cancel}</a>
         </p:confirmDialog>
+        <div id="submitted-order-detail-dialog" class="modal" style="min-width: 900px">
+            <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="orderStatus"/>
+            <div class="modal-content">
+                <h5 class="light-blue-text">#{bundle.OrderDetail}</h5>
+                <p:outputPanel id="submitted-order-detail-panel">
+                    <c:choose>
+                        <c:when test="#{not empty orderBean.submitedOrder}">
+                            <c:choose>
+                                <c:when test="#{orderBean.submitedOrder.status eq orderStatus.ORDER_STATUS_NOT_PAY}">
+                                    <span class="red-text">#{bundle.TipPayOrderWithinAHour}</span>
+                                    <br/>
+                                    <w:notPayOrder ticketOrder="#{orderBean.submitedOrder}"/>
+                                </c:when>
+                                <c:when test="#{orderBean.submitedOrder.status eq orderStatus.ORDER_STATUS_NOT_EXTRACT_TICKET}">
+                                    <span class="orange-text">#{bundle.TipAutoRefundOrder}</span>
+                                    <br/>
+                                    <w:notExtractTicketOrder extractCodeDialog="extract-code-dialog"
+                                                             updateExtractCodePanel="extract-code-panel"
+                                                             ticketOrder="#{orderBean.submitedOrder}"/>
+                                </c:when>
+                                <c:when test="#{orderBean.submitedOrder.status eq orderStatus.ORDER_STATUS_FINISHED}">
+                                    <w:finishedOrder ticketOrder="#{orderBean.submitedOrder}"/>
+                                </c:when>
+                                <c:when test="#{orderBean.submitedOrder.status eq orderStatus.ORDER_STATUS_REFUNDED}">
+                                    <w:refundedOrder ticketOrder="#{orderBean.submitedOrder}"/>
+                                </c:when>
+                            </c:choose>
+                        </c:when>
+                        <c:otherwise>
+                            <script type="text/javascript">
+                                $('#submitted-order-detail-dialog').closeModal();
+                            </script>
+                        </c:otherwise>
+                    </c:choose>
+                </p:outputPanel>
+            </div>
+            <div class="modal-footer">
+                <a class="waves-effect waves-green btn-flat" onclick="$('#submitted-order-detail-dialog').closeModal()">
+                    #{bundle.Close}
+                </a>
+            </div>
+        </div>
         <div id="order-callback-dialog" class="modal" style="width: 600px;">
             <div class="modal-content">
                 <h5 class="light-blue-text">#{bundle.Alert}</h5>
                 <p id="order-callback-msg"/>
             </div>
             <div class="modal-footer">
-                <a class="waves-effect waves-green btn-flat" onclick="$('#order-callback-dialog').closeModal()">
-                    #{bundle.Close}
-                </a>
+                <h:form>
+                    <p:commandButton class="waves-effect waves-green btn-flat" value="#{bundle.Close}"
+                                     oncomplete="$('#order-callback-dialog').closeModal();$('.collapsible').collapsible({accordion: false});"
+                                     update="#{p:component('submitted-order-detail-panel')}"/>
+                </h:form>
             </div>
         </div>
         <div id="extract-code-dialog" class="modal" style="width: 400px">
@@ -145,11 +298,10 @@
                 </p:outputPanel>
             </div>
             <div class="modal-footer">
-                <a class="waves-effect waves-green btn-flat" type="button"
-                   onclick="$('#extract-code-dialog').closeModal();return;">#{bundle.Close}</a>
+                <a class="waves-effect waves-green btn-flat"
+                   onclick="$('#extract-code-dialog').closeModal()">#{bundle.Close}</a>
             </div>
         </div>
-
     </ui:define>
 
 </ui:composition>

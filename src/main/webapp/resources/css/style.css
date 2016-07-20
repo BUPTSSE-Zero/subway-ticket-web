@@ -118,7 +118,7 @@ body{
 }
 
 .captcha-button{
-	padding-left: 6px;
+	padding-left: 15px;
 	padding-right: 0;
 	overflow: hidden;
 }
@@ -225,7 +225,7 @@ body{
 }
 
 .order-record-header{
-	padding: 10px 0;
+	padding: 0 10px;
 }
 
 .station-msg-header,
@@ -245,10 +245,10 @@ body{
 	margin-right: 10px;
 }
 
-.order-record-body .btn{
+/*.order-record-body .btn{
 	padding-left: 10px;
 	padding-right: 5px;
-}
+}*/
 
 .confirm-dialog {
 	background-color: white;

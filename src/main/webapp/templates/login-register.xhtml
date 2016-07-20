@@ -83,9 +83,9 @@
                         <p:inputText id="reset_password_captcha" class="validate" value="#{userOperationBean.captcha}"/>
                         <label for="reset_password_captcha">#{bundle.PhoneCaptcha}</label>
                     </div>
-                    <div class="col s6" style="height: 60px; line-height: 60px">
-                        <p:commandButton class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
-                                       icon="ui-icon-send" update="reset_password_message" partialSubmit="true" process="reset_password_phone_number"/>
+                    <div style="height: 60px; line-height: 60px">
+                        <p:commandButton styleClass="captcha-button btn teal waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
+                                       icon="ui-icon-send" update="reset_password_message"/>
                     </div>
                 </div>
                 <p:messages id="reset_password_message" autoUpdate="false" closable="true"/>
@@ -148,8 +148,8 @@
                     <label for="signup_captcha">#{bundle.PhoneCaptcha}</label>
                 </div>
                 <div style="height: 60px; line-height: 60px">
-                    <p:commandButton class="captcha-button btn waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
-                         icon="ui-icon-send" update="singup_message" partialSubmit="true" process="signup_phone_number">
+                    <p:commandButton styleClass="captcha-button btn teal waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
+                         icon="ui-icon-send" update="singup_message">
                     </p:commandButton>
                 </div>
             </div>

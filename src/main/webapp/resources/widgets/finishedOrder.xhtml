@@ -54,7 +54,7 @@
                                     <td>#{cc.attrs.ticketOrder.amount}</td>
                                     <td>#{cc.attrs.ticketOrder.extractAmount}</td>
                                     <td>
-                                        <h:outputText value="#{cc.attrs.ticketOrder.ticketPrice * cc.attrs.ticketOrder.ticketAmount}">
+                                        <h:outputText value="#{cc.attrs.ticketOrder.ticketPrice * cc.attrs.ticketOrder.amount}">
                                             <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
                                         </h:outputText>
                                     </td>

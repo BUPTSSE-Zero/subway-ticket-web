@@ -10,6 +10,9 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Created by zhou-shengyun on 7/15/16.
@@ -87,4 +90,13 @@ public class PreferBean {
         if(pr != null)
             systemDBHelperBean.remove(pr);
     }
+
+    public List<PreferRoute> getPreferRouteList(){
+        return user.getPreferRouteList();
+    }
+
+    public List<HistoryRoute> getHistoryRouteList(){
+        return user.getHistoryRouteList();
+    }
+
 }

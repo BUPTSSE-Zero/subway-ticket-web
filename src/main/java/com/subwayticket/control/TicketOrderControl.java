@@ -18,6 +18,7 @@ import com.subwayticket.util.SecurityUtil;
 
 import javax.ejb.EJBException;
 import javax.servlet.ServletRequest;
+import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -58,7 +59,8 @@ public class TicketOrderControl {
             for(HistoryRoute hr : user.getHistoryRouteList()){
                 if(hr.getStartStationId() == submitOrderRequest.getStartStationId() &&
                         hr.getEndStartionId() == submitOrderRequest.getEndStationId()) {
-                    return result;
+                    subwayInfoDBHelperBean.remove(hr);
+                    break;
                 }
             }
             if(user.getHistoryRouteList().size() < 3){
@@ -66,9 +68,11 @@ public class TicketOrderControl {
                         submitOrderRequest.getEndStationId()));
                 return result;
             }
+            Collections.sort(user.getHistoryRouteList());
             subwayInfoDBHelperBean.remove(user.getHistoryRouteList().get(0));
             subwayInfoDBHelperBean.create(new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
                     submitOrderRequest.getEndStationId()));
+            subwayInfoDBHelperBean.refresh(user);
             return result;
         }catch (EJBException e){
             e.printStackTrace();

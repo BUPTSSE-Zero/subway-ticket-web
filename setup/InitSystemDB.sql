@@ -141,16 +141,6 @@ CREATE TABLE TicketOrder(
   Comment VARCHAR(50)
 );
 
-CREATE TABLE PreferCity(
-  UserID VARCHAR(20) NOT NULL,
-  CONSTRAINT PreferCityUserIDFK FOREIGN KEY (UserID) REFERENCES Account(PhoneNumber)
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  CityID INT NOT NULL,
-  CONSTRAINT PreferCityCityIDFK FOREIGN KEY (CityID) REFERENCES City(CityID)
-    ON UPDATE CASCADE ON DELETE CASCADE,
-  PRIMARY KEY (UserID, CityID)
-);
-
 CREATE TABLE PreferSubwayStation(
   UserID VARCHAR(20) NOT NULL,
   CONSTRAINT PreferSubwayStationUserIDFK FOREIGN KEY (UserID) REFERENCES Account(PhoneNumber)
@@ -158,6 +148,7 @@ CREATE TABLE PreferSubwayStation(
   StationID INT NOT NULL,
   CONSTRAINT PreferSubwayStationStationIDFK FOREIGN KEY (StationID) REFERENCES SubwayStation(SubwayStationID)
     ON UPDATE CASCADE ON DELETE CASCADE,
+  AddTime DATETIME NOT NULL,
   PRIMARY KEY (UserID, StationID)
 );
 
@@ -171,6 +162,7 @@ CREATE TABLE PreferRoute(
   EndStationID INT NOT NULL,
   CONSTRAINT PreferRouteEndStationIDFK FOREIGN KEY (EndStationID) REFERENCES SubwayStation(SubwayStationID)
     ON UPDATE CASCADE ON DELETE CASCADE,
+  AddTime DATETIME NOT NULL,
   PRIMARY KEY (UserID, StartStationID, EndStationID)
 );
 
@@ -184,6 +176,7 @@ CREATE TABLE HistoryRoute(
   EndStationID INT NOT NULL,
   CONSTRAINT HistoryRouteEndStationIDFK FOREIGN KEY (EndStationID) REFERENCES SubwayStation(SubwayStationID)
     ON UPDATE CASCADE ON DELETE CASCADE,
+  AddTime DATETIME NOT NULL,
   PRIMARY KEY (UserID, StartStationID, EndStationID)
 )
 
