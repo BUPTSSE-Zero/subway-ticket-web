@@ -10,7 +10,7 @@
     <ui:define name="login-button">
         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                          value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
-                         update="login_error_message header-panel #{p:component('buyticket-panel')}"
+                         update="login_error_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"
                          oncomplete="handleLoginResult(xhr, status, args)">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
@@ -22,7 +22,7 @@
     <ui:define name="signup-button">
         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
                          value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
-                         update="singup_message header-panel #{p:component('buyticket-panel')}"
+                         update="singup_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"
                          oncomplete="handleLoginResult(xhr, status, args)">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
@@ -34,7 +34,7 @@
     <ui:define name="reset-password-button">
         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                          value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
-                         update="reset_password_message header-panel #{p:component('buyticket-panel')}"
+                         update="reset_password_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"
                          oncomplete="handleLoginResult(xhr, status, args)">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
@@ -46,11 +46,12 @@
     <ui:define name="logout-button">
         <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
                          style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
-                         update="header-panel #{p:component('buyticket-panel')} ">
+                         update="header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')} #{p:component('submitted-order-detail-panel')}">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
             <f:actionListener binding="#{preferBean.findUser()}"/>
             <f:actionListener binding="#{orderBean.findUser()}"/>
+            <f:actionListener binding="#{orderBean.setSubmitedOrder(null)}"/>
         </p:commandButton>
     </ui:define>
 
@@ -127,17 +128,20 @@
                 </h:form>
             </div>
 
-            <p:outputPanel id="buyticket-panel">
-                <p:outputPanel id="normal-buyticket-panel">
-                    <c:if test="#{not empty buyTicketBean.ticketPrice}">
-                        <w:buyTicketTable endStation="#{buyTicketBean.endStation}"
-                                          startStation="#{buyTicketBean.startStation}"
-                                          ticketPrice="#{buyTicketBean.ticketPrice}"
-                                          preferButtonUpdate="#{p:component('buyticket-panel')}"
-                                          submitUpdate="#{p:component('submitted-order-detail-panel')} #{p:component('buyticket-panel')}"/>
-                    </c:if>
-                </p:outputPanel>
+            <p:outputPanel id="normal-buyticket-panel">
+                <c:if test="#{not empty buyTicketBean.ticketPrice}">
+                    <ui:include src="buyticket-widgets/buyticket-table.xhtml">
+                        <ui:param name="startStation" value="#{buyTicketBean.startStation}"/>
+                        <ui:param name="endStation" value="#{buyTicketBean.endStation}"/>
+                        <ui:param name="ticketPrice" value="#{buyTicketBean.ticketPrice}"/>
+                        <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
+                        <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')}"/>
+                        <ui:param name="widgetId" value="normal-buyticket"/>
+                    </ui:include>
+                </c:if>
+            </p:outputPanel>
 
+            <p:outputPanel id="quick-buyticket-panel">
                 <h5 class="indigo-text" style="margin-top: 50px">#{bundle.PreferRoute}</h5>
                 <p:separator/>
                 <c:choose>
@@ -163,9 +167,12 @@
                         </table>
                     </c:when>
                     <c:otherwise>
-                        <w:quickBuyTicket routeRecordType="prefer" preferRouteList="#{preferBean.preferRouteList}"
-                                          preferButtonUpdate="#{p:component('buyticket-panel')}"
-                                          submitUpdate="#{p:component('submitted-order-detail-panel')} #{p:component('buyticket-panel')}"/>
+                        <ui:include src="buyticket-widgets/prefer-route-buyticket.xhtml">
+                            <ui:param name="routeList" value="#{preferBean.preferRouteList}"/>
+                            <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
+                            <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')}"/>
+                            <ui:param name="widgetId" value="prefer-route-buyticket"/>
+                        </ui:include>
                         <script>
                             $('.collapsible').collapsible({accordion : true});
                         </script>
@@ -197,9 +204,12 @@
                         </table>
                     </c:when>
                     <c:otherwise>
-                        <w:quickBuyTicket routeRecordType="history" historyRouteList="#{preferBean.historyRouteList}"
-                                          preferButtonUpdate="#{p:component('buyticket-panel')}"
-                                          submitUpdate="#{p:component('submitted-order-detail-panel')} #{p:component('buyticket-panel')}"/>
+                        <ui:include src="buyticket-widgets/history-buyticket.xhtml">
+                            <ui:param name="routeList" value="#{preferBean.historyRouteList}"/>
+                            <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
+                            <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')}"/>
+                            <ui:param name="widgetId" value="history-route-buyticket"/>
+                        </ui:include>
                         <script>
                             $('.collapsible').collapsible({accordion : true});
                         </script>

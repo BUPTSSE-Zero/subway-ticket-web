@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <table>
+        <thead>
+        <tr>
+            <th data-field="start_station">#{bundle.StartSubwayStation}</th>
+            <th data-field="end_station">#{bundle.EndSubwayStation}</th>
+            <th data-field="ticket_price">#{bundle.TicketPrice}</th>
+            <th data-field="ticket_amount">#{bundle.TicketNumber}</th>
+            <th data-field="ticket_total_price">#{bundle.TotalPrice}</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+            <td>
+                <h:form>
+                    <span class="#{widgetId}-start-station" data-disable="#{not startStation.available}"
+                          station-msg="#{startStation.stationMessage.content}"
+                          station-msg-time="#{startStation.stationMessage.releaseTime.time}"
+                          station-msg-publisher="#{startStation.stationMessage.publisher}">
+                        #{startStation.displayName}
+                    </span>
+                    <script type="text/javascript">
+                        initStationMessage('.#{widgetId}-start-station');
+                    </script>
+                    <c:choose>
+                        <c:when test="#{not empty sessionScope.user and preferBean.isStationPrefer(startStation)}">
+                            <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
+                                             icon="ui-icon-star" actionListener="#{preferBean.removePreferSubwayStation(startStation)}"
+                                             update="#{preferUpdate}"
+                                             onsuccess="Materialize.toast('#{bundle.TipRemovePreferStationSuccess}', 4000, 'rounded')">
+                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                            </p:commandButton>
+                        </c:when>
+                        <c:when test="#{not empty sessionScope.user}">
+                            <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
+                                             icon="ui-icon-star-border" actionListener="#{preferBean.addPreferSubwayStation(startStation)}"
+                                             onsuccess="Materialize.toast('#{bundle.TipAddPreferStationSuccess}', 4000, 'rounded')"
+                                             update="#{preferUpdate}">
+                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                            </p:commandButton>
+                        </c:when>
+                    </c:choose>
+                </h:form>
+            </td>
+            <td>
+                <h:form>
+                    <span class="#{widgetId}-end-station" data-disable="#{not endStation.available}"
+                          station-msg="#{endStation.stationMessage.content}"
+                          station-msg-time="#{endStation.stationMessage.releaseTime.time}"
+                          station-msg-publisher="#{endStation.stationMessage.publisher}">
+                        #{endStation.displayName}
+                    </span>
+                    <script type="text/javascript">
+                        initStationMessage('.#{widgetId}-end-station');
+                    </script>
+                    <c:choose>
+                        <c:when test="#{not empty sessionScope.user and preferBean.isStationPrefer(endStation)}">
+                            <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
+                                             icon="ui-icon-star" actionListener="#{preferBean.removePreferSubwayStation(endStation)}"
+                                             update="#{preferUpdate}"
+                                             onsuccess="Materialize.toast('#{bundle.TipRemovePreferStationSuccess}', 4000, 'rounded')">
+                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                            </p:commandButton>
+                        </c:when>
+                        <c:when test="#{not empty sessionScope.user}">
+                            <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
+                                             icon="ui-icon-star-border" actionListener="#{preferBean.addPreferSubwayStation(endStation)}"
+                                             onsuccess="Materialize.toast('#{bundle.TipAddPreferStationSuccess}', 4000, 'rounded')"
+                                             update="#{preferUpdate}">
+                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                            </p:commandButton>
+                        </c:when>
+                    </c:choose>
+                </h:form>
+            </td>
+            <td>
+                <h:outputText value="#{ticketPrice.price}">
+                    <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
+                </h:outputText>
+            </td>
+            <td>
+                <span id="#{widgetId}-ticketamount">1</span>
+                <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{widgetId}', #{ticketPrice.price}, -1)">
+                    <i class="material-icons red-text">remove</i>
+                </a>
+                <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{widgetId}', #{ticketPrice.price}, 1)">
+                    <i class="material-icons light-green-text">add</i>
+                </a>
+            </td>
+            <td>
+                <span class="red-text" style="font-size: 25px; font-weight: bold">￥</span>
+                <span id="#{widgetId}-totalprice" class="red-text" style="font-size: 25px; font-weight: bold">
+                    <h:outputText value="#{ticketPrice.price}">
+                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                    </h:outputText>
+                </span>
+            </td>
+        </tr>
+        <c:choose>
+            <c:when test="#{empty sessionScope.user}">
+                <tr>
+                    <td colspan="5" style="padding: 0;">
+                        <p class="right red-text">
+                            #{bundle.TipBuyTicketAfterLogin}
+                        </p>
+                    </td>
+                </tr>
+            </c:when>
+            <c:otherwise>
+                <tr>
+                    <td colspan="5" style="padding: 0">
+                        <h:form>
+                            <c:choose>
+                                <c:when test="#{preferBean.isRoutePrefer(startStation, endStation)}">
+                                    <p:commandButton styleClass="btn deep-orange lighten-1 waves-effect waves-light left"
+                                                     icon="ui-icon-remove" value="#{bundle.RemovePreferRoute}"
+                                                     actionListener="#{preferBean.removePreferSubwayRoute(startStation, endStation)}"
+                                                     onsuccess="Materialize.toast('#{bundle.TipRemovePreferRoute}', 4000, 'rounded')"
+                                                     update="#{preferUpdate}">
+                                        <f:actionListener binding="#{preferBean.refreshUser()}"/>
+                                    </p:commandButton>
+                                </c:when>
+                                <c:otherwise>
+                                    <p:commandButton styleClass="btn deep-purple waves-effect waves-light left"
+                                                     icon="ui-icon-add" value="#{bundle.AddToPreferRoute}"
+                                                     actionListener="#{preferBean.addPreferSubwayRoute(startStation, endStation)}"
+                                                     onsuccess="Materialize.toast('#{bundle.TipAddPreferRouteSuccess}', 4000, 'rounded')"
+                                                     update="#{preferUpdate}">
+                                        <f:actionListener binding="#{preferBean.refreshUser()}"/>
+                                    </p:commandButton>
+                                </c:otherwise>
+                            </c:choose>
+                        </h:form>
+                        <h:form>
+                            <input type="hidden" id="#{widgetId}-ticketamount-hinput" name="ticketAmount" value="1"/>
+                            <p:commandButton styleClass="btn green darken-1 waves-effect waves-light right" icon="ui-icon-done" type="submit"
+                                             actionListener="#{orderBean.submitOrder(startStation, endStation, ticketPrice)}"
+                                             update="#{submitUpdate}" oncomplete="onSubmitOrderCallback(xhr, status, args);$('.collapsible').collapsible({accordion: true});"
+                                             value="#{bundle.SubmitOrder}">
+                                <f:actionListener binding="#{preferBean.refreshUser()}"/>
+                            </p:commandButton>
+                        </h:form>
+                    </td>
+                </tr>
+            </c:otherwise>
+        </c:choose>
+        </tbody>
+    </table>
+
+</html>

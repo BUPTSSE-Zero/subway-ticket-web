@@ -32,6 +32,9 @@ public class BuyTicketBean implements Serializable{
     @PostConstruct
     public void init(){
         findUser();
+        //startStation = (SubwayStation) subwayInfoDBHelperBean.find(SubwayStation.class, 151);
+        //endStation = (SubwayStation) subwayInfoDBHelperBean.find(SubwayStation.class, 1131);
+        //ticketPrice = subwayInfoDBHelperBean.getTicketPrice(startStation, endStation);
     }
 
     public void findUser(){

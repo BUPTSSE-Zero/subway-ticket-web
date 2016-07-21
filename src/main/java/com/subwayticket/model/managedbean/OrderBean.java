@@ -181,6 +181,10 @@ public class OrderBean implements Serializable {
         return submitedOrder;
     }
 
+    public void setSubmitedOrder(TicketOrder submitedOrder) {
+        this.submitedOrder = submitedOrder;
+    }
+
     public void submitOrder(SubwayStation startStation, SubwayStation endStation, TicketPrice tp){
         submitedOrder = null;
         FacesContext context = FacesContext.getCurrentInstance();
