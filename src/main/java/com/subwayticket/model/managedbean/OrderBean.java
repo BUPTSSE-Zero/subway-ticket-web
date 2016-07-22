@@ -48,7 +48,6 @@ public class OrderBean implements Serializable {
     private List<TicketOrder> notPayOrders;
     private List<TicketOrder> notExtractTicketOrders;
     private List<TicketOrder> historyTicketOrders;
-    private List<TicketOrder> currentTicketOrders;
     private TicketOrder selectedNotExtractTicketOrder;
     private SimpleDateFormat sdf;
     private Date startDate;
@@ -69,14 +68,9 @@ public class OrderBean implements Serializable {
             user = (Account)systemDBHelperBean.find(Account.class, user.getPhoneNumber());
     }
 
-    public void refreshUser(){
-        systemDBHelperBean.refresh(user);
-    }
-
     public List<TicketOrder> getNotPayOrders(){
         if(notPayOrders == null)
             refreshNotPayOrders();
-        currentTicketOrders = notPayOrders;
         return notPayOrders;
     }
 
@@ -111,7 +105,6 @@ public class OrderBean implements Serializable {
     public List<TicketOrder> getNotExtractTicketOrders() {
         if(notExtractTicketOrders == null)
             refreshNotExtractTicketOrders();
-        currentTicketOrders = notExtractTicketOrders;
         return notExtractTicketOrders;
     }
 
@@ -165,7 +158,6 @@ public class OrderBean implements Serializable {
     }
 
     public List<TicketOrder> getHistoryTicketOrders() {
-        currentTicketOrders = historyTicketOrders;
         return historyTicketOrders;
     }
 

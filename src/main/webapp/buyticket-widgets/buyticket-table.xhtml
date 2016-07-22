@@ -38,7 +38,7 @@
                                              icon="ui-icon-star" actionListener="#{preferBean.removePreferSubwayStation(startStation)}"
                                              update="#{preferUpdate}"
                                              onsuccess="Materialize.toast('#{bundle.TipRemovePreferStationSuccess}', 4000, 'rounded')">
-                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                                <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
                         </c:when>
                         <c:when test="#{not empty sessionScope.user}">
@@ -46,7 +46,7 @@
                                              icon="ui-icon-star-border" actionListener="#{preferBean.addPreferSubwayStation(startStation)}"
                                              onsuccess="Materialize.toast('#{bundle.TipAddPreferStationSuccess}', 4000, 'rounded')"
                                              update="#{preferUpdate}">
-                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                                <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
                         </c:when>
                     </c:choose>
@@ -69,7 +69,7 @@
                                              icon="ui-icon-star" actionListener="#{preferBean.removePreferSubwayStation(endStation)}"
                                              update="#{preferUpdate}"
                                              onsuccess="Materialize.toast('#{bundle.TipRemovePreferStationSuccess}', 4000, 'rounded')">
-                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                                <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
                         </c:when>
                         <c:when test="#{not empty sessionScope.user}">
@@ -77,7 +77,7 @@
                                              icon="ui-icon-star-border" actionListener="#{preferBean.addPreferSubwayStation(endStation)}"
                                              onsuccess="Materialize.toast('#{bundle.TipAddPreferStationSuccess}', 4000, 'rounded')"
                                              update="#{preferUpdate}">
-                                <f:actionListener binding="#{subwayInfoBean.refreshUser()}"/>
+                                <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
                         </c:when>
                     </c:choose>
@@ -127,7 +127,7 @@
                                                      actionListener="#{preferBean.removePreferSubwayRoute(startStation, endStation)}"
                                                      onsuccess="Materialize.toast('#{bundle.TipRemovePreferRoute}', 4000, 'rounded')"
                                                      update="#{preferUpdate}">
-                                        <f:actionListener binding="#{preferBean.refreshUser()}"/>
+                                        <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                                     </p:commandButton>
                                 </c:when>
                                 <c:otherwise>
@@ -136,7 +136,7 @@
                                                      actionListener="#{preferBean.addPreferSubwayRoute(startStation, endStation)}"
                                                      onsuccess="Materialize.toast('#{bundle.TipAddPreferRouteSuccess}', 4000, 'rounded')"
                                                      update="#{preferUpdate}">
-                                        <f:actionListener binding="#{preferBean.refreshUser()}"/>
+                                        <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                                     </p:commandButton>
                                 </c:otherwise>
                             </c:choose>
@@ -147,7 +147,7 @@
                                              actionListener="#{orderBean.submitOrder(startStation, endStation, ticketPrice)}"
                                              update="#{submitUpdate}" oncomplete="onSubmitOrderCallback(xhr, status, args);$('.collapsible').collapsible({accordion: true});"
                                              value="#{bundle.SubmitOrder}">
-                                <f:actionListener binding="#{preferBean.refreshUser()}"/>
+                                <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
                         </h:form>
                     </td>

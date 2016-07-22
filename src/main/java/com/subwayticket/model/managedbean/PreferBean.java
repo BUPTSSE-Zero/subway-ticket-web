@@ -3,16 +3,18 @@ package com.subwayticket.model.managedbean;
 import com.subwayticket.control.AccountControl;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.model.*;
+import com.subwayticket.util.BundleUtil;
+import org.primefaces.context.RequestContext;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by zhou-shengyun on 7/15/16.
@@ -35,10 +37,6 @@ public class PreferBean {
         user = (Account) session.getAttribute(AccountControl.SESSION_ATTR_USER);
         if(user != null)
             user = (Account)systemDBHelperBean.find(Account.class, user.getPhoneNumber());
-    }
-
-    public void refreshUser(){
-        systemDBHelperBean.refresh(user);
     }
 
     public boolean isStationPrefer(SubwayStation ss){
@@ -64,6 +62,8 @@ public class PreferBean {
     public void addPreferSubwayStation(SubwayStation ss){
         if(user == null)
             return;
+        if(isStationPrefer(ss))
+            return;
         systemDBHelperBean.create(new PreferSubwayStation(user.getPhoneNumber(), ss.getSubwayStationId()));
     }
 
@@ -79,6 +79,8 @@ public class PreferBean {
     public void addPreferSubwayRoute(SubwayStation startStation, SubwayStation endStation){
         if(user == null)
             return;
+        if(isRoutePrefer(startStation, endStation))
+            return;
         systemDBHelperBean.create(new PreferRoute(user.getPhoneNumber(), startStation.getSubwayStationId(), endStation.getSubwayStationId()));
     }
 
@@ -91,12 +93,87 @@ public class PreferBean {
             systemDBHelperBean.remove(pr);
     }
 
-    public List<PreferRoute> getPreferRouteList(){
-        return user.getPreferRouteList();
-    }
-
     public List<HistoryRoute> getHistoryRouteList(){
         return user.getHistoryRouteList();
     }
 
+    public Map<City, List<PreferSubwayStation>> getPreferSubwayStationMap(){
+        if(user == null)
+            return null;
+        Map<City, List<PreferSubwayStation>> result = new HashMap<>();
+        for(PreferSubwayStation pss : user.getPreferSubwayStationList()){
+            if(!result.containsKey(pss.getSubwayStation().getSubwayLine().getCity())){
+                List<PreferSubwayStation> stationList = new ArrayList<>();
+                stationList.add(pss);
+                result.put(pss.getSubwayStation().getSubwayLine().getCity(), stationList);
+            }else{
+                List<PreferSubwayStation> stationList = result.get(pss.getSubwayStation().getSubwayLine().getCity());
+                stationList.add(pss);
+            }
+        }
+        return result;
+    }
+
+    private int preferStationId;
+
+    public String getPreferStationId(){
+        return null;
+    }
+
+    public void setPreferStationId(String stationId){
+        preferStationId = Integer.valueOf(stationId);
+    }
+
+    public void addPreferSubwayStation(){
+        addPreferSubwayStation(new SubwayStation(preferStationId));
+        RequestContext.getCurrentInstance().addCallbackParam("result_code", 0);
+    }
+
+    private int preferRouteStartStationId;
+
+    public String getPreferRouteStartStationId() {
+        return null;
+    }
+
+    public void setPreferRouteStartStationId(String stationId) {
+        this.preferRouteStartStationId = Integer.valueOf(stationId);
+    }
+
+    private int preferRouteEndStationId;
+
+    public String getPreferRouteEndStationId() {
+        return null;
+    }
+
+    public void setPreferRouteEndStationId(String stationId) {
+        this.preferRouteEndStationId = Integer.valueOf(stationId);
+    }
+
+    public void addPreferSubwayRoute(){
+        if(preferRouteStartStationId == preferRouteEndStationId){
+            FacesContext context = FacesContext.getCurrentInstance();
+            HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
+            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, BundleUtil.getString(request, "TipStartStationEqualEndStation"), ""));
+            return;
+        }
+        addPreferSubwayRoute(new SubwayStation(preferRouteStartStationId), new SubwayStation(preferRouteEndStationId));
+        RequestContext.getCurrentInstance().addCallbackParam("result_code", 0);
+    }
+
+    public Map<City, List<PreferRoute>> getPreferRouteMap(){
+        if(user == null)
+            return null;
+        Map<City, List<PreferRoute>> result = new HashMap<>();
+        for(PreferRoute pr : user.getPreferRouteList()){
+            if(!result.containsKey(pr.getStartStation().getSubwayLine().getCity())){
+                List<PreferRoute> preferRoutes = new ArrayList<>();
+                preferRoutes.add(pr);
+                result.put(pr.getStartStation().getSubwayLine().getCity(), preferRoutes);
+            }else{
+                List<PreferRoute> preferRoutes = result.get(pr.getStartStation().getSubwayLine().getCity());
+                preferRoutes.add(pr);
+            }
+        }
+        return result;
+    }
 }

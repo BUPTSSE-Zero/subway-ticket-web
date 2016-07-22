@@ -96,6 +96,7 @@ public class Account {
     private List<PreferSubwayStation> preferSubwayStationList;
 
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    @OrderBy("addTime DESC")
     public List<PreferSubwayStation> getPreferSubwayStationList() {
         return preferSubwayStationList;
     }
@@ -107,6 +108,7 @@ public class Account {
     private List<HistoryRoute> historyRouteList;
 
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    @OrderBy("addTime DESC")
     public List<HistoryRoute> getHistoryRouteList() {
         return historyRouteList;
     }
@@ -118,6 +120,7 @@ public class Account {
     private List<PreferRoute> preferRouteList;
 
     @OneToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE}, mappedBy = "user")
+    @OrderBy("addTime DESC")
     public List<PreferRoute> getPreferRouteList() {
         return preferRouteList;
     }

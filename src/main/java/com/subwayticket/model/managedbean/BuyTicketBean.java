@@ -32,9 +32,6 @@ public class BuyTicketBean implements Serializable{
     @PostConstruct
     public void init(){
         findUser();
-        //startStation = (SubwayStation) subwayInfoDBHelperBean.find(SubwayStation.class, 151);
-        //endStation = (SubwayStation) subwayInfoDBHelperBean.find(SubwayStation.class, 1131);
-        //ticketPrice = subwayInfoDBHelperBean.getTicketPrice(startStation, endStation);
     }
 
     public void findUser(){
@@ -42,10 +39,6 @@ public class BuyTicketBean implements Serializable{
         user = (Account) session.getAttribute(AccountControl.SESSION_ATTR_USER);
         if(user != null)
             user = (Account)subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
-    }
-
-    public void refreshUser(){
-        subwayInfoDBHelperBean.refresh(user);
     }
 
     public void setStartStationId(String stationIdStr) {

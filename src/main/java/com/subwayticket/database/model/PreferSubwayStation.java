@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "PreferSubwayStation")
 @IdClass(PreferSubwayStationPK.class)
-public class PreferSubwayStation implements Comparable<PreferSubwayStation> {
+public class PreferSubwayStation {
     private String userId;
     private int stationId;
     private Account user;
@@ -92,14 +92,5 @@ public class PreferSubwayStation implements Comparable<PreferSubwayStation> {
 
     public void setAddTime(Date addTime) {
         this.addTime = addTime;
-    }
-
-    @Override
-    public int compareTo(PreferSubwayStation o) {
-        if(this.addTime.before(o.addTime))
-            return -1;
-        else if(this.addTime.after(o.addTime))
-            return 1;
-        return 0;
     }
 }

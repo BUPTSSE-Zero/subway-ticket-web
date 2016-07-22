@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "HistoryRoute")
 @IdClass(HistoryRoutePK.class)
-public class HistoryRoute implements Comparable<HistoryRoute> {
+public class HistoryRoute {
     private String userId;
     private int startStationId;
     private int endStartionId;
@@ -117,14 +117,5 @@ public class HistoryRoute implements Comparable<HistoryRoute> {
 
     public void setAddTime(Date addTime) {
         this.addTime = addTime;
-    }
-
-    @Override
-    public int compareTo(HistoryRoute o) {
-        if(this.addTime.before(o.addTime))
-            return -1;
-        else if(this.addTime.after(o.addTime))
-            return 1;
-        return 0;
     }
 }

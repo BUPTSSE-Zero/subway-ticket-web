@@ -46,10 +46,6 @@ public class SubwayInfoBean implements Serializable {
             user = (Account)subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
     }
 
-    public void refreshUser(){
-        subwayInfoDBHelperBean.refresh(user);
-    }
-
     public List<City> getCities() {
         return cities;
     }

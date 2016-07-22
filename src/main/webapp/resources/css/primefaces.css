@@ -93,6 +93,10 @@
     content: 'remove';
 }
 
+.ui-icon-delete:before{
+    content: 'delete';
+}
+
 .ui-icon-triangle-1-s:before{
     content: 'arrow_drop_down';
 }

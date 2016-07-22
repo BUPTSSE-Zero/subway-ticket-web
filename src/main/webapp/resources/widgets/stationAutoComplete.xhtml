@@ -22,7 +22,7 @@
 
     <cc:implementation>
         <p:autoComplete id="#{cc.attrs.id}" value="#{cc.attrs.value}" styleClass="#{cc.attrs.id} station-autocomplete" style="width: 100%"
-                        emptyMessage="#{bundle.NoStationSearchResult}" completeMethod="#{cc.attrs.completeMethod}"
+                        emptyMessage="#{bundle.TipNoStationSearchResult}" completeMethod="#{cc.attrs.completeMethod}"
                         forceSelection="true" var="station" itemLabel="#{station.displayName}" dropdown="true"
                         itemValue="#{station.subwayStationId.toString()}" required="#{cc.attrs.required}"
                         requiredMessage="#{cc.attrs.requiredMessage}"

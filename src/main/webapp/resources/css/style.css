@@ -281,3 +281,7 @@ body{
 .prefer-button .ui-icon{
 	color: #ff8f00;
 }
+
+.delete-button .ui-icon{
+	color: #ef5350;
+}

@@ -1,0 +1,135 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:w="http://xmlns.jcp.org/jsf/composite/widgets"
+                template="/templates/person-center-template.xhtml">
+
+    <ui:param name="itemPreferSettingsActive" value="active"/>
+    <ui:param name="itemPreferSubwayStationActive" value="active"/>
+    <ui:param name="personCenterContentTitle" value="#{bundle.PreferSubwayStation}"/>
+
+    <ui:define name="person-center-content">
+        <p:outputPanel id="prefer-subway-station-panel" style="height: calc(100% - 70px)">
+            <c:set var="preferStationMap" value="#{preferBean.preferSubwayStationMap}"/>
+            <c:choose>
+                <c:when test="#{empty preferStationMap or preferStationMap.size() eq 0}">
+                    <div class="valign-wrapper" style="height: 80%">
+                        <table class="valign" style="width: auto; margin: 0 auto">
+                            <tr>
+                                <td>
+                                    <i class="material-icons green-text" style="font-size: 64px">info_outline</i>
+                                </td>
+                                <td>
+                                    <h5>#{bundle.TipNoPreferSubwayStation}</h5>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="entry" items="#{preferStationMap}">
+                        <ul class="collection with-header">
+                            <li class="collection-header">
+                                <h6 style="font-size: 1.3rem" class="light-blue-text">#{entry.key.cityName}</h6>
+                            </li>
+                            <c:forEach var="pss" items="#{entry.value}">
+                                <li class="collection-item" style="height: 45px; line-height: 45px; padding-top: 0; padding-bottom: 0">
+                                    #{pss.subwayStation.displayName}
+                                    <h:form styleClass="secondary-content">
+                                        <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect delete-button"
+                                                         icon="ui-icon-delete" actionListener="#{preferBean.removePreferSubwayStation(pss.subwayStation)}"
+                                                         update="#{p:component('prefer-subway-station-panel')}"
+                                                         onsuccess="Materialize.toast('#{bundle.TipRemovePreferStationSuccess}', 4000, 'rounded')">
+                                            <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
+                                        </p:commandButton>
+                                    </h:form>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
+        </p:outputPanel>
+    </ui:define>
+
+    <ui:define name="page-footer">
+        <script>
+            $(document).ready(function() {
+                $('select').material_select();
+            });
+            function handleAddPreferStationResult(xhr, status, args){
+                if(args.result_code != undefined &amp;&amp; args.result_code == 0) {
+                    Materialize.toast('#{bundle.TipAddPreferStationSuccess}', 4000, 'rounded');
+                }
+            }
+        </script>
+        <div id="add-preferstation-dialog" class="modal" style="width: 820px">
+            <div class="modal-content">
+                <h5 class="light-blue-text">#{bundle.AddPreferSubwayStation}</h5>
+                <div class="row" style="margin-bottom: 0">
+                    <h:form class="col s12">
+                        <div class="row" style="margin-bottom: 0">
+                            <div class="col s3">
+                                <div class="col" style="padding: 20px 6px 0 0;">
+                                    <i class="material-icons">location_city</i>
+                                </div>
+                                <div class="input-field col" style="width: calc(100% - 30px)">
+                                    <h:selectOneMenu value="#{subwayInfoBean.selectedCityId}">
+                                        <c:forEach items="#{subwayInfoBean.cities}" var="city">
+                                            <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city.cityId}"/>
+                                        </c:forEach>
+                                        <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityIdChange}"
+                                                onsuccess="$('#station-select input').val('')"/>
+                                    </h:selectOneMenu>
+                                    <label>#{bundle.City}</label>
+                                </div>
+                            </div>
+                            <div class="col s6">
+                                <div class="col" style="padding: 20px 6px 0 0;">
+                                    <i class="material-icons">subway</i>
+                                </div>
+                                <div id="station-select" class="input-field col" style="width: calc(100% - 30px)">
+                                    <w:stationAutoComplete value="#{preferBean.preferStationId}" id="station-autocomplete"
+                                                           stationNameClass="station-text"
+                                                           enableStationMessage="#{false}" completeMethod="#{subwayInfoBean.searchStation}"
+                                                           required="true" requiredMessage="#{bundle.TipSelectStation}"
+                                                           label="#{bundle.SubwayStation}"/>
+                                </div>
+                            </div>
+                            <div class="input-field col s3" style="text-align: right">
+                                <p:commandButton styleClass="btn light-green waves-effect waves-light" icon="ui-icon-add" value="#{bundle.Add}"
+                                                 actionListener="#{preferBean.addPreferSubwayStation}"
+                                                 oncomplete="handleAddPreferStationResult(xhr, status, args)"
+                                                 update="#{p:component('select-station-msg')} #{p:component('prefer-subway-station-panel')}">
+                                    <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
+                                </p:commandButton>
+                            </div>
+                        </div>
+                        <p:messages id="select-station-msg" closable="true" autoUpdate="false"/>
+                    </h:form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="waves-effect waves-green btn-flat" onclick="$('#add-preferstation-dialog').closeModal()">
+                    #{bundle.Close}
+                </a>
+            </div>
+        </div>
+        <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
+            <a class="btn-floating btn-large waves-effect waves-light green"
+               onclick="$('#add-preferstation-dialog').openModal({
+                        dismissible: true,
+                        ready: function(){
+                            $('.lean-overlay').css('z-index', 20);
+                            $('#add-preferstation-dialog').css('z-index', 21);
+                        }
+                    })">
+                <i class="material-icons">add</i>
+            </a>
+        </div>
+    </ui:define>
+
+</ui:composition>

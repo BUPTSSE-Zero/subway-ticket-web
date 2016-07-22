@@ -53,6 +53,18 @@
                                     <i class="material-icons light-green-text">credit_card</i>
                                     #{bundle.PurchaseCommonlyUsedSettings}
                                 </div>
+                                <div class="collapsible-body blue-grey darken-4 white-text">
+                                    <ul>
+                                        <li class="#{itemPreferSubwayStationActive}">
+                                            <h:link class="white-text" outcome="prefer-subway-station.xhtml">#{bundle.PreferSubwayStation}</h:link>
+                                        </li>
+                                    </ul>
+                                    <ul>
+                                        <li class="#{itemPreferRouteActive}">
+                                            <h:link class="white-text" outcome="prefer-route.xhtml">#{bundle.PreferRoute}</h:link>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                             <li>
                                 <div class="collapsible-header waves-effect waves-light #{itemOrderRecordsActive}">

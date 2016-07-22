@@ -39,6 +39,7 @@ public class UserOperationBean implements Serializable {
     private String password;
     private String newPassword;
     private String captcha;
+    private Account user;
 
     public UserOperationBean(){}
 
@@ -112,9 +113,10 @@ public class UserOperationBean implements Serializable {
                 setPassword("");
                 setPhoneNumber("");
                 setNewPassword("");
-                if (result.getResultCode() == PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
-                    return false;
-                return true;
+                HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+                user = (Account) session.getAttribute(AccountControl.SESSION_ATTR_USER);
+                user = (Account) dbBean.find(Account.class, user.getPhoneNumber());
+                return result.getResultCode() != PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE;
             } else {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
             }
@@ -155,6 +157,7 @@ public class UserOperationBean implements Serializable {
     }
 
     public void logout(){
+        user = null;
         AccountControl.webLogout((HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest());
     }
 
@@ -195,5 +198,10 @@ public class UserOperationBean implements Serializable {
                     FacesContext.getCurrentInstance().getExternalContext().getApplicationContextPath()
             );
         }
+    }
+
+    public void refreshLoginUser(){
+        if(user != null)
+            dbBean.refresh(user);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Table(name = "PreferRoute")
 @IdClass(PreferRoutePK.class)
-public class PreferRoute implements Comparable<PreferRoute>{
+public class PreferRoute{
     private String userId;
     private int startStationId;
     private int endStationId;
@@ -117,14 +117,5 @@ public class PreferRoute implements Comparable<PreferRoute>{
 
     public void setAddTime(Date addTime) {
         this.addTime = addTime;
-    }
-
-    @Override
-    public int compareTo(PreferRoute o) {
-        if(this.addTime.before(o.addTime))
-            return -1;
-        else if(this.addTime.after(o.addTime))
-            return 1;
-        return 0;
     }
 }

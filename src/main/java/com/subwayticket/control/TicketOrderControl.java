@@ -59,8 +59,9 @@ public class TicketOrderControl {
             for(HistoryRoute hr : user.getHistoryRouteList()){
                 if(hr.getStartStationId() == submitOrderRequest.getStartStationId() &&
                         hr.getEndStartionId() == submitOrderRequest.getEndStationId()) {
-                    subwayInfoDBHelperBean.remove(hr);
-                    break;
+                    hr.setAddTime(new Date());
+                    subwayInfoDBHelperBean.merge(hr);
+                    return result;
                 }
             }
             if(user.getHistoryRouteList().size() < 3){
@@ -68,8 +69,7 @@ public class TicketOrderControl {
                         submitOrderRequest.getEndStationId()));
                 return result;
             }
-            Collections.sort(user.getHistoryRouteList());
-            subwayInfoDBHelperBean.remove(user.getHistoryRouteList().get(0));
+            subwayInfoDBHelperBean.remove(user.getHistoryRouteList().get(user.getHistoryRouteList().size() - 1));
             subwayInfoDBHelperBean.create(new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
                     submitOrderRequest.getEndStationId()));
             subwayInfoDBHelperBean.refresh(user);

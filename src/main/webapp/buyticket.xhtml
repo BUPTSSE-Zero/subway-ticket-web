@@ -144,8 +144,9 @@
             <p:outputPanel id="quick-buyticket-panel">
                 <h5 class="indigo-text" style="margin-top: 50px">#{bundle.PreferRoute}</h5>
                 <p:separator/>
+                <c:set var="preferRouteMap" value="#{preferBean.preferRouteMap}"/>
                 <c:choose>
-                    <c:when test="#{empty sessionScope.user or preferBean.preferRouteList.size() eq 0}">
+                    <c:when test="#{empty sessionScope.user or preferRouteMap.size() eq 0}">
                         <table style="width:auto; margin: auto">
                             <tr>
                                 <td>
@@ -167,12 +168,15 @@
                         </table>
                     </c:when>
                     <c:otherwise>
-                        <ui:include src="buyticket-widgets/prefer-route-buyticket.xhtml">
-                            <ui:param name="routeList" value="#{preferBean.preferRouteList}"/>
-                            <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
-                            <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')}"/>
-                            <ui:param name="widgetId" value="prefer-route-buyticket"/>
-                        </ui:include>
+                        <c:forEach var="entry" items="#{preferRouteMap}">
+                            <h6 class="pink-text" style="font-size: 1.2rem">#{entry.key.cityName}</h6>
+                            <ui:include src="buyticket-widgets/prefer-route-buyticket.xhtml">
+                                <ui:param name="routeList" value="#{entry.value}"/>
+                                <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
+                                <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')}"/>
+                                <ui:param name="widgetId" value="prefer-route-buyticket"/>
+                            </ui:include>
+                        </c:forEach>
                         <script>
                             $('.collapsible').collapsible({accordion : true});
                         </script>

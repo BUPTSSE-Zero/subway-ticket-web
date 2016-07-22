@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:w="http://java.sun.com/jsf/composite/widgets"
+                template="/templates/person-center-template.xhtml">
+
+    <ui:param name="itemPreferSettingsActive" value="active"/>
+    <ui:param name="itemPreferRouteActive" value="active"/>
+    <ui:param name="personCenterContentTitle" value="#{bundle.PreferRoute}"/>
+
+    <ui:define name="person-center-content">
+        <p:outputPanel id="prefer-route-panel" style="height: calc(100% - 70px)">
+            <c:set var="preferRouteMap" value="#{preferBean.preferRouteMap}"/>
+            <c:choose>
+                <c:when test="#{empty preferRouteMap or preferRouteMap.size() eq 0}">
+                    <div class="valign-wrapper" style="height: 80%">
+                        <table class="valign" style="width: auto; margin: 0 auto">
+                            <tr>
+                                <td>
+                                    <i class="material-icons green-text" style="font-size: 64px">info_outline</i>
+                                </td>
+                                <td>
+                                    <h5>#{bundle.TipNoPreferRoute}</h5>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="entry" items="#{preferRouteMap}">
+                        <ul class="collection with-header">
+                            <li class="collection-header">
+                                <h6 style="font-size: 1.3rem" class="light-blue-text">#{entry.key.cityName}</h6>
+                            </li>
+                            <c:forEach var="route" items="#{entry.value}">
+                                <li class="collection-item" style="height: 45px; line-height: 45px; padding-top: 0; padding-bottom: 0">
+                                    <span class="left">#{route.startStation.displayName}</span>
+                                    <span class="material-icons left" style="line-height: 45px; margin: 0 10px">trending_flat</span>
+                                    <span class="left">
+                                        #{route.endStation.displayName}
+                                    </span>
+                                    <h:form styleClass="secondary-content">
+                                        <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect delete-button"
+                                                         icon="ui-icon-delete" actionListener="#{preferBean.removePreferSubwayRoute(route.startStation, route.endStation)}"
+                                                         update="#{p:component('prefer-route-panel')}"
+                                                         onsuccess="Materialize.toast('#{bundle.TipRemovePreferRoute}', 4000, 'rounded')">
+                                            <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
+                                        </p:commandButton>
+                                    </h:form>
+                                </li>
+                            </c:forEach>
+                        </ul>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
+        </p:outputPanel>
+    </ui:define>
+
+    <ui:define name="page-footer">
+        <script>
+            $(document).ready(function() {
+                $('select').material_select();
+            });
+            function handleAddPreferRouteResult(xhr, status, args){
+                if(args.result_code != undefined &amp;&amp; args.result_code == 0) {
+                    Materialize.toast('#{bundle.TipAddPreferRouteSuccess}', 4000, 'rounded');
+                }
+            }
+        </script>
+        <div id="add-preferroute-dialog" class="modal" style="width: 800px">
+            <h:form>
+                <div class="modal-content">
+                    <h5 class="light-blue-text">#{bundle.AddPreferRoute}</h5>
+                    <div class="row" style="margin-bottom: 0">
+                        <div class="col s12">
+                            <div class="row" style="margin-bottom: 0">
+                                <div class="col s3">
+                                    <div class="col" style="padding: 20px 6px 0 0;">
+                                        <i class="material-icons">location_city</i>
+                                    </div>
+                                    <div class="input-field col" style="width: calc(100% - 30px)">
+                                        <h:selectOneMenu value="#{subwayInfoBean.selectedCityId}">
+                                            <c:forEach items="#{subwayInfoBean.cities}" var="city">
+                                                <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city.cityId}"/>
+                                            </c:forEach>
+                                            <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityIdChange}"
+                                                    onsuccess="$('#start-station-select input').val(''); $('#end-station-select input').val('')"/>
+                                        </h:selectOneMenu>
+                                        <label>#{bundle.City}</label>
+                                    </div>
+                                </div>
+                                <div class="col s4">
+                                    <div class="col" style="padding: 20px 6px 0 0;">
+                                        <i class="material-icons">subway</i>
+                                    </div>
+                                    <div id="start-station-select" class="input-field col" style="width: calc(100% - 30px)">
+                                        <w:stationAutoComplete value="#{preferBean.preferRouteStartStationId}" id="start-station-autocomplete" stationNameClass="start-station-text"
+                                                               enableStationMessage="#{false}" completeMethod="#{subwayInfoBean.searchStation}"
+                                                               required="true" requiredMessage="#{bundle.TipSelectStartStation}"
+                                                               label="#{bundle.StartSubwayStation}"/>
+                                    </div>
+                                </div>
+                                <div class="col s5">
+                                    <div class="col" style="padding: 20px 5px 0 20px;">
+                                        <i class="material-icons">trending_flat</i>
+                                    </div>
+                                    <div id="end-station-select" class="input-field col" style="width: calc(100% - 50px)">
+                                        <w:stationAutoComplete id="end-station-autocomplete" value="#{preferBean.preferRouteEndStationId}"
+                                                               stationNameClass="end-station-text"
+                                                               enableStationMessage="#{false}" completeMethod="#{subwayInfoBean.searchStation}"
+                                                               required="true" requiredMessage="#{bundle.TipSelectEndStation}"
+                                                               label="#{bundle.EndSubwayStation}"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <p:messages id="select-station-msg" closable="true" autoUpdate="false"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a class="waves-effect waves-green btn-flat" onclick="$('#add-preferroute-dialog').closeModal()">
+                        #{bundle.Close}
+                    </a>
+                    <p:commandButton styleClass="btn-flat waves-effect light-blue-text" value="#{bundle.Add}"
+                                     update="select-station-msg #{p:component('prefer-route-panel')}"
+                                     actionListener="#{preferBean.addPreferSubwayRoute}"
+                                     oncomplete="handleAddPreferRouteResult(xhr, status, args)">
+                        <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
+                    </p:commandButton>
+                </div>
+            </h:form>
+        </div>
+        <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
+            <a class="btn-floating btn-large waves-effect waves-light green"
+               onclick="$('#add-preferroute-dialog').openModal({
+                        dismissible: true,
+                        ready: function(){
+                            $('.lean-overlay').css('z-index', 20);
+                            $('#add-preferroute-dialog').css('z-index', 21);
+                        }
+                    })">
+                <i class="material-icons">add</i>
+            </a>
+        </div>
+    </ui:define>
+
+</ui:composition>
