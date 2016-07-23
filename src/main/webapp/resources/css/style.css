@@ -35,6 +35,11 @@ body{
 	width: 400px;
 }
 
+#index-title-body{
+	height: 400px;
+	padding-bottom: 60px;
+}
+
 #titlebar{
 	float: left;
 	font-weight: bold;
@@ -228,6 +233,9 @@ body{
 	padding: 0 10px;
 }
 
+.system-msg-header,
+.system-msg-header i,
+.system-msg-header span,
 .station-msg-header,
 .station-msg-header i,
 .station-msg-header span,
@@ -238,17 +246,14 @@ body{
 	line-height: 40px;
 }
 
+.system-msg-header i,
+.system-msg-header span,
 .station-msg-header i,
 .station-msg-header span,
 .order-record-header i,
 .order-record-header span{
 	margin-right: 10px;
 }
-
-/*.order-record-body .btn{
-	padding-left: 10px;
-	padding-right: 5px;
-}*/
 
 .confirm-dialog {
 	background-color: white;

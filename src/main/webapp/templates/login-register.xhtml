@@ -37,18 +37,9 @@
                 <p:messages id="login_error_message" autoUpdate="false" closable="true"/>
                 <div style="text-align: center">
                     <ui:insert name="login-button">
-                        <c:choose>
-                            <c:when test="#{facesContext.viewRoot.viewId == '/index.xhtml'}">
-                                <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" action="#{userOperationBean.login}" icon="ui-icon-enter"
-                                                 update="login_error_message" oncomplete="indexHandleLoginResult(xhr, status, args)"/>
-                            </c:when>
-                            <c:otherwise>
-                                <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
-                                                 update="login_error_message header-panel page-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
-                            </c:otherwise>
-                        </c:choose>
+                        <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                                         value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
+                                         update="login_error_message header-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
                     </ui:insert>
                 </div>
             </h:form>
@@ -91,18 +82,9 @@
                 <p:messages id="reset_password_message" autoUpdate="false" closable="true"/>
                 <div style="text-align: center">
                     <ui:insert name="reset-password-button">
-                        <c:choose>
-                            <c:when test="#{facesContext.viewRoot.viewId == '/index.xhtml'}">
-                                <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" action="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
-                                                 update="reset_password_message" oncomplete="indexHandleLoginResult(xhr, status, args)"/>
-                            </c:when>
-                            <c:otherwise>
-                                <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                                                 value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
-                                                 update="reset_password_message header-panel page-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
-                            </c:otherwise>
-                        </c:choose>
+                        <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
+                                         value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
+                                         update="reset_password_message header-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
                     </ui:insert>
                 </div>
             </h:form>
@@ -156,18 +138,9 @@
             <p:messages id="singup_message" autoUpdate="false" closable="true"/>
             <div style="text-align: center">
                 <ui:insert name="signup-button">
-                    <c:choose>
-                        <c:when test="#{facesContext.viewRoot.viewId == '/index.xhtml'}">
-                            <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
-                                             value="#{bundle.Register}" action="#{userOperationBean.register}"
-                                             update="singup_message"/>
-                        </c:when>
-                        <c:otherwise>
-                            <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
-                                             value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
-                                             update="singup_message header-panel page-panel"/>
-                        </c:otherwise>
-                    </c:choose>
+                    <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
+                                     value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
+                                     update="singup_message header-panel"/>
                 </ui:insert>
             </div>
         </h:form>

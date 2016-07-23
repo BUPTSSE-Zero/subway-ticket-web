@@ -1,10 +1,72 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
                 xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:c="http://java.sun.com/jsp/jstl/core"
+                xmlns:p="http://primefaces.org/ui"
                 template="/templates/main-template.xhtml">
 
     <ui:define name="page-panel-content">
-        <div id="login-panel" class="row card-panel white">
-            <ui:include src="templates/login-register.xhtml"/>
+        <div id="index-title-body" class="light-blue darken-2 white-text valign-wrapper">
+            <table>
+                <tr>
+                    <td style="text-align: center;padding: 0">
+                        <h2 style="font-weight: bold">#{bundle.AppName}</h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;padding: 0">
+                        <h4>#{bundle.IndexSlogan}</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center">
+                        <h:link styleClass="waves-effect waves-light btn-large light-green"
+                            style="font-size: 20px" outcome="buyticket.xhtml">
+                            <i class="material-icons left" style="font-size: 32px">payment</i>
+                            #{bundle.BuyTicket}
+                            <i class="material-icons right" style="font-size: 32px">chevron_right</i>
+                        </h:link>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <ul class="card collection with-header" style="width: 70%; margin: -60px auto 15px auto">
+            <li class="collection-header light-blue-text"><h5>#{bundle.SystemMessage}</h5></li>
+            <c:set var="msgList" value="#{subwayInfoBean.systemMessageList}"/>
+            <c:choose>
+                <c:when test="#{empty msgList or msgList.size() eq 0}">
+                    <li class="collection-item">#{bundle.TipNoMessage}</li>
+                </c:when>
+                <c:otherwise>
+                    <c:forEach var="msg" items="#{msgList}">
+                        <li class="collection-item">
+                            <h:form>
+                                <p:commandLink value="#{msg.title}" styleClass="black-text" actionListener="#{subwayInfoBean.setSelectedSystemMessage(msg)}"
+                                               update="#{p:component('system-msg-panel')}"
+                                               onsuccess="$('#system-msg-dialog').openModal({dismissible: true});updateAllDate()"/>
+                                <span class="secondary-content local-time right">#{msg.releaseTime.time}</span>
+                            </h:form>
+                        </li>
+                    </c:forEach>
+                </c:otherwise>
+            </c:choose>
+        </ul>
+        <div id="system-msg-dialog" class="modal modal-fixed-footer">
+            <div class="modal-content">
+                <p:outputPanel id="system-msg-panel">
+                    <h5 class="light-blue-text">#{subwayInfoBean.selectedSystemMessage.title}</h5>
+                    <div class="system-msg-header">
+                        <i class="material-icons left">schedule</i>
+                        <span class="local-time left">#{subwayInfoBean.selectedSystemMessage.releaseTime.time}</span>
+                    </div>
+                    <p>#{subwayInfoBean.selectedSystemMessage.content}</p>
+                </p:outputPanel>
+            </div>
+            <div class="modal-footer">
+                <a class="waves-effect waves-green btn-flat" onclick="$('#system-msg-dialog').closeModal()">
+                    #{bundle.Close}
+                </a>
+            </div>
         </div>
     </ui:define>
 

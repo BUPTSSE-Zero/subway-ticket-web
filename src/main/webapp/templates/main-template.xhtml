@@ -28,7 +28,7 @@
     </ui:insert>
 
     <ui:insert name="page-content">
-        <p:outputPanel id="page-panel" style="width: 100%">
+        <p:outputPanel id="page-panel" style="width: 100%; margin-top: 60px">
             <ui:insert name="page-panel-content"/>
         </p:outputPanel>
     </ui:insert>
@@ -38,14 +38,15 @@
     </ui:insert>
 
     <p:ajaxStatus onstart="$('#ajax-status-dialog').openModal({dismissible: false, in_duration: 50, out_duration: 100});return;"
-                  oncomplete="$('#ajax-status-dialog').closeModal();updateAllDate();return;"/>
+                  oncomplete="$('#ajax-status-dialog').closeModal();updateAllDate();return;"
+                  onerror="$('#ajax-status-dialog').closeModal();$('#ajax-error-dialog').openModal({dismissible: false})"/>
 
     <div id="ajax-status-dialog" class="modal">
         <table style="width: auto">
             <tr>
                 <td>
                     <div class="preloader-wrapper active" style="margin-right: 10px">
-                        <div class="spinner-layer spinner-light-blue-only">
+                        <div class="spinner-layer spinner-blue-only">
                             <div class="circle-clipper left">
                                 <div class="circle"></div>
                             </div>
@@ -63,6 +64,16 @@
                 </td>
             </tr>
         </table>
+    </div>
+
+    <div id="ajax-error-dialog" class="modal">
+        <div class="modal-content">
+            <h5>#{bundle.Alert}</h5>
+            <p>#{bundle.TipAjaxError}</p>
+        </div>
+        <div class="modal-footer">
+            <a class=" modal-action modal-close waves-effect waves-red btn-flat">#{bundle.Close}</a>
+        </div>
     </div>
 
 </h:body>

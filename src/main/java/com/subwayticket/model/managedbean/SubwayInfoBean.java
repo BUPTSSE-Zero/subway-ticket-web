@@ -2,6 +2,7 @@ package com.subwayticket.model.managedbean;
 
 import com.subwayticket.control.AccountControl;
 import com.subwayticket.database.control.SubwayInfoDBHelperBean;
+import com.subwayticket.database.control.SystemMessageDBHelperBean;
 import com.subwayticket.database.model.*;
 
 import javax.annotation.PostConstruct;
@@ -25,6 +26,8 @@ import java.util.Map;
 public class SubwayInfoBean implements Serializable {
     @EJB
     private SubwayInfoDBHelperBean subwayInfoDBHelperBean;
+    @EJB
+    private SystemMessageDBHelperBean sysMsgDBBean;
 
     private Account user;
     private List<City> cities;
@@ -97,5 +100,19 @@ public class SubwayInfoBean implements Serializable {
             }
         }
         return result;
+    }
+
+    public List<SystemMessage> getSystemMessageList(){
+        return sysMsgDBBean.getLatestMessage(10);
+    }
+
+    private SystemMessage selectedSystemMessage;
+
+    public SystemMessage getSelectedSystemMessage() {
+        return selectedSystemMessage;
+    }
+
+    public void setSelectedSystemMessage(SystemMessage selectedSystemMessage) {
+        this.selectedSystemMessage = selectedSystemMessage;
     }
 }
