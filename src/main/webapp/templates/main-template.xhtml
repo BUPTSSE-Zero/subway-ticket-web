@@ -11,6 +11,7 @@
     <f:facet name="first">
         <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     </f:facet>
+    <f:event type="preRenderView" listener="#{userOperationBean.refreshLoginUser}"/>
     <h:outputScript library="js" name="materialize.js"/>
     <h:outputScript library="js" name="localtime.js"/>
     <title>#{bundle.AppName}</title>

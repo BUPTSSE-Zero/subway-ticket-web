@@ -4,6 +4,8 @@ import com.subwayticket.database.model.Account;
 import com.subwayticket.database.model.TicketOrder;
 
 import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -16,23 +18,22 @@ import java.util.List;
  * Created by zhou-shengyun on 7/7/16.
  */
 
-@Stateless
-public class TicketOrderDBHelperBean extends EntityManagerHelper {
-    private EntityManager entityManager;
-
-    public TicketOrderDBHelperBean(){
-        entityManager = SystemDBHelperBean.initSubwayTicketDBPU();
-    }
-
-    @Override
-    protected EntityManager getEntityManager() {
-        return entityManager;
+@Stateless(name = "TicketOrderDBHelperEJB")
+public class TicketOrderDBHelperBean extends SystemDBHelperBean {
+    public static TicketOrderDBHelperBean getInstance(){
+        try {
+            InitialContext initialContext = new InitialContext();
+            return (TicketOrderDBHelperBean) initialContext.lookup("java:module/TicketOrderDBHelperEJB");
+        }catch (NamingException ne){
+            ne.printStackTrace();
+            return null;
+        }
     }
 
     public TicketOrder getOrderByOrderID(String ticketOrderID, Account user){
         if(ticketOrderID == null || user == null)
             return null;
-        Query q = entityManager.createQuery("select t from TicketOrder t where t.user=:user and t.ticketOrderId=:ticketOrderID");
+        Query q = getEntityManager().createQuery("select t from TicketOrder t where t.user=:user and t.ticketOrderId=:ticketOrderID");
         q.setParameter("user", user);
         q.setParameter("ticketOrderID", ticketOrderID);
         try{
@@ -66,11 +67,17 @@ public class TicketOrderDBHelperBean extends EntityManagerHelper {
         if(user == null)
             return null;
         setDateRange(startDate, endDate);
-        Query q = entityManager.createQuery("select t from TicketOrder t where t.user=:user and t.ticketOrderTime between :startDate and :endDate " +
+        Query q = getEntityManager().createQuery("select t from TicketOrder t where t.user=:user and t.ticketOrderTime between :startDate and :endDate " +
                                             "order by t.ticketOrderTime desc");
         q.setParameter("user", user);
         q.setParameter("startDate", startDate);
         q.setParameter("endDate", endDate);
+        return q.getResultList();
+    }
+
+    public List<TicketOrder> getAllOrderByStatus(char orderStatus){
+        Query q = getEntityManager().createQuery("select t from TicketOrder t where t.status=:status order by t.ticketOrderTime asc");
+        q.setParameter("status", orderStatus);
         return q.getResultList();
     }
 
@@ -83,10 +90,10 @@ public class TicketOrderDBHelperBean extends EntityManagerHelper {
             return null;
         Query q;
         if(startDate == null && endDate == null){
-            q = entityManager.createQuery("select t from TicketOrder t where t.user=:user and t.status=:status order by t.ticketOrderTime desc");
+            q = getEntityManager().createQuery("select t from TicketOrder t where t.user=:user and t.status=:status order by t.ticketOrderTime desc");
         }else if(startDate != null && endDate != null){
             setDateRange(startDate, endDate);
-            q = entityManager.createQuery("select t from TicketOrder t where t.user=:user and t.status=:status and t.ticketOrderTime between :startDate and :endDate " +
+            q = getEntityManager().createQuery("select t from TicketOrder t where t.user=:user and t.status=:status and t.ticketOrderTime between :startDate and :endDate " +
                                           "order by t.ticketOrderTime desc");
             q.setParameter("startDate", startDate);
             q.setParameter("endDate", endDate);
@@ -101,7 +108,7 @@ public class TicketOrderDBHelperBean extends EntityManagerHelper {
     public TicketOrder getOrderByExtractCode(String extractCode){
         if(extractCode == null || extractCode.isEmpty())
             return null;
-        Query q = entityManager.createQuery("select t from TicketOrder t where t.extractCode = :extractCode", TicketOrder.class);
+        Query q = getEntityManager().createQuery("select t from TicketOrder t where t.extractCode = :extractCode", TicketOrder.class);
         q.setParameter("extractCode", extractCode);
         try {
             return (TicketOrder) q.getSingleResult();

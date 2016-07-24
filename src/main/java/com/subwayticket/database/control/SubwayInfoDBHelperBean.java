@@ -13,25 +13,14 @@ import java.util.List;
  * Created by shengyun-zhou on 6/16/16.
  */
 
-@Stateless
-public class SubwayInfoDBHelperBean extends EntityManagerHelper{
-    private EntityManager entityManager;
-
-    public SubwayInfoDBHelperBean(){
-        entityManager = SystemDBHelperBean.initSubwayTicketDBPU();
-    }
-
-    @Override
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
+@Stateless(name = "SubwayInfoDBHelperEJB")
+public class SubwayInfoDBHelperBean extends SystemDBHelperBean{
     public List<SubwayLine> getSubwayLineList(int cityID){
         return getSubwayLineList(new City(cityID));
     }
 
     public List<SubwayLine> getSubwayLineList(City city){
-        Query q = entityManager.createQuery("select s from SubwayLine s where s.city = :city order by s.subwayLineId", SubwayLine.class);
+        Query q = getEntityManager().createQuery("select s from SubwayLine s where s.city = :city order by s.subwayLineId", SubwayLine.class);
         q.setParameter("city", city);
         return q.getResultList();
     }
@@ -41,7 +30,7 @@ public class SubwayInfoDBHelperBean extends EntityManagerHelper{
     }
 
     public List<SubwayStation> getSubwayStationList(SubwayLine subwayLine){
-        Query q = entityManager.createQuery("select s from SubwayStation s where s.subwayLine = :subwayLine order by s.subwayStationId");
+        Query q = getEntityManager().createQuery("select s from SubwayStation s where s.subwayLine = :subwayLine order by s.subwayStationId");
         q.setParameter("subwayLine", subwayLine);
         return q.getResultList();
     }

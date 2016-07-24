@@ -84,6 +84,10 @@ public class OrderBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         Result result = TicketOrderControl.payOrder((ServletRequest)context.getExternalContext().getRequest(),
                         systemDBHelperBean, user, new PayOrderRequest(order.getTicketOrderId()));
+        if(submitedOrder != null && submitedOrder.getTicketOrderId().equals(order.getTicketOrderId())
+                && result.getResultCode() == PublicResultCode.ORDER_NOT_EXIST){
+            submitedOrder = null;
+        }
         sendOrderOperResult(result);
     }
 
@@ -92,7 +96,7 @@ public class OrderBean implements Serializable {
         Result result = TicketOrderControl.cancelOrder((ServletRequest)context.getExternalContext().getRequest(),
                 systemDBHelperBean, user, order.getTicketOrderId());
         if(submitedOrder != null && submitedOrder.getTicketOrderId().equals(order.getTicketOrderId())
-                && result.getResultCode() == PublicResultCode.SUCCESS){
+                && (result.getResultCode() == PublicResultCode.SUCCESS || result.getResultCode() == PublicResultCode.ORDER_NOT_EXIST)){
             submitedOrder = null;
         }
         sendOrderOperResult(result);
@@ -116,6 +120,10 @@ public class OrderBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         Result result = TicketOrderControl.refundOrder((ServletRequest)context.getExternalContext().getRequest(),
                 systemDBHelperBean, user, new RefundOrderRequest(order.getTicketOrderId()));
+        if(submitedOrder != null && submitedOrder.getTicketOrderId().equals(order.getTicketOrderId())
+                && result.getResultCode() == PublicResultCode.ORDER_NOT_EXIST){
+            submitedOrder = null;
+        }
         sendOrderOperResult(result);
     }
 

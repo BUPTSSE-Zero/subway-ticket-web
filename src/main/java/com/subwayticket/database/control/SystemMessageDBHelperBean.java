@@ -12,20 +12,9 @@ import java.util.List;
  * Created by shengyun-zhou on 6/8/16.
  */
 @Stateless(name = "SystemMessageDBHelperEJB")
-public class SystemMessageDBHelperBean extends EntityManagerHelper {
-    EntityManager entityManager;
-
-    @Override
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    public SystemMessageDBHelperBean() {
-        entityManager = SystemDBHelperBean.initSubwayTicketDBPU();
-    }
-
+public class SystemMessageDBHelperBean extends SystemDBHelperBean {
     public List<SystemMessage> getLatestMessage(int n){
-        Query q = entityManager.createQuery("select sm from SystemMessage sm order by sm.releaseTime desc", SystemMessage.class);
+        Query q = getEntityManager().createQuery("select sm from SystemMessage sm order by sm.releaseTime desc", SystemMessage.class);
         q.setMaxResults(n);
         return q.getResultList();
     }

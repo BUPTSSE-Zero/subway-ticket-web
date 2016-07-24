@@ -1,5 +1,6 @@
 package com.subwayticket.control;
 
+import com.subwayticket.control.jobs.AutoCancelOrderJob;
 import com.subwayticket.database.control.SubwayInfoDBHelperBean;
 import com.subwayticket.database.control.SystemDBHelperBean;
 import com.subwayticket.database.control.TicketOrderDBHelperBean;
@@ -14,11 +15,13 @@ import com.subwayticket.model.result.RefundOrderResult;
 import com.subwayticket.model.result.Result;
 import com.subwayticket.model.result.SubmitOrderResult;
 import com.subwayticket.util.BundleUtil;
+import com.subwayticket.util.ScheduleUtil;
 import com.subwayticket.util.SecurityUtil;
+import org.quartz.JobDataMap;
+import org.quartz.SchedulerException;
 
 import javax.ejb.EJBException;
 import javax.servlet.ServletRequest;
-import java.util.Collections;
 import java.util.Date;
 
 /**
@@ -29,6 +32,8 @@ public class TicketOrderControl {
     private static long timestamp = 0;
     private static int serialNumber = 0;
     public static final int MAX_TICKET_AMOUNT = 10;
+    public static final int MAX_NOTPAY_MINUTES = 60;
+    public static final String AUTO_CANCEL_ORDER_JOB_PREFIX = "CancelOrderJob-";
 
     public static Result submitOrder(ServletRequest req, SubwayInfoDBHelperBean subwayInfoDBHelperBean, Account user, SubmitOrderRequest submitOrderRequest){
         if(submitOrderRequest.getAmount() <= 0)
@@ -38,6 +43,7 @@ public class TicketOrderControl {
         TicketPrice ticketPrice = subwayInfoDBHelperBean.getTicketPrice(submitOrderRequest.getStartStationId(), submitOrderRequest.getEndStationId());
         if(ticketPrice == null)
             return new Result(PublicResultCode.ORDER_SUBMIT_ROUTE_NOT_EXIST, BundleUtil.getString(req, "TipSubwayRouteNotExist"));
+        Result result = null;
         try{
             String orderID;
             Date date;
@@ -54,7 +60,12 @@ public class TicketOrderControl {
                                                    new SubwayStation(submitOrderRequest.getEndStationId()), ticketPrice.getPrice(), submitOrderRequest.getAmount());
             subwayInfoDBHelperBean.create(newOrder);
             subwayInfoDBHelperBean.refresh(newOrder);
-            SubmitOrderResult result = new SubmitOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"), newOrder);
+            result = new SubmitOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"), newOrder);
+
+            JobDataMap dataMap = new JobDataMap();
+            dataMap.put(AutoCancelOrderJob.JOB_KEY_ORDER_ID, orderID);
+            ScheduleUtil.addIntervalScheduleJob(AutoCancelOrderJob.class, AUTO_CANCEL_ORDER_JOB_PREFIX + orderID, dataMap, MAX_NOTPAY_MINUTES * 60, 1, false);
+
             user = (Account)subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
             for(HistoryRoute hr : user.getHistoryRouteList()){
                 if(hr.getStartStationId() == submitOrderRequest.getStartStationId() &&
@@ -73,11 +84,13 @@ public class TicketOrderControl {
             subwayInfoDBHelperBean.create(new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
                     submitOrderRequest.getEndStationId()));
             subwayInfoDBHelperBean.refresh(user);
-            return result;
         }catch (EJBException e){
             e.printStackTrace();
+            result = new Result(PublicResultCode.ORDER_SUBMIT_ERROR, BundleUtil.getString(req, "TipOrderSubmitError"));
+        } catch (SchedulerException e) {
+            e.printStackTrace();
         }
-        return new Result(PublicResultCode.ORDER_SUBMIT_ERROR, BundleUtil.getString(req, "TipOrderSubmitError"));
+        return result;
     }
 
 
@@ -89,8 +102,12 @@ public class TicketOrderControl {
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
         if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_PAY)
             return new Result(PublicResultCode.ORDER_CANCEL_NOT_CANCELABLE, BundleUtil.getString(req, "TipOrderNotCancelable"));
-        dbHelperBean.remove(ticketOrder);
+        cancelOrder(dbHelperBean, ticketOrder);
         return new Result(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderCancelSuccess"));
+    }
+
+    public static void cancelOrder(SystemDBHelperBean dbHelperBean, TicketOrder to){
+        dbHelperBean.remove(to);
     }
 
     public static Result payOrder(ServletRequest req, SystemDBHelperBean dbHelperBean, Account user, PayOrderRequest payOrderRequest){
@@ -105,6 +122,11 @@ public class TicketOrderControl {
         ticketOrder.setStatus(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET);
         ticketOrder.setExtractCode(SecurityUtil.getExtractCode(user.getPhoneNumber()));
         dbHelperBean.merge(ticketOrder);
+        try {
+            ScheduleUtil.cancelScheduleJob(AUTO_CANCEL_ORDER_JOB_PREFIX + payOrderRequest.getOrderId());
+        } catch (SchedulerException e) {
+            e.printStackTrace();
+        }
         return new PayOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderPaySuccess"), ticketOrder.getExtractCode());
     }
 
@@ -116,11 +138,15 @@ public class TicketOrderControl {
             return new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(req, "TipOrderNotExist"));
         if(ticketOrder.getStatus() != TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET || ticketOrder.getExtractAmount() >= ticketOrder.getAmount())
             return new Result(PublicResultCode.ORDER_REFUND_NOT_REFUNDABLE, BundleUtil.getString(req, "TipOrderNotRefundable"));
+        refundOrder(dbHelperBean, ticketOrder);
+        return new RefundOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderRefundSuccess"),
+                                     ticketOrder.getTicketPrice() * (ticketOrder.getAmount() - ticketOrder.getExtractAmount()));
+    }
+
+    public static void refundOrder(SystemDBHelperBean dbHelperBean, TicketOrder ticketOrder){
         ticketOrder.setStatus(TicketOrder.ORDER_STATUS_REFUNDED);
         ticketOrder.setExtractCode(null);
         dbHelperBean.merge(ticketOrder);
-        return new RefundOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderRefundSuccess"),
-                                     ticketOrder.getTicketPrice() * (ticketOrder.getAmount() - ticketOrder.getExtractAmount()));
     }
 
     public static Result extractTicket(ServletRequest req, TicketOrderDBHelperBean dbHelperBean, ExtractTicketRequest extractTicketRequest){

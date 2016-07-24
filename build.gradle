@@ -15,7 +15,7 @@ dependencies {
     compile (
             'mysql:mysql-connector-java:5.1.+',
             'redis.clients:jedis:2.8.+',
-            'log4j:log4j:1.2.+',
+            'org.slf4j:slf4j-log4j12:+',
             'com.google.code.gson:gson:2.6.+',
             'javax.servlet:javax.servlet-api:4.+',
             'org.eclipse.persistence:org.eclipse.persistence.jpa:+',
@@ -27,6 +27,8 @@ dependencies {
             'javax.ws.rs:javax.ws.rs-api:+',
             'org.glassfish.jersey.containers:jersey-container-servlet:2.+',
             'net.glxn:qrgen:+',
+            'org.quartz-scheduler:quartz:+',
+            'org.quartz-scheduler:quartz-jobs:+',
     )
 
     providedRuntime 'javax.servlet:javax.servlet-api:4.+'

@@ -18,7 +18,7 @@
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.user" value="SubwayTicketWeb"/>
             <property name="javax.persistence.jdbc.password" value="4af8c2909cee0431cae76d45ef740152d144ed51de1af8cde9f836b2158a8bae"/>
-            <property name="eclipselink.logging.level" value="ALL"/>
+            <property name="eclipselink.logging.level" value="WARNING"/>
         </properties>
 
     </persistence-unit>

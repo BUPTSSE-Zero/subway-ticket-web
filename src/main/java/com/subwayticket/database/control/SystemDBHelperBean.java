@@ -1,6 +1,8 @@
 package com.subwayticket.database.control;
 
 import javax.ejb.Stateless;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.persistence.*;
 
 /**
@@ -10,23 +12,18 @@ import javax.persistence.*;
 public class SystemDBHelperBean extends EntityManagerHelper {
     private EntityManager entityManager;
 
-    private static EntityManager publicEntityManager = null;
-    private static EntityManagerFactory subwayTicketDBPUEMF = Persistence.createEntityManagerFactory("SubwayTicketDBPU");
-
-    public static EntityManager initSubwayTicketDBPU(){
-        if(publicEntityManager == null) {
-            publicEntityManager = subwayTicketDBPUEMF.createEntityManager();
-            publicEntityManager.setFlushMode(FlushModeType.COMMIT);
+    public static SystemDBHelperBean getInstance(){
+        try {
+            InitialContext initialContext = new InitialContext();
+            return (SystemDBHelperBean) initialContext.lookup("java:module/SubwayTicketDBHelperEJB");
+        }catch (NamingException ne){
+            ne.printStackTrace();
+            return null;
         }
-        return publicEntityManager;
-    }
-
-    public static void closeSubwayTicketDBPU(){
-        subwayTicketDBPUEMF.close();
     }
 
     public SystemDBHelperBean() {
-        entityManager = initSubwayTicketDBPU();
+        entityManager = EntityManagerFactory.getSubwayTicketDBEntityManager();
     }
 
     @Override

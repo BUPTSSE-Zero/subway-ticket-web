@@ -14,6 +14,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -22,7 +23,7 @@ import java.util.*;
 
 @ManagedBean(name = "preferBean")
 @ViewScoped
-public class PreferBean {
+public class PreferBean implements Serializable{
     @EJB
     private SystemDBHelperBean systemDBHelperBean;
     private Account user;
