@@ -55,7 +55,7 @@
                             </ul>
                         </c:when>
                         <c:otherwise>
-                            <a class="waves-effect waves-light" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab')">#{bundle.Signin}/#{bundle.Signup}
+                            <a class="waves-effect waves-light" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab');">#{bundle.Signin}/#{bundle.Signup}
                                 <i class="material-icons left">account_circle</i>
                             </a>
                         </c:otherwise>
@@ -64,18 +64,16 @@
             </li>
             <li>
                 <div>
-                    <h:link class="waves-effect waves-light" value="#{bundle.MobileClient}" outcome="/mobile-download.xhtml">
+                    <a class="waves-effect waves-light"
+                       onclick="$('#mobile-client-download-dialog').openModal();$('ul.tabs').tabs('select_tab', 'android-client-tabpage');">
                         <i class="material-icons left">android</i>
-                    </h:link>
+                        #{bundle.MobileClient}
+                    </a>
                 </div>
             </li>
         </ul>
     </div>
 </nav>
-
-<script type="text/javascript">
-    $('nav').pushpin({ top: $('nav').offset().top });
-</script>
 
 <div id="login-modal" class="modal white">
     <div class="modal-content">
@@ -91,6 +89,40 @@
         <a class="modal-action modal-close waves-effect waves-red btn-flat">#{bundle.Close}
             <i class="material-icons left" style="font-size: 24px">close</i>
         </a>
+    </div>
+</div>
+
+<div id="mobile-client-download-dialog" class="modal white" style="width: 500px">
+    <div class="modal-content">
+        <h5 class="light-blue-text">#{bundle.MobileClientDownload}</h5>
+        <div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s3"><a href="#android-client-tabpage">#{bundle.Android}</a></li>
+            </ul>
+        </div>
+        <div id="android-client-tabpage" class="col s12">
+            <table>
+                <tr>
+                    <td>
+                        <p:barcode value="http://#{facesContext.externalContext.requestServerName}:#{facesContext.externalContext.requestServerPort}#{facesContext.externalContext.applicationContextPath}#{mobileVersion.AndroidClientFilePath}"
+                                   type="qr" format="svg" width="200"/>
+                    </td>
+                    <td>
+                        <span>#{bundle.LatestVersion}:#{mobileVersion.AndroidClientVersion}</span>
+                        <br/>
+                        <span>#{bundle.UpdateDate}:#{mobileVersion.AndroidClientUpdateDate}</span>
+                        <br/>
+                        <a class="btn waves-effect waves-light light-green" style="margin-top: 10px" href="#{facesContext.externalContext.applicationContextPath}#{mobileVersion.AndroidClientFilePath}">
+                            <i class="material-icons left">file_download</i>
+                            #{bundle.Download}
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer white">
+        <a class="modal-action modal-close waves-effect waves-green btn-flat">#{bundle.Close}</a>
     </div>
 </div>
 
@@ -112,5 +144,9 @@
         </a>
     </div>
 </div>
+
+<script type="text/javascript">
+    $('nav').pushpin({ top: $('nav').offset().top });
+</script>
 
 </html>

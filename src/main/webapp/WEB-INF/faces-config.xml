@@ -9,6 +9,10 @@
             <base-name>bundle.string</base-name>
             <var>bundle</var>
         </resource-bundle>
+        <resource-bundle>
+            <base-name>bundle.mobile_version</base-name>
+            <var>mobileVersion</var>
+        </resource-bundle>
         <locale-config>
             <default-locale>zh_CN</default-locale>
             <supported-locale>zh_CN</supported-locale>
