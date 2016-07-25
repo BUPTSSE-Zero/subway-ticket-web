@@ -25,9 +25,7 @@ public abstract class EntityManagerHelper {
     }
 
     public void refresh(Object entity) {
-        getEntityManager().getTransaction().begin();
         getEntityManager().refresh(entity);
-        getEntityManager().getTransaction().commit();
     }
     
     public void remove(Object entity) {

@@ -10,9 +10,9 @@ import java.util.Date;
 @Table(name = "PreferSubwayStation")
 @IdClass(PreferSubwayStationPK.class)
 public class PreferSubwayStation {
-    private String userId;
+    private transient String userId;
     private int stationId;
-    private Account user;
+    private transient Account user;
     private SubwayStation subwayStation;
     private Date addTime;
 

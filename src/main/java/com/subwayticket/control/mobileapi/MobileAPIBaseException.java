@@ -10,7 +10,7 @@ public class MobileAPIBaseException extends RuntimeException {
     private Result errorResult;
 
     public MobileAPIBaseException(int statusCode, Result errorResult){
-        super("Mobile API Exception");
+        super(errorResult.getResultDescription());
         this.statusCode = statusCode;
         this.errorResult = errorResult;
     }

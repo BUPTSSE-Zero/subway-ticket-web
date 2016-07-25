@@ -41,4 +41,9 @@ public class PublicResultCode {
     public static final int TICKET_EXTRACT_NOT_EXTRACTABLE = 100440;
     public static final int TICKET_EXTRACT_AMOUNT_ILLEGAL = 100441;
     public static final int TICKET_EXTRACT_AMOUNT_EXCESS = 100442;
+
+    public static final int PREFER_RECORD_NOT_EXIST = 100501;
+    public static final int PREFER_RECORD_EXISTED = 100502;
+    public static final int PREFER_RECORD_NOT_FOUND = 100503;
+    public static final int PREFER_ROUTE_STARTSTATION_EQUAL_ENDSTATION = 100510;
 }

@@ -10,10 +10,10 @@ import java.util.Date;
 @Table(name = "PreferRoute")
 @IdClass(PreferRoutePK.class)
 public class PreferRoute{
-    private String userId;
+    private transient String userId;
     private int startStationId;
     private int endStationId;
-    private Account user;
+    private transient Account user;
     private SubwayStation startStation;
     private SubwayStation endStation;
     private Date addTime;

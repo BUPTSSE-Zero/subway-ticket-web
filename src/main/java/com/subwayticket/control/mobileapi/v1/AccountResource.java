@@ -71,6 +71,13 @@ public class AccountResource {
         return account;
     }
 
+    @GET
+    @Path("/check_login")
+    public Response checkLogin(){
+        authCheck(request);
+        return Response.noContent().build();
+    }
+
     @PUT
     @Path("/modify_password")
     @Consumes("application/json")

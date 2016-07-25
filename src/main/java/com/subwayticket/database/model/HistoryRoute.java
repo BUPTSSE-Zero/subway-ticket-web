@@ -10,10 +10,10 @@ import java.util.Date;
 @Table(name = "HistoryRoute")
 @IdClass(HistoryRoutePK.class)
 public class HistoryRoute {
-    private String userId;
+    private transient String userId;
     private int startStationId;
     private int endStartionId;
-    private Account user;
+    private transient Account user;
     private SubwayStation startStation;
     private SubwayStation endStation;
     private Date addTime;

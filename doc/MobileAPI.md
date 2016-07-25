@@ -212,6 +212,18 @@ PUT account/logout
 |------------------|-------------|--------------------|
 | 204 | —/— | —/— |
 
+## 检查登录状态及测试Token是否有效*
+
+```
+GET account/check_login
+```
+
+该API不需要任何请求内容，只要Http Header中有`AuthToken`字段就行
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 204 | —/— | —/— |
 
 # 获取地铁信息API
 
@@ -432,3 +444,112 @@ Return: OrderListResult
 |------------------|-------------|--------------------|
 | 404 | 100410 | 订单不存在 |
 | 200 | 0      | --/-- |
+
+# 常用设置相关API
+
+## 获取历史路线记录*
+```
+GET preference/history_route
+```
+### Model Class：
+Return: HistoryRouteListResult
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100503 | 暂无历史路线记录 |
+| 200 | 0      | --/-- |
+
+## 获取常用地铁站*
+```
+GET preference/prefer_station
+```
+### Model Class：
+Return: PreferStationListResult
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100503 | 暂无常用地铁站 |
+| 200 | 0      | --/-- |
+
+## 添加常用地铁站*
+```
+POST preference/prefer_station/add
+```
+### Model Class：
+Request: AddPreferStationRequest
+Return: Result
+
+### Request JSON Key:
++ station_id：地铁站ID
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100502 | 该常用地铁站已存在 |
+| 201 | 0      | 添加常用地铁站成功 |
+
+
+## 移除常用地铁站*
+```
+DELETE preference/prefer_station/remove/{stationId}
+```
+`stationId`为要移除的常用地铁站的ID
+
+### Model Class：
+Return: Result
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100501 | 该常用地铁站不存在 |
+| 200 | 0      | 已从常用地铁站中移除 |
+
+## 获取常用路线*
+```
+GET preference/prefer_route
+```
+### Model Class：
+Return: PreferRouteListResult
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100503 | 暂无常用路线 |
+| 200 | 0      | --/-- |
+
+## 添加常用路线*
+```
+POST preference/prefer_route/add
+```
+### Model Class：
+Request: AddPreferRouteRequest
+Return: Result
+
+### Request JSON Key:
++ start_station_id：起始站ID
++ end_station_id：终点站ID
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100502 | 该常用路线已存在 |
+| 422 | 100510 | 起始站与终点站不能一致 |
+| 201 | 0      | 添加常用路线成功 |
+
+## 移除常用路线*
+```
+DELETE preference/prefer_route/remove/{startStationId}/{endStationId}
+```
+`startStationId`为起始站ID，`endStationId`为终点站ID
+
+### Model Class：
+Return: Result
+
+### Return:
+| Http Status Code | result_code | result_description |
+|------------------|-------------|--------------------|
+| 404 | 100501 | 该常用路线不存在 |
+| 200 | 0      | 已移除常用路线 |
+
