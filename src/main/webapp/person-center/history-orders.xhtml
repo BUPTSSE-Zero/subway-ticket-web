@@ -29,11 +29,20 @@
                     </div>
                     <div class="input-field col">
                         <p:commandButton styleClass="btn light-green waves-effect waves-light" icon="ui-icon-search"
-                                    value="#{bundle.SearchOrder}" actionListener="#{orderBean.refreshHistoryTicketOrders}"
-                                    update="history-orders-panel" oncomplete="$('.collapsible').collapsible({accordion: false});"/>
+                                    value="#{bundle.SearchOrder}"
+                                    update="#{p:component('history-orders-panel')}"
+                                    oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                     </div>
                 </div>
             </h:form>
+            <script type="text/javascript">
+                var settings = $.datepicker.regional['#{facesContext.viewRoot.locale.language}-#{facesContext.viewRoot.locale.country}'];
+                if(!settings){
+                    $('.datepicker').pickadate($.datepicker.regional['default']);
+                }else{
+                    $('.datepicker').pickadate(settings);
+                }
+            </script>
         </div>
         <div class="card-panel amber lighten-4 z-depth-0">
           <span class="black-text">
@@ -42,10 +51,53 @@
               2.#{bundle.TipAutoRefundOrder}
           </span>
         </div>
+        <script type="text/javascript">
+            function updateOrderList(){
+                var c = 0;
+                $(PrimeFaces.escapeClientId('#{p:component('history-orders-panel')}') + ' .order-record').each(function(){
+                    switch($(this).attr('order-status')){
+                        case '#{orderStatus.ORDER_STATUS_NOT_PAY}':
+                            if($('#notpay-checkbox').is(':checked')){
+                                $(this).css('display', 'block');
+                                c++;
+                            }else{
+                                $(this).css('display', 'none');
+                            }
+                            break;
+                        case '#{orderStatus.ORDER_STATUS_NOT_EXTRACT_TICKET}':
+                            if($('#notextract-checkbox').is(':checked')){
+                                $(this).css('display', 'block');
+                                c++;
+                            }else{
+                                $(this).css('display', 'none');
+                            }
+                            break;
+                        case '#{orderStatus.ORDER_STATUS_FINISHED}':
+                            if($('#finished-checkbox').is(':checked')){
+                                $(this).css('display', 'block');
+                                c++;
+                            }else{
+                                $(this).css('display', 'none');
+                            }
+                            break;
+                        case '#{orderStatus.ORDER_STATUS_REFUNDED}':
+                            if($('#refunded-checkbox').is(':checked')){
+                                $(this).css('display', 'block');
+                                c++;
+                            }else{
+                                $(this).css('display', 'none');
+                            }
+                            break;
+                    }
+                });
+                $('#order-record-amount').text(c);
+            }
+        </script>
         <p:outputPanel id="history-orders-panel" style="height: calc(100% - 270px)">
+            <c:set var="historyTicketOrders" value="#{orderBean.historyTicketOrders}"/>
             <c:choose>
-                <c:when test="#{orderBean.historyTicketOrders eq null}"/>
-                <c:when test="#{empty orderBean.historyTicketOrders}">
+                <c:when test="#{historyTicketOrders eq null}"/>
+                <c:when test="#{empty historyTicketOrders}">
                     <div class="valign-wrapper" style="height: 60%">
                         <table class="valign" style="width: auto; margin: 0 auto">
                             <tr>
@@ -61,12 +113,33 @@
                 </c:when>
                 <c:otherwise>
                     <div>
-                        <h:outputFormat styleClass="left" value="#{bundle.OrderRecordAmount}">
-                            <f:param value="#{orderBean.historyTicketOrders.size()}"/>
-                        </h:outputFormat>
+                        <span class="left">
+                            #{bundle.OrderRecordAmount2}:
+                            <span id="order-record-amount">#{historyTicketOrders.size()}</span>
+                        </span>
+                        <p class="right" style="margin: 0 10px 0 0">
+                            <input id="refunded-checkbox" type="checkbox" class="filled-in light-blue-text" checked="checked"
+                                   onchange="updateOrderList()"/>
+                            <label for="refunded-checkbox">#{bundle.Refunded}</label>
+                        </p>
+                        <p class="right" style="margin: 0 10px 0 0">
+                            <input id="finished-checkbox" type="checkbox" class="filled-in light-blue-text" checked="checked"
+                                   onchange="updateOrderList()"/>
+                            <label for="finished-checkbox">#{bundle.Finished}</label>
+                        </p>
+                        <p class="right" style="margin: 0 10px 0 0">
+                            <input id="notextract-checkbox" type="checkbox" class="filled-in light-blue-text" checked="checked"
+                                   onchange="updateOrderList()"/>
+                            <label for="notextract-checkbox">#{bundle.NotExtractTicket}</label>
+                        </p>
+                        <p class="right" style="margin: 0 10px 0 0">
+                            <input id="notpay-checkbox" type="checkbox" class="filled-in light-blue-text" checked="checked"
+                                   onchange="updateOrderList()"/>
+                            <label for="notpay-checkbox">#{bundle.NotPay}</label>
+                        </p>
                     </div>
                     <br/>
-                    <c:forEach var="order" items="#{orderBean.historyTicketOrders}">
+                    <c:forEach var="order" items="#{historyTicketOrders}">
                         <c:choose>
                             <c:when test="#{order.status eq orderStatus.ORDER_STATUS_NOT_PAY}">
                                 <w:notPayOrder ticketOrder="#{order}"/>
@@ -86,14 +159,6 @@
                 </c:otherwise>
             </c:choose>
         </p:outputPanel>
-        <script type="text/javascript">
-            var settings = $.datepicker.regional['#{facesContext.viewRoot.locale.language}-#{facesContext.viewRoot.locale.country}'];
-            if(!settings){
-                $('.datepicker').pickadate($.datepicker.regional['default']);
-            }else{
-                $('.datepicker').pickadate(settings);
-            }
-        </script>
     </ui:define>
 
     <ui:define name="page-footer">
@@ -113,8 +178,8 @@
                 </div>
                 <div class="modal-footer">
                     <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
-                                     actionListener="#{orderBean.refreshHistoryTicketOrders}"
-                                     onclick="$('#order-callback-dialog').closeModal();return;" update="history-orders-panel"
+                                     onclick="$('#order-callback-dialog').closeModal();return;"
+                                     update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('history-orders-panel')}"
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                 </div>
             </div>
@@ -132,9 +197,9 @@
                                      onclick="$('#extract-code-dialog').closeModal();return;">#{bundle.Close}</a>
                 </div>
             </div>
-            <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
+            <div class="fixed-action-btn">
                 <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
-                                 actionListener="#{orderBean.refreshHistoryTicketOrders}" update="history-orders-panel"
+                                 update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('history-orders-panel')}"
                                  oncomplete="$('.collapsible').collapsible({accordion: false});"/>
             </div>
         </h:form>

@@ -15,7 +15,7 @@
         <h:outputScript library="js" name="order-callback.js"/>
         <p:outputPanel id="noextract-orders-panel" style="height: calc(100% - 70px)">
             <c:choose>
-                <c:when test="#{empty orderBean.notExtractTicketOrders}">
+                <c:when test="#{empty notExtractTicketOrders}">
                     <div class="valign-wrapper" style="height: 80%">
                         <table class="valign" style="width: auto; margin: 0 auto">
                             <tr>
@@ -37,7 +37,7 @@
                         <span class="right orange-text darken-1">#{bundle.TipAutoRefundOrder}</span>
                     </div>
                     <br/>
-                    <c:forEach var="order" items="#{orderBean.notExtractTicketOrders}">
+                    <c:forEach var="order" items="#{notExtractTicketOrders}">
                         <w:notExtractTicketOrder ticketOrder="#{order}"
                                                  extractCodeDialog="extract-code-dialog" updateExtractCodePanel=":#{p:component('extract-code-panel')}"/>
                     </c:forEach>
@@ -63,8 +63,8 @@
                 </div>
                 <div class="modal-footer">
                     <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
-                                     actionListener="#{orderBean.refreshNotExtractTicketOrders}"
-                                     onclick="$('#order-callback-dialog').closeModal();return;" update="noextract-orders-panel"
+                                     onclick="$('#order-callback-dialog').closeModal();return;"
+                                     update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('noextract-orders-panel')}"
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                 </div>
             </div>
@@ -78,13 +78,12 @@
                     </p:outputPanel>
                 </div>
                 <div class="modal-footer">
-                    <a class="waves-effect waves-green btn-flat" type="button"
-                                     onclick="$('#extract-code-dialog').closeModal();return;">#{bundle.Close}</a>
+                    <a class="waves-effect waves-green btn-flat modal-close">#{bundle.Close}</a>
                 </div>
             </div>
-            <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
+            <div class="fixed-action-btn">
                 <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
-                                 actionListener="#{orderBean.refreshNotExtractTicketOrders}" update="noextract-orders-panel"
+                                 update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('noextract-orders-panel')}"
                                  oncomplete="$('.collapsible').collapsible({accordion: false});"/>
             </div>
         </h:form>

@@ -2,7 +2,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 xmlns:h="http://xmlns.jcp.org/jsf/html"
-                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
                 template="/templates/main-template.xhtml">
 
     <ui:define name="head">
@@ -71,15 +71,25 @@
                                     <i class="material-icons amber-text">content_paste</i>
                                     #{bundle.OrderRecord}
                                 </div>
-                                <div class="collapsible-body blue-grey darken-4 white-text">
+                                <p:outputPanel id="person-center-nav-order-record" class="collapsible-body blue-grey darken-4 white-text">
                                     <ul>
                                         <li class="#{itemNotPayOrderActive}">
-                                            <h:link class="white-text" outcome="not-pay-orders.xhtml">#{bundle.NotPayOrders}</h:link>
+                                            <h:link class="white-text" outcome="not-pay-orders.xhtml">
+                                                #{bundle.NotPayOrders}
+                                                <c:if test="#{notPayOrders.size() > 0}">
+                                                    <span class="new badge amber darken-2">#{notPayOrders.size()}</span>
+                                                </c:if>
+                                            </h:link>
                                         </li>
                                     </ul>
                                     <ul>
                                         <li class="#{itemNotDrawTicketOrderActive}">
-                                            <h:link class="white-text" outcome="not-extract-ticket-orders.xhtml">#{bundle.NotExtractTicketOrders}</h:link>
+                                            <h:link class="white-text" outcome="not-extract-ticket-orders.xhtml">
+                                                #{bundle.NotExtractTicketOrders}
+                                                <c:if test="#{notExtractTicketOrders.size() > 0}">
+                                                    <span class="new badge amber darken-2">#{notExtractTicketOrders.size()}</span>
+                                                </c:if>
+                                            </h:link>
                                         </li>
                                     </ul>
                                     <ul>
@@ -87,7 +97,7 @@
                                             <h:link class="white-text" outcome="history-orders.xhtml">#{bundle.HistoryOrders}</h:link>
                                         </li>
                                     </ul>
-                                </div>
+                                </p:outputPanel>
                             </li>
                             <li>
                                 <a href="../buyticket.xhtml" class="collapsible-header waves-effect waves-light white-text">

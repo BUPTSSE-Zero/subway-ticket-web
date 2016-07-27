@@ -313,3 +313,21 @@ body{
 .delete-button .ui-icon{
 	color: #ef5350;
 }
+
+span.badge.new{
+	position: static;
+	font-weight: normal;
+	font-size: 1rem;
+}
+
+.fixed-action-btn{
+	bottom: 20px;
+	right: 20px;
+}
+
+[type="checkbox"] + label{
+	padding-left: 25px;
+	height: 20px;
+	line-height: 20px;
+	color: black;
+}

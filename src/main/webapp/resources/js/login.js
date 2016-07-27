@@ -26,14 +26,10 @@ function indexHandleLoginResult(xhr, status, args){
 function handleLoginResult(xhr, status, args){
     if(args.result_code == 0 || args.result_code == 100201) {
         $('#login-modal').closeModal();
-        if(args.result_code == 100201)
+        if(args.result_code == 100201) {
             $('#login-tip-modal').openModal({
                 dismissible: false
             });
-        $('#header-user-dropdown').dropdown({
-                hover: true,
-                belowOrigin: true
-            }
-        );
+        }
     }
 }

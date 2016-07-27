@@ -45,14 +45,10 @@ public class OrderBean implements Serializable {
     private SubwayInfoDBHelperBean subwayInfoDBHelperBean;
 
     private Account user;
-    private List<TicketOrder> notPayOrders;
-    private List<TicketOrder> notExtractTicketOrders;
-    private List<TicketOrder> historyTicketOrders;
     private TicketOrder selectedNotExtractTicketOrder;
     private SimpleDateFormat sdf;
     private Date startDate;
     private Date endDate;
-
     private TicketOrder submitedOrder;
 
     @PostConstruct
@@ -69,9 +65,7 @@ public class OrderBean implements Serializable {
     }
 
     public List<TicketOrder> getNotPayOrders(){
-        if(notPayOrders == null)
-            refreshNotPayOrders();
-        return notPayOrders;
+        return ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_PAY, user);
     }
 
     private void sendOrderOperResult(Result result){
@@ -102,18 +96,8 @@ public class OrderBean implements Serializable {
         sendOrderOperResult(result);
     }
 
-    public void refreshNotPayOrders(){
-        notPayOrders = ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_PAY, user);
-    }
-
     public List<TicketOrder> getNotExtractTicketOrders() {
-        if(notExtractTicketOrders == null)
-            refreshNotExtractTicketOrders();
-        return notExtractTicketOrders;
-    }
-
-    public void refreshNotExtractTicketOrders(){
-        notExtractTicketOrders = ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET, user);
+        return ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_EXTRACT_TICKET, user);
     }
 
     public void refundOrder(TicketOrder order){
@@ -166,15 +150,10 @@ public class OrderBean implements Serializable {
     }
 
     public List<TicketOrder> getHistoryTicketOrders() {
-        return historyTicketOrders;
-    }
-
-    public void refreshHistoryTicketOrders() {
         if(startDate == null || endDate == null){
-            historyTicketOrders = null;
-            return;
+            return null;
         }
-        historyTicketOrders = ticketOrderDBHelperBean.getAllOrderByDate(user, startDate, endDate);
+        return ticketOrderDBHelperBean.getAllOrderByDate(user, startDate, endDate);
     }
 
     public TicketOrder getSubmitedOrder() {

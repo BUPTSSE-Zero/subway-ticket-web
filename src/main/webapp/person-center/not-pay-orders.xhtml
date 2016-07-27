@@ -15,7 +15,7 @@
         <h:outputScript library="js" name="order-callback.js"/>
         <p:outputPanel id="nopay-orders-panel" style="height: calc(100% - 70px)">
             <c:choose>
-                <c:when test="#{empty orderBean.notPayOrders}">
+                <c:when test="#{empty notPayOrders}">
                     <div class="valign-wrapper" style="height: 80%">
                         <table class="valign" style="width: auto; margin: 0 auto">
                             <tr>
@@ -32,12 +32,12 @@
                 <c:otherwise>
                     <div>
                         <h:outputFormat styleClass="left" value="#{bundle.OrderRecordAmount}">
-                            <f:param value="#{orderBean.notPayOrders.size()}"/>
+                            <f:param value="#{notPayOrders.size()}"/>
                         </h:outputFormat>
                         <span class="right red-text">#{bundle.TipPayOrderWithinAHour}</span>
                     </div>
                     <br/>
-                    <c:forEach var="order" items="#{orderBean.notPayOrders}">
+                    <c:forEach var="order" items="#{notPayOrders}">
                         <w:notPayOrder ticketOrder="#{order}"/>
                     </c:forEach>
                 </c:otherwise>
@@ -63,13 +63,14 @@
                 <div class="modal-footer">
                     <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
                                      actionListener="#{orderBean.refreshNotPayOrders}"
-                                     onclick="$('#order-callback-dialog').closeModal();return;" update="nopay-orders-panel"
+                                     onclick="$('#order-callback-dialog').closeModal();return;"
+                                     update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('nopay-orders-panel')}"
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                 </div>
             </div>
-            <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
+            <div class="fixed-action-btn">
                 <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
-                                 actionListener="#{orderBean.refreshNotPayOrders}" update="nopay-orders-panel"
+                                 update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('nopay-orders-panel')}"
                                  oncomplete="$('.collapsible').collapsible({accordion: false});"/>
             </div>
         </h:form>

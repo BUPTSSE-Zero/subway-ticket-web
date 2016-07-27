@@ -159,7 +159,7 @@
                         <ui:param name="endStation" value="#{buyTicketBean.endStation}"/>
                         <ui:param name="ticketPrice" value="#{buyTicketBean.ticketPrice}"/>
                         <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
-                        <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')}"/>
+                        <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('header-panel')}"/>
                         <ui:param name="widgetId" value="normal-buyticket"/>
                     </ui:include>
                 </c:if>
@@ -197,7 +197,7 @@
                             <ui:include src="buyticket-widgets/prefer-route-buyticket.xhtml">
                                 <ui:param name="routeList" value="#{entry.value}"/>
                                 <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
-                                <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')}"/>
+                                <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')} #{p:component('header-panel')}"/>
                                 <ui:param name="widgetId" value="prefer-route-buyticket"/>
                             </ui:include>
                         </c:forEach>
@@ -235,7 +235,7 @@
                         <ui:include src="buyticket-widgets/history-buyticket.xhtml">
                             <ui:param name="routeList" value="#{preferBean.historyRouteList}"/>
                             <ui:param name="preferUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"/>
-                            <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')}"/>
+                            <ui:param name="submitUpdate" value="#{p:component('submitted-order-detail-panel')} #{p:component('quick-buyticket-panel')} #{p:component('header-panel')}"/>
                             <ui:param name="widgetId" value="history-route-buyticket"/>
                         </ui:include>
                         <script>
@@ -365,7 +365,7 @@
                 <h:form>
                     <p:commandButton class="waves-effect waves-green btn-flat" value="#{bundle.Close}"
                                      oncomplete="$('#order-callback-dialog').closeModal();$('.collapsible').collapsible({accordion: false});"
-                                     update="#{p:component('submitted-order-detail-panel')}"/>
+                                     update="#{p:component('submitted-order-detail-panel')} #{p:component('header-panel')}"/>
                 </h:form>
             </div>
         </div>

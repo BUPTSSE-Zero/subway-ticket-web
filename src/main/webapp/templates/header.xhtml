@@ -24,10 +24,15 @@
                 <p:outputPanel id="header-panel">
                     <c:choose>
                         <c:when test="#{not empty userOperationBean.userID}">
+                            <c:set var="notPayOrders" value="#{orderBean.notPayOrders}" scope="request"/>
+                            <c:set var="notExtractTicketOrders" value="#{orderBean.notExtractTicketOrders}" scope="request"/>
                             <a id="header-user-dropdown" class='dropdown-button waves-effect waves-light' data-activates='header-user-menu'
                                data-beloworigin="true" data-hover="true">#{userOperationBean.userID}
                                 <i class="material-icons left">account_circle</i>
                                 <i class="material-icons right">arrow_drop_down</i>
+                                <c:if test="#{notPayOrders.size() + notExtractTicketOrders.size() > 0}">
+                                    <span class="new badge amber darken-2">#{notPayOrders.size() + notExtractTicketOrders.size()}</span>
+                                </c:if>
                             </a>
 
                             <ul id='header-user-menu' class="dropdown-content" style="min-width: 200px">
@@ -53,6 +58,13 @@
                                     </div>
                                 </li>
                             </ul>
+                            <script type="text/javascript">
+                                $('#header-user-dropdown').dropdown({
+                                            hover: true,
+                                            belowOrigin: true
+                                        }
+                                );
+                            </script>
                         </c:when>
                         <c:otherwise>
                             <a class="waves-effect waves-light" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab');">#{bundle.Signin}/#{bundle.Signup}
