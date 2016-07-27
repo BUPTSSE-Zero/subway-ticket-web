@@ -74,6 +74,7 @@ public class SubwayLine {
     }
 
     @OneToMany(cascade = {CascadeType.REFRESH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "subwayLine")
+    @OrderBy("subwayStationId ASC")
     public List<SubwayStation> getSubwayStationList() {
         return subwayStationList;
     }

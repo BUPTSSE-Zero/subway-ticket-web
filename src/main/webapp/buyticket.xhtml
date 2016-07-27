@@ -10,36 +10,42 @@
     <ui:define name="login-button">
         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                          value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
-                         update="login_error_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"
-                         oncomplete="handleLoginResult(xhr, status, args)">
+                         update="login_error_message header-panel #{p:component('normal-buyticket-panel')}
+                            #{p:component('quick-buyticket-panel')} #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"
+                         oncomplete="handleLoginResult(xhr, status, args);Materialize.updateTextFields();$('select').material_select()">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
             <f:actionListener binding="#{preferBean.findUser()}"/>
             <f:actionListener binding="#{orderBean.findUser()}"/>
+            <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
         </p:commandButton>
     </ui:define>
 
     <ui:define name="signup-button">
         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
                          value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
-                         update="singup_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"
-                         oncomplete="handleLoginResult(xhr, status, args)">
+                         update="singup_message header-panel #{p:component('normal-buyticket-panel')}
+                            #{p:component('quick-buyticket-panel')} #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"
+                         oncomplete="handleLoginResult(xhr, status, args);Materialize.updateTextFields();$('select').material_select()">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
             <f:actionListener binding="#{preferBean.findUser()}"/>
             <f:actionListener binding="#{orderBean.findUser()}"/>
+            <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
         </p:commandButton>
     </ui:define>
 
     <ui:define name="reset-password-button">
         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                          value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
-                         update="reset_password_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}"
-                         oncomplete="handleLoginResult(xhr, status, args)">
+                         update="reset_password_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}
+                            #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"
+                         oncomplete="handleLoginResult(xhr, status, args);Materialize.updateTextFields();$('select').material_select()">
             <f:actionListener binding="#{buyTicketBean.findUser()}"/>
             <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
             <f:actionListener binding="#{preferBean.findUser()}"/>
             <f:actionListener binding="#{orderBean.findUser()}"/>
+            <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
         </p:commandButton>
     </ui:define>
 
@@ -79,18 +85,21 @@
             <p:separator/>
             <div class="row" style="margin-bottom: 0">
                 <h:form class="col s12">
-                    <div class="row" style="margin-bottom: 0">
+                    <p:outputPanel id="normal-buyticket-input" class="row" style="margin-bottom: 0">
                         <div class="col s2">
                             <div class="col" style="padding: 20px 6px 0 0;">
                                 <i class="material-icons">location_city</i>
                             </div>
                             <div class="input-field col" style="width: calc(100% - 30px)">
-                                <h:selectOneMenu value="#{subwayInfoBean.selectedCityId}">
+                                <h:selectOneMenu value="#{subwayInfoBean.selectedCity}" converter="cityConverter">
                                     <c:forEach items="#{subwayInfoBean.cities}" var="city">
-                                        <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city.cityId}"/>
+                                        <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city}"/>
                                     </c:forEach>
-                                    <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityIdChange}"
-                                            onsuccess="$('#start-station-select input').val(''); $('#end-station-select input').val('')"/>
+                                    <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityChange}"
+                                            update="#{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"
+                                            oncomplete="Materialize.updateTextFields();$('select').material_select();
+                                                $('#start-station-select input').val('');$('#end-station-select input').val('')">
+                                    </p:ajax>
                                 </h:selectOneMenu>
                                 <label>#{bundle.City}</label>
                             </div>
@@ -99,31 +108,46 @@
                             <div class="col" style="padding: 20px 6px 0 0;">
                                 <i class="material-icons">subway</i>
                             </div>
-                            <div id="start-station-select" class="input-field col" style="width: calc(100% - 30px)">
-                                <w:stationAutoComplete value="#{buyTicketBean.startStationId}" id="start-station-autocomplete" stationNameClass="start-station-text"
-                                                       enableStationMessage="#{true}" completeMethod="#{subwayInfoBean.searchStation}"
+                            <div id="start-station-select" class="input-field station-autocomplete-field col">
+                                <w:stationAutoComplete value="#{buyTicketBean.startStation}" id="start-station-autocomplete" stationNameClass="start-station-text"
+                                                       enableStationMessage="true" completeMethod="#{subwayInfoBean.searchStation}"
                                                        required="true" requiredMessage="#{bundle.TipSelectStartStation}"
-                                                       label="#{bundle.StartSubwayStation}"/>
+                                                       label="#{bundle.StartSubwayStation}" fullSelectDialogId="station-fullselect-dialog"/>
                             </div>
                         </div>
-                        <div class="col s4">
-                            <div class="col" style="padding: 20px 5px 0 20px;">
-                                <i class="material-icons">trending_flat</i>
+                        <div class="col s4" style="padding-left: 0">
+                            <div class="col" style="padding: 20px 6px 0 0;">
+                                <a id="station-swap-button" class="btn-floating transparent btn-flat waves-effect">
+                                    <i class="material-icons light-blue-text">swap_horiz</i>
+                                </a>
                             </div>
-                            <div id="end-station-select" class="input-field col" style="width: calc(100% - 50px)">
-                                <w:stationAutoComplete id="end-station-autocomplete" value="#{buyTicketBean.endStationId}" stationNameClass="end-station-text"
+                            <div id="end-station-select" class="input-field station-autocomplete-field col">
+                                <w:stationAutoComplete id="end-station-autocomplete" value="#{buyTicketBean.endStation}" stationNameClass="end-station-text"
                                                        enableStationMessage="#{true}" completeMethod="#{subwayInfoBean.searchStation}"
                                                        required="true" requiredMessage="#{bundle.TipSelectEndStation}"
-                                                       label="#{bundle.EndSubwayStation}"/>
+                                                       label="#{bundle.EndSubwayStation}" fullSelectDialogId="station-fullselect-dialog"/>
                             </div>
                         </div>
-                        <div class="input-field col s2" style="text-align: right">
-                            <p:commandButton styleClass="btn light-green waves-effect waves-light" icon="ui-icon-search" value="#{bundle.Search}"
-                                             style="padding-left: 20px; padding-right: 10px"
+                        <div class="input-field col s2 center-align">
+                            <p:commandButton styleClass="btn light-green waves-effect waves-light s12" icon="ui-icon-search" value="#{bundle.Search}"
+                                             style="width: 100%"
                                              update="select-station-msg #{p:component('normal-buyticket-panel')}"
                                              actionListener="#{buyTicketBean.searchTicketPrice}"/>
                         </div>
-                    </div>
+                        <script>
+                            $('#station-swap-button').click(function(e){
+                                var temp = $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_input')).val();
+                                $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_input')).
+                                    val($(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_input')).val());
+                                $(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_input')).val(temp);
+
+                                temp = $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_hinput')).val();
+                                $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_hinput')).
+                                    val($(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_hinput')).val());
+                                $(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_hinput')).val(temp);
+                            })
+                        </script>
+                    </p:outputPanel>
                     <p:messages id="select-station-msg" closable="true" autoUpdate="false"/>
                 </h:form>
             </div>
@@ -222,6 +246,49 @@
             </p:outputPanel>
         </div>
 
+        <div id="station-fullselect-dialog" class="modal modal-fixed-footer" style="width: 75%">
+            <p:outputPanel id="station-fullselect-panel" class="modal-content">
+                <h5 class="light-blue-text">#{subwayInfoBean.selectedCity.cityName}</h5>
+                <table class="striped">
+                    <thead>
+                    <tr>
+                        <th data-field="subway_line">#{bundle.SubwayLine}</th>
+                        <th data-field="subway_station" class="center-align">#{bundle.SubwayStation}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <c:set var="lineStationMap" value="#{subwayInfoBean.cityStationMap[subwayInfoBean.selectedCity]}"/>
+                    <c:forEach var="line" items="#{lineStationMap}" varStatus="i">
+                        <tr>
+                            <td>
+                                #{line.key.subwayLineName}
+                            </td>
+                            <td>
+                                <c:forEach var="station" items="#{line.value}" varStatus="j">
+                                    <a id="#{i.index}-${j.index}-station" class="waves-effect btn-flat station-fullselect-item" data-disable="#{not station.available}" station-msg="#{station.stationMessage.content}"
+                                       station-msg-time="#{station.stationMessage.releaseTime.time}"
+                                       station-msg-publisher="#{station.stationMessage.publisher}"
+                                       data-value="#{station.subwayStationId}" data-label="#{station.displayName}">
+                                        #{station.subwayStationName}
+                                    </a>
+                                    <script type="text/javascript">
+                                        initStationMessage('##{i.index}-${j.index}-station', false, true);
+                                    </script>
+                                </c:forEach>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </p:outputPanel>
+            <div class="modal-footer">
+                <a class="waves-effect waves-green btn-flat modal-close">
+                    #{bundle.Close}
+                </a>
+            </div>
+        </div>
+
         <div id="station-msg-dialog" class="modal modal-fixed-footer">
             <div class="modal-content">
                 <h5 class="light-blue-text">#{bundle.StationMessage}</h5>
@@ -234,7 +301,7 @@
                 <p id="station-msg"/>
             </div>
             <div class="modal-footer">
-                <a class="waves-effect waves-green btn-flat" onclick="$('#station-msg-dialog').closeModal()">
+                <a class="waves-effect waves-green btn-flat modal-close">
                     #{bundle.Close}
                 </a>
             </div>
@@ -247,7 +314,7 @@
             <a class="ui-confirmdialog-yes waves-effect waves-green btn-flat right">#{bundle.Ok}</a>
             <a class="ui-confirmdialog-no waves-effect waves-red btn-flat right">#{bundle.Cancel}</a>
         </p:confirmDialog>
-        <div id="submitted-order-detail-dialog" class="modal" style="min-width: 900px">
+        <div id="submitted-order-detail-dialog" class="modal" style="width: 90%">
             <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="orderStatus"/>
             <div class="modal-content">
                 <h5 class="light-blue-text">#{bundle.OrderDetail}</h5>
@@ -284,7 +351,7 @@
                 </p:outputPanel>
             </div>
             <div class="modal-footer">
-                <a class="waves-effect waves-green btn-flat" onclick="$('#submitted-order-detail-dialog').closeModal()">
+                <a class="waves-effect waves-green btn-flat modal-close">
                     #{bundle.Close}
                 </a>
             </div>
@@ -312,8 +379,7 @@
                 </p:outputPanel>
             </div>
             <div class="modal-footer">
-                <a class="waves-effect waves-green btn-flat"
-                   onclick="$('#extract-code-dialog').closeModal()">#{bundle.Close}</a>
+                <a class="waves-effect waves-green btn-flat modal-close">#{bundle.Close}</a>
             </div>
         </div>
     </ui:define>

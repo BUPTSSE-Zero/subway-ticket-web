@@ -70,53 +70,71 @@
                 }
             }
         </script>
-        <div id="add-preferroute-dialog" class="modal" style="width: 800px">
+        <div id="add-preferroute-dialog" class="modal" style="width: 80%">
             <h:form>
                 <div class="modal-content">
                     <h5 class="light-blue-text">#{bundle.AddPreferRoute}</h5>
                     <div class="row" style="margin-bottom: 0">
                         <div class="col s12">
                             <div class="row" style="margin-bottom: 0">
-                                <div class="col s3">
+                                <div class="col s2">
                                     <div class="col" style="padding: 20px 6px 0 0;">
                                         <i class="material-icons">location_city</i>
                                     </div>
                                     <div class="input-field col" style="width: calc(100% - 30px)">
-                                        <h:selectOneMenu value="#{subwayInfoBean.selectedCityId}">
+                                        <h:selectOneMenu value="#{subwayInfoBean.selectedCity}" converter="cityConverter">
                                             <c:forEach items="#{subwayInfoBean.cities}" var="city">
-                                                <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city.cityId}"/>
+                                                <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city}"/>
                                             </c:forEach>
-                                            <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityIdChange}"
-                                                    onsuccess="$('#start-station-select input').val(''); $('#end-station-select input').val('')"/>
+                                            <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityChange}"
+                                                    update="#{p:component('station-fullselect-panel')}"
+                                                    oncomplete="$('#start-station-select input').val(''); $('#end-station-select input').val('')"/>
                                         </h:selectOneMenu>
                                         <label>#{bundle.City}</label>
                                     </div>
                                 </div>
-                                <div class="col s4">
+                                <div class="col s5">
                                     <div class="col" style="padding: 20px 6px 0 0;">
                                         <i class="material-icons">subway</i>
                                     </div>
-                                    <div id="start-station-select" class="input-field col" style="width: calc(100% - 30px)">
-                                        <w:stationAutoComplete value="#{preferBean.preferRouteStartStationId}" id="start-station-autocomplete" stationNameClass="start-station-text"
+                                    <div id="start-station-select" class="input-field col station-autocomplete-field">
+                                        <w:stationAutoComplete value="#{preferBean.preferRouteStartStation}" id="start-station-autocomplete" stationNameClass="start-station-text"
                                                                enableStationMessage="#{false}" completeMethod="#{subwayInfoBean.searchStation}"
                                                                required="true" requiredMessage="#{bundle.TipSelectStartStation}"
-                                                               label="#{bundle.StartSubwayStation}"/>
+                                                               label="#{bundle.StartSubwayStation}"
+                                                               fullSelectDialogId="station-fullselect-dialog"/>
                                     </div>
                                 </div>
-                                <div class="col s5">
-                                    <div class="col" style="padding: 20px 5px 0 20px;">
-                                        <i class="material-icons">trending_flat</i>
+                                <div class="col s5" style="padding-left: 0">
+                                    <div class="col" style="padding: 20px 6px 0 0;">
+                                        <a id="station-swap-button" class="btn-floating transparent btn-flat waves-effect">
+                                            <i class="material-icons light-blue-text">swap_horiz</i>
+                                        </a>
                                     </div>
-                                    <div id="end-station-select" class="input-field col" style="width: calc(100% - 50px)">
-                                        <w:stationAutoComplete id="end-station-autocomplete" value="#{preferBean.preferRouteEndStationId}"
+                                    <div id="end-station-select" class="input-field col station-autocomplete-field">
+                                        <w:stationAutoComplete id="end-station-autocomplete" value="#{preferBean.preferRouteEndStation}"
                                                                stationNameClass="end-station-text"
                                                                enableStationMessage="#{false}" completeMethod="#{subwayInfoBean.searchStation}"
                                                                required="true" requiredMessage="#{bundle.TipSelectEndStation}"
-                                                               label="#{bundle.EndSubwayStation}"/>
+                                                               label="#{bundle.EndSubwayStation}"
+                                                               fullSelectDialogId="station-fullselect-dialog"/>
                                     </div>
                                 </div>
                             </div>
                             <p:messages id="select-station-msg" closable="true" autoUpdate="false"/>
+                            <script>
+                                $('#station-swap-button').click(function(e){
+                                    var temp = $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_input')).val();
+                                    $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_input')).
+                                    val($(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_input')).val());
+                                    $(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_input')).val(temp);
+
+                                    temp = $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_hinput')).val();
+                                    $(PrimeFaces.escapeClientId('#{p:component('start-station-autocomplete')}:start-station-autocomplete_hinput')).
+                                    val($(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_hinput')).val());
+                                    $(PrimeFaces.escapeClientId('#{p:component('end-station-autocomplete')}:end-station-autocomplete_hinput')).val(temp);
+                                })
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -132,6 +150,43 @@
                     </p:commandButton>
                 </div>
             </h:form>
+        </div>
+        <div id="station-fullselect-dialog" class="modal modal-fixed-footer" style="width: 75%">
+            <p:outputPanel id="station-fullselect-panel" class="modal-content">
+                <h5 class="light-blue-text">#{subwayInfoBean.selectedCity.cityName}</h5>
+                <table class="striped">
+                    <thead>
+                    <tr>
+                        <th data-field="subway_line">#{bundle.SubwayLine}</th>
+                        <th data-field="subway_station" class="center-align">#{bundle.SubwayStation}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <c:set var="lineStationMap" value="#{subwayInfoBean.cityStationMap[subwayInfoBean.selectedCity]}"/>
+                    <c:forEach var="line" items="#{lineStationMap}" varStatus="i">
+                        <tr>
+                            <td>
+                                #{line.key.subwayLineName}
+                            </td>
+                            <td>
+                                <c:forEach var="station" items="#{line.value}" varStatus="j">
+                                    <a id="#{i.index}-${j.index}-station" class="waves-effect btn-flat station-fullselect-item"
+                                       data-value="#{station.subwayStationId}" data-label="#{station.displayName}">
+                                        #{station.subwayStationName}
+                                    </a>
+                                </c:forEach>
+                            </td>
+                        </tr>
+                    </c:forEach>
+                    </tbody>
+                </table>
+            </p:outputPanel>
+            <div class="modal-footer">
+                <a class="waves-effect waves-green btn-flat modal-close">
+                    #{bundle.Close}
+                </a>
+            </div>
         </div>
         <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
             <a class="btn-floating btn-large waves-effect waves-light green"

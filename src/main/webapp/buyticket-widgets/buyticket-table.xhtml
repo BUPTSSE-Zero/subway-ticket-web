@@ -3,24 +3,27 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui">
 
     <table>
         <thead>
-        <tr>
-            <th data-field="start_station">#{bundle.StartSubwayStation}</th>
-            <th data-field="end_station">#{bundle.EndSubwayStation}</th>
-            <th data-field="ticket_price">#{bundle.TicketPrice}</th>
-            <th data-field="ticket_amount">#{bundle.TicketNumber}</th>
-            <th data-field="ticket_total_price">#{bundle.TotalPrice}</th>
-        </tr>
+            <tr>
+                <th data-field="city">#{bundle.City}</th>
+                <th data-field="start_station">#{bundle.StartSubwayStation}</th>
+                <th data-field="end_station">#{bundle.EndSubwayStation}</th>
+                <th data-field="ticket_price">#{bundle.TicketPrice}</th>
+                <th data-field="ticket_amount">#{bundle.TicketNumber}</th>
+                <th data-field="ticket_total_price">#{bundle.TotalPrice}</th>
+            </tr>
         </thead>
 
         <tbody>
         <tr>
+            <td>
+                #{startStation.subwayLine.city.cityName}
+            </td>
             <td>
                 <h:form>
                     <span class="#{widgetId}-start-station" data-disable="#{not startStation.available}"
@@ -30,7 +33,7 @@
                         #{startStation.displayName}
                     </span>
                     <script type="text/javascript">
-                        initStationMessage('.#{widgetId}-start-station');
+                        initStationMessage('.#{widgetId}-start-station', true);
                     </script>
                     <c:choose>
                         <c:when test="#{not empty sessionScope.user and preferBean.isStationPrefer(startStation)}">
@@ -61,7 +64,7 @@
                         #{endStation.displayName}
                     </span>
                     <script type="text/javascript">
-                        initStationMessage('.#{widgetId}-end-station');
+                        initStationMessage('.#{widgetId}-end-station', true);
                     </script>
                     <c:choose>
                         <c:when test="#{not empty sessionScope.user and preferBean.isStationPrefer(endStation)}">
@@ -109,7 +112,7 @@
         <c:choose>
             <c:when test="#{empty sessionScope.user}">
                 <tr>
-                    <td colspan="5" style="padding: 0;">
+                    <td colspan="6" style="padding: 0;">
                         <p class="right red-text">
                             #{bundle.TipBuyTicketAfterLogin}
                         </p>
@@ -118,7 +121,7 @@
             </c:when>
             <c:otherwise>
                 <tr>
-                    <td colspan="5" style="padding: 0">
+                    <td colspan="6" style="padding: 0">
                         <h:form>
                             <c:choose>
                                 <c:when test="#{preferBean.isRoutePrefer(startStation, endStation)}">

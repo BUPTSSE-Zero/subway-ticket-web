@@ -12,10 +12,7 @@ import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by zhou-shengyun on 7/15/16.
@@ -38,44 +35,52 @@ public class SubwayInfoBean implements Serializable {
     private void init(){
         cities = subwayInfoDBHelperBean.findAll(City.class);
         selectedCity = cities.get(0);
-        getCityStationMap();
+        generateCityStationMap();
         findUser();
     }
 
     public void findUser(){
         HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession(false);
         user = (Account) session.getAttribute(AccountControl.SESSION_ATTR_USER);
-        if(user != null)
-            user = (Account)subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
+        if(user != null) {
+            user = (Account) subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
+            if(!user.getHistoryRouteList().isEmpty()){
+                if(user.getHistoryRouteList().get(0).getStartStation().getSubwayLine().getCity().getCityId() != selectedCity.getCityId()) {
+                    selectedCity = user.getHistoryRouteList().get(0).getStartStation().getSubwayLine().getCity();
+                    generateCityStationMap();
+                }
+            }
+        }
     }
 
     public List<City> getCities() {
         return cities;
     }
 
-    public int getSelectedCityId() {
-        return selectedCity.getCityId();
+    public City getSelectedCity() {
+        return selectedCity;
     }
 
-    public void setSelectedCityId(int cityId) {
-        for(City c : cities){
-            if(c.getCityId() == cityId)
-                selectedCity = c;
-        }
+    public void setSelectedCity(City selectedCity) {
+        this.selectedCity = selectedCity;
     }
 
-    public void onSelectedCityIdChange(){
-        getCityStationMap();
+    public void onSelectedCityChange(){
+        generateCityStationMap();
     }
 
-    private void getCityStationMap(){
+    private void generateCityStationMap(){
         if(cityStationMap.containsKey(selectedCity))
             return;
-        Map<SubwayLine, List<SubwayStation>> stationMap = new HashMap<>();
+        Map<SubwayLine, List<SubwayStation>> stationMap = new LinkedHashMap<>();
         for(SubwayLine sl : selectedCity.getSubwayLineList()){
             stationMap.put(sl, sl.getSubwayStationList());
         }
         cityStationMap.put(selectedCity, stationMap);
+    }
+
+    public Map<City, Map<SubwayLine, List<SubwayStation>>> getCityStationMap() {
+        return cityStationMap;
     }
 
     public List<SubwayStation> searchStation(String queryString){

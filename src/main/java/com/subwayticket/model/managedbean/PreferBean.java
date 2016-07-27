@@ -115,49 +115,49 @@ public class PreferBean implements Serializable{
         return result;
     }
 
-    private int preferStationId;
+    private SubwayStation preferStation;
 
-    public String getPreferStationId(){
-        return null;
+    public SubwayStation getPreferStation() {
+        return preferStation;
     }
 
-    public void setPreferStationId(String stationId){
-        preferStationId = Integer.valueOf(stationId);
+    public void setPreferStation(SubwayStation preferStation) {
+        this.preferStation = preferStation;
     }
 
     public void addPreferSubwayStation(){
-        addPreferSubwayStation(new SubwayStation(preferStationId));
+        addPreferSubwayStation(preferStation);
         RequestContext.getCurrentInstance().addCallbackParam("result_code", 0);
     }
 
-    private int preferRouteStartStationId;
+    private SubwayStation preferRouteStartStation;
 
-    public String getPreferRouteStartStationId() {
-        return null;
+    public SubwayStation getPreferRouteStartStation() {
+        return preferRouteStartStation;
     }
 
-    public void setPreferRouteStartStationId(String stationId) {
-        this.preferRouteStartStationId = Integer.valueOf(stationId);
+    public void setPreferRouteStartStation(SubwayStation preferRouteStartStation) {
+        this.preferRouteStartStation = preferRouteStartStation;
     }
 
-    private int preferRouteEndStationId;
+    private SubwayStation preferRouteEndStation;
 
-    public String getPreferRouteEndStationId() {
-        return null;
+    public SubwayStation getPreferRouteEndStation() {
+        return preferRouteEndStation;
     }
 
-    public void setPreferRouteEndStationId(String stationId) {
-        this.preferRouteEndStationId = Integer.valueOf(stationId);
+    public void setPreferRouteEndStation(SubwayStation preferRouteEndStation) {
+        this.preferRouteEndStation = preferRouteEndStation;
     }
 
     public void addPreferSubwayRoute(){
-        if(preferRouteStartStationId == preferRouteEndStationId){
+        if(preferRouteStartStation.getSubwayStationId() == preferRouteEndStation.getSubwayStationId()){
             FacesContext context = FacesContext.getCurrentInstance();
             HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, BundleUtil.getString(request, "TipStartStationEqualEndStation"), ""));
             return;
         }
-        addPreferSubwayRoute(new SubwayStation(preferRouteStartStationId), new SubwayStation(preferRouteEndStationId));
+        addPreferSubwayRoute(preferRouteStartStation, preferRouteEndStation);
         RequestContext.getCurrentInstance().addCallbackParam("result_code", 0);
     }
 

@@ -283,6 +283,29 @@ body{
 	content: 'star_rate';
 }
 
+.station-autocomplete .ui-autocomplete-input.ui-autocomplete-dd-input{
+	padding-right: 3.5em;
+}
+
+.station-autocomplete .ui-autocomplete-dropdown{
+	right: -50px;
+	width: 16px;
+}
+
+.station-autocomplete .station-fullselect{
+	position: absolute;
+	top: 13px;
+	right: -25px;
+}
+
+.station-fullselect i{
+	font-size: 16px;
+}
+
+.station-autocomplete-field{
+	width: calc(100% - 30px - 3.5em);
+}
+
 .prefer-button .ui-icon{
 	color: #ff8f00;
 }

@@ -66,10 +66,10 @@
                 }
             }
         </script>
-        <div id="add-preferstation-dialog" class="modal" style="width: 820px">
+        <div id="add-preferstation-dialog" class="modal" style="width: 80%">
             <div class="modal-content">
                 <h5 class="light-blue-text">#{bundle.AddPreferSubwayStation}</h5>
-                <div class="row" style="margin-bottom: 0">
+                <p:outputPanel id="add-preferstation-input" class="row" style="margin-bottom: 0">
                     <h:form class="col s12">
                         <div class="row" style="margin-bottom: 0">
                             <div class="col s3">
@@ -77,12 +77,13 @@
                                     <i class="material-icons">location_city</i>
                                 </div>
                                 <div class="input-field col" style="width: calc(100% - 30px)">
-                                    <h:selectOneMenu value="#{subwayInfoBean.selectedCityId}">
+                                    <h:selectOneMenu value="#{subwayInfoBean.selectedCity}" converter="cityConverter">
                                         <c:forEach items="#{subwayInfoBean.cities}" var="city">
-                                            <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city.cityId}"/>
+                                            <f:selectItem itemLabel="#{city.cityName}" itemValue="#{city}"/>
                                         </c:forEach>
-                                        <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityIdChange}"
-                                                onsuccess="$('#station-select input').val('')"/>
+                                        <p:ajax global="false" event="change" listener="#{subwayInfoBean.onSelectedCityChange}"
+                                                update="#{p:component('station-fullselect-panel')}"
+                                                oncomplete="$('#station-select input').val('')"/>
                                     </h:selectOneMenu>
                                     <label>#{bundle.City}</label>
                                 </div>
@@ -91,17 +92,18 @@
                                 <div class="col" style="padding: 20px 6px 0 0;">
                                     <i class="material-icons">subway</i>
                                 </div>
-                                <div id="station-select" class="input-field col" style="width: calc(100% - 30px)">
-                                    <w:stationAutoComplete value="#{preferBean.preferStationId}" id="station-autocomplete"
+                                <div id="station-select" class="input-field col station-autocomplete-field">
+                                    <w:stationAutoComplete value="#{preferBean.preferStation}" id="station-autocomplete"
                                                            stationNameClass="station-text"
-                                                           enableStationMessage="#{false}" completeMethod="#{subwayInfoBean.searchStation}"
+                                                           enableStationMessage="false" completeMethod="#{subwayInfoBean.searchStation}"
                                                            required="true" requiredMessage="#{bundle.TipSelectStation}"
+                                                           fullSelectDialogId="station-fullselect-dialog"
                                                            label="#{bundle.SubwayStation}"/>
                                 </div>
                             </div>
-                            <div class="input-field col s3" style="text-align: right">
+                            <div class="input-field col s3 center-align">
                                 <p:commandButton styleClass="btn light-green waves-effect waves-light" icon="ui-icon-add" value="#{bundle.Add}"
-                                                 actionListener="#{preferBean.addPreferSubwayStation}"
+                                                 actionListener="#{preferBean.addPreferSubwayStation}" style="width: 90%"
                                                  oncomplete="handleAddPreferStationResult(xhr, status, args)"
                                                  update="#{p:component('select-station-msg')} #{p:component('prefer-subway-station-panel')}">
                                     <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
@@ -110,14 +112,53 @@
                         </div>
                         <p:messages id="select-station-msg" closable="true" autoUpdate="false"/>
                     </h:form>
-                </div>
+                </p:outputPanel>
             </div>
             <div class="modal-footer">
-                <a class="waves-effect waves-green btn-flat" onclick="$('#add-preferstation-dialog').closeModal()">
+                <a class="waves-effect waves-green btn-flat modal-close">
                     #{bundle.Close}
                 </a>
             </div>
         </div>
+
+        <div id="station-fullselect-dialog" class="modal modal-fixed-footer" style="width: 75%">
+            <p:outputPanel id="station-fullselect-panel" class="modal-content">
+                <h5 class="light-blue-text">#{subwayInfoBean.selectedCity.cityName}</h5>
+                <table class="striped">
+                    <thead>
+                    <tr>
+                        <th data-field="subway_line">#{bundle.SubwayLine}</th>
+                        <th data-field="subway_station" class="center-align">#{bundle.SubwayStation}</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                        <c:set var="lineStationMap" value="#{subwayInfoBean.cityStationMap[subwayInfoBean.selectedCity]}"/>
+                        <c:forEach var="line" items="#{lineStationMap}" varStatus="i">
+                            <tr>
+                                <td>
+                                    #{line.key.subwayLineName}
+                                </td>
+                                <td>
+                                    <c:forEach var="station" items="#{line.value}" varStatus="j">
+                                        <a id="#{i.index}-${j.index}-station" class="waves-effect btn-flat station-fullselect-item"
+                                           data-value="#{station.subwayStationId}" data-label="#{station.displayName}">
+                                            #{station.subwayStationName}
+                                        </a>
+                                    </c:forEach>
+                                </td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+            </p:outputPanel>
+            <div class="modal-footer">
+                <a class="waves-effect waves-green btn-flat modal-close">
+                    #{bundle.Close}
+                </a>
+            </div>
+        </div>
+
         <div class="fixed-action-btn" style="bottom: 30px; right: 30px;">
             <a class="btn-floating btn-large waves-effect waves-light green"
                onclick="$('#add-preferstation-dialog').openModal({

@@ -14,9 +14,10 @@
         <cc:attribute name="label"/>
         <cc:attribute name="completeMethod" method-signature="void searchStation(String)"/>
         <cc:attribute name="stationNameClass"/>
-        <cc:attribute name="enableStationMessage"/>
-        <cc:attribute name="required" default="false"/>
-        <cc:attribute name="value"/>
+        <cc:attribute name="enableStationMessage" type="java.lang.Boolean" default="true"/>
+        <cc:attribute name="required" type="java.lang.Boolean" default="false"/>
+        <cc:attribute name="value" type="com.subwayticket.database.model.SubwayStation"/>
+        <cc:attribute name="fullSelectDialogId" required="true"/>
         <cc:attribute name="requiredMessage" default=""/>
     </cc:interface>
 
@@ -25,7 +26,7 @@
                         emptyMessage="#{bundle.TipNoStationSearchResult}" completeMethod="#{cc.attrs.completeMethod}"
                         forceSelection="true" var="station" itemLabel="#{station.displayName}" dropdown="true"
                         itemValue="#{station.subwayStationId.toString()}" required="#{cc.attrs.required}"
-                        requiredMessage="#{cc.attrs.requiredMessage}"
+                        requiredMessage="#{cc.attrs.requiredMessage}" converter="subwayStationConverter"
                         placeholder="#{bundle.SupportPinyinSearch}" >
             <c:choose>
                 <c:when test="#{cc.attrs.enableStationMessage}">
@@ -50,7 +51,17 @@
         </p:autoComplete>
 
         <script type="text/javascript">
-            $('.#{cc.attrs.id}').append('<label>#{cc.attrs.label}</label>');
+            $(PrimeFaces.escapeClientId('#{p:component(cc.id)}:#{cc.attrs.id}')).append('<label>#{cc.attrs.label}</label>');
+            $(PrimeFaces.escapeClientId('#{p:component(cc.id)}:#{cc.attrs.id}')).append('<a class="station-fullselect"><i id="#{cc.attrs.id}-fullselect" class="material-icons materialize-red-text">place</i></a>');
+            $('##{cc.attrs.id}-fullselect').click(function(e){
+                $('##{cc.attrs.fullSelectDialogId}').openModal();
+                $('##{cc.attrs.fullSelectDialogId} .station-fullselect-item').unbind();
+                $('##{cc.attrs.fullSelectDialogId} .station-fullselect-item').click(function(e){
+                    $(PrimeFaces.escapeClientId('#{p:component(cc.id)}:#{cc.attrs.id}_input')).val($(this).attr('data-label'));
+                    $(PrimeFaces.escapeClientId('#{p:component(cc.id)}:#{cc.attrs.id}_hinput')).val($(this).attr('data-value'));
+                    $('##{cc.attrs.fullSelectDialogId}').closeModal();
+                });
+            })
         </script>
     </cc:implementation>
 

@@ -41,30 +41,29 @@ public class BuyTicketBean implements Serializable{
             user = (Account)subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
     }
 
-    public void setStartStationId(String stationIdStr) {
-        int stationId = Integer.valueOf(stationIdStr);
-        startStation = (SubwayStation) subwayInfoDBHelperBean.find(SubwayStation.class, stationId);
-    }
-
-    public void setEndStationId(String stationIdStr){
-        int stationId = Integer.valueOf(stationIdStr);
-        endStation = (SubwayStation) subwayInfoDBHelperBean.find(SubwayStation.class, stationId);
-    }
-
-    public String getStartStationId() {
-        return null;
-    }
-
-    public String getEndStationId() {
-        return null;
+    public void onSelectedCityChange(){
+        SubwayInfoBean subwayInfoBean = (SubwayInfoBean) FacesContext.getCurrentInstance().getViewRoot().getViewMap().get("subwayInfoBean");
+        if(startStation != null && subwayInfoBean != null &&
+                subwayInfoBean.getSelectedCity().getCityId() == startStation.getSubwayLine().getCity().getCityId()){
+            return;
+        }
+        startStation = endStation = null;
     }
 
     public SubwayStation getStartStation() {
         return startStation;
     }
 
+    public void setStartStation(SubwayStation startStation) {
+        this.startStation = startStation;
+    }
+
     public SubwayStation getEndStation() {
         return endStation;
+    }
+
+    public void setEndStation(SubwayStation endStation) {
+        this.endStation = endStation;
     }
 
     public void searchTicketPrice(){
