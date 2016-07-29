@@ -34,9 +34,11 @@ public class SubwayInfoBean implements Serializable {
     @PostConstruct
     private void init(){
         cities = subwayInfoDBHelperBean.findAll(City.class);
-        selectedCity = cities.get(0);
-        generateCityStationMap();
         findUser();
+        if(user == null || selectedCity == null) {
+            selectedCity = cities.get(0);
+            generateCityStationMap();
+        }
     }
 
     public void findUser(){
@@ -45,7 +47,7 @@ public class SubwayInfoBean implements Serializable {
         if(user != null) {
             user = (Account) subwayInfoDBHelperBean.find(Account.class, user.getPhoneNumber());
             if(!user.getHistoryRouteList().isEmpty()){
-                if(user.getHistoryRouteList().get(0).getStartStation().getSubwayLine().getCity().getCityId() != selectedCity.getCityId()) {
+                if(selectedCity == null || user.getHistoryRouteList().get(0).getStartStation().getSubwayLine().getCity().getCityId() != selectedCity.getCityId()) {
                     selectedCity = user.getHistoryRouteList().get(0).getStartStation().getSubwayLine().getCity();
                     generateCityStationMap();
                 }

@@ -19,6 +19,7 @@
         <cc:attribute name="value" type="com.subwayticket.database.model.SubwayStation"/>
         <cc:attribute name="fullSelectDialogId" required="true"/>
         <cc:attribute name="requiredMessage" default=""/>
+        <cc:attribute name="stationMsgDialogId"/>
     </cc:interface>
 
     <cc:implementation>
@@ -30,9 +31,11 @@
                         placeholder="#{bundle.SupportPinyinSearch}" >
             <c:choose>
                 <c:when test="#{cc.attrs.enableStationMessage}">
-                    <p:ajax event="query" global="false" oncomplete="initStationMessage('.#{cc.attrs.stationNameClass}')"/>
+                    <p:ajax event="query" global="false" oncomplete="initStationMessage('#{cc.attrs.stationMsgDialogId}' ,'#{cc.attrs.stationNameClass}')"/>
                     <p:column>
-                        <span class="#{cc.attrs.stationNameClass}" data-disable="#{not station.available}" station-msg="#{station.stationMessage.content}"
+                        <span class="#{cc.attrs.stationNameClass}"
+                              data-disable="#{not station.available}" station-msg="#{station.stationMessage.content}"
+                              station-msg-title="#{station.stationMessage.title}"
                               station-msg-time="#{station.stationMessage.releaseTime.time}"
                               station-msg-publisher="#{station.stationMessage.publisher}">
                             #{station.displayName}

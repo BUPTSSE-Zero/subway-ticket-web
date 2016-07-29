@@ -59,7 +59,7 @@
                         <i class="material-icons left">schedule</i>
                         <span class="local-time left">#{subwayInfoBean.selectedSystemMessage.releaseTime.time}</span>
                     </div>
-                    <p>#{subwayInfoBean.selectedSystemMessage.content}</p>
+                    <h:outputText escape="false" value="#{subwayInfoBean.selectedSystemMessage.content}"/>
                 </p:outputPanel>
             </div>
             <div class="modal-footer">

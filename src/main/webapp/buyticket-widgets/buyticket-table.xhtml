@@ -28,12 +28,13 @@
                 <h:form>
                     <span class="#{widgetId}-start-station" data-disable="#{not startStation.available}"
                           station-msg="#{startStation.stationMessage.content}"
+                          station-msg-title="#{startStation.stationMessage.title}"
                           station-msg-time="#{startStation.stationMessage.releaseTime.time}"
                           station-msg-publisher="#{startStation.stationMessage.publisher}">
                         #{startStation.displayName}
                     </span>
                     <script type="text/javascript">
-                        initStationMessage('.#{widgetId}-start-station', true);
+                        initStationMessage('station-msg-dialog', '#{widgetId}-start-station', true);
                     </script>
                     <c:choose>
                         <c:when test="#{not empty sessionScope.user and preferBean.isStationPrefer(startStation)}">
@@ -59,12 +60,13 @@
                 <h:form>
                     <span class="#{widgetId}-end-station" data-disable="#{not endStation.available}"
                           station-msg="#{endStation.stationMessage.content}"
+                          station-msg-title="#{endStation.stationMessage.title}"
                           station-msg-time="#{endStation.stationMessage.releaseTime.time}"
                           station-msg-publisher="#{endStation.stationMessage.publisher}">
                         #{endStation.displayName}
                     </span>
                     <script type="text/javascript">
-                        initStationMessage('.#{widgetId}-end-station', true);
+                        initStationMessage('station-msg-dialog', '#{widgetId}-end-station', true);
                     </script>
                     <c:choose>
                         <c:when test="#{not empty sessionScope.user and preferBean.isStationPrefer(endStation)}">

@@ -12,6 +12,7 @@ import java.util.Date;
 public class StationMessage {
     private int stationMessageId;
     private String publisher;
+    private String title;
     private Date releaseTime;
     private String content;
     private transient List<SubwayStation> stationList;
@@ -34,6 +35,16 @@ public class StationMessage {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    @Basic
+    @Column(name = "Title", nullable = false, length = 40)
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     @Basic
