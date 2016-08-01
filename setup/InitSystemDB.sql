@@ -16,6 +16,14 @@ CREATE TABLE Account(
 INSERT INTO Account(PhoneNumber, Password, RegisterDate)
           VALUES('123456', '123456', CURRENT_DATE);
 
+CREATE TABLE SystemAccount(
+  UserID VARCHAR(15) NOT NULL PRIMARY KEY,
+  Password VARCHAR(20) NOT NULL
+);
+
+INSERT INTO SystemAccount(UserID, Password)
+          VALUES('admin', 'admin');
+
 CREATE TABLE SystemMessage(
   ReleaseTime DATETIME NOT NULL PRIMARY KEY,
   Title VARCHAR(40) NOT NULL,

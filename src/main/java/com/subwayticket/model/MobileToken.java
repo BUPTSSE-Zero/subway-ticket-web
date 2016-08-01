@@ -4,23 +4,23 @@ package com.subwayticket.model;
  * Created by shengyun-zhou on 6/6/16.
  */
 public class MobileToken {
-    private String phoneNumber;
+    private String userId;
     private long timestamp;
     private String token;
 
     public MobileToken() {}
 
-    public MobileToken(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public MobileToken(String userId) {
+        this.userId = userId;
         this.timestamp = System.currentTimeMillis();
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public long getTimestamp() {

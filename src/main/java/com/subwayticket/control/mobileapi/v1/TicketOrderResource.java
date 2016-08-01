@@ -100,6 +100,7 @@ public class TicketOrderResource {
     @Consumes("application/json")
     @Produces("application/json")
     public Result extractTicket(ExtractTicketRequest extractTicketRequest){
+        SystemAccountResource.authCheck(request);
         Result result = TicketOrderControl.extractTicket(request, ticketOrderDBHelperBean, extractTicketRequest);
         if(result.getResultCode() == PublicResultCode.ORDER_NOT_EXIST)
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(), result);
@@ -109,14 +110,27 @@ public class TicketOrderResource {
     }
 
     @GET
-    @Path("/order_info/{orderId}")
+    @Path("/order_info/by_orderid/{orderId}")
     @Produces("application/json")
-    public OrderInfoResult getOrderInfo(@PathParam("orderId") String orderID){
+    public OrderInfoResult getOrderInfoByOrderId(@PathParam("orderId") String orderID){
         Account user = AccountResource.authCheck(request);
         TicketOrder ticketOrder = ticketOrderDBHelperBean.getOrderByOrderID(orderID, user);
         if(ticketOrder == null){
             throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
                             new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(request, "TipOrderNotExist")));
+        }
+        return new OrderInfoResult(PublicResultCode.SUCCESS, "", ticketOrder);
+    }
+
+    @GET
+    @Path("/order_info/by_extractcode/{extractCode}")
+    @Produces("application/json")
+    public OrderInfoResult getOrderInfoByExtractCode(@PathParam("extractCode") String extractCode){
+        SystemAccountResource.authCheck(request);
+        TicketOrder ticketOrder = ticketOrderDBHelperBean.getOrderByExtractCode(extractCode);
+        if(ticketOrder == null){
+            throw new CheckException(Response.Status.NOT_FOUND.getStatusCode(),
+                    new Result(PublicResultCode.ORDER_NOT_EXIST, BundleUtil.getString(request, "TipOrderNotExist")));
         }
         return new OrderInfoResult(PublicResultCode.SUCCESS, "", ticketOrder);
     }

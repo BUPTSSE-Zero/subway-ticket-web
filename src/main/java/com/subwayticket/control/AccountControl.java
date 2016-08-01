@@ -64,7 +64,7 @@ public class AccountControl {
 
 
     private static Result login(HttpServletRequest req, LoginRequest loginRequest, SystemDBHelperBean dbBean, boolean sessionFlag){
-        Account account = (Account) dbBean.find(Account.class, loginRequest.getPhoneNumber());
+        Account account = (Account) dbBean.find(Account.class, loginRequest.getUserId());
         if(account == null)
             return new Result(PublicResultCode.USER_NOT_EXIST, BundleUtil.getString(req, "TipUserNotExist"));
         if(!account.getPassword().equals(loginRequest.getPassword()))
@@ -99,12 +99,12 @@ public class AccountControl {
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             return result;
         MobileLoginResult mobileLoginResult = new MobileLoginResult(result);
-        if(jedis.get(SecurityUtil.REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber()) != null){
+        if(jedis.get(SecurityUtil.REDIS_KEY_MOBILETOKEN_PREFIX + loginRequest.getUserId()) != null){
             mobileLoginResult.setResultCode(PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE);
             mobileLoginResult.setResultDescription(BundleUtil.getString(req, "TipLoginWithPreOffline"));
         }
-        mobileLoginResult.setToken(SecurityUtil.getMobileToken(loginRequest.getPhoneNumber()));
-        jedis.setex(SecurityUtil.REDIS_KEY_MOBILETOKEN + loginRequest.getPhoneNumber(), SecurityUtil.MOBILETOKEN_VALID_HOURS * 3600,
+        mobileLoginResult.setToken(SecurityUtil.getMobileToken(loginRequest.getUserId()));
+        jedis.setex(SecurityUtil.REDIS_KEY_MOBILETOKEN_PREFIX + loginRequest.getUserId(), SecurityUtil.MOBILETOKEN_VALID_HOURS * 3600,
                     mobileLoginResult.getToken());
         return mobileLoginResult;
     }
@@ -176,6 +176,6 @@ public class AccountControl {
     }
 
     public static void mobileLogout(Account account, Jedis jedis){
-        jedis.del(SecurityUtil.REDIS_KEY_MOBILETOKEN + account.getPhoneNumber());
+        jedis.del(SecurityUtil.REDIS_KEY_MOBILETOKEN_PREFIX + account.getPhoneNumber());
     }
 }

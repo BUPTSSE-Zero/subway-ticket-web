@@ -215,7 +215,7 @@ task mavenLocalInstall(type: Upload) {
         }
         pom('models_jar').groupId = 'com.subwayticket'
         pom('models_jar').artifactId = 'subway-ticket-models'
-        pom('models_jar').version = '0.11'
+        pom('models_jar').version = '1.0.0'
         pom('models_jar').withXml {
             // Clear dependencies
             asNode().remove(asNode().dependencies.first())
@@ -238,7 +238,7 @@ task mavenRemoteSync(type: Upload) {
             }
             pom('models_jar').groupId = 'com.subwayticket'
             pom('models_jar').artifactId = 'subway-ticket-models'
-            pom('models_jar').version = '0.11'
+            pom('models_jar').version = '1.0.0'
             pom('models_jar').withXml {
                 // Clear dependencies
                 asNode().remove(asNode().dependencies.first())

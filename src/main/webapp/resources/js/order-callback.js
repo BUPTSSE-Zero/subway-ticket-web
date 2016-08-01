@@ -22,18 +22,3 @@ function onSubmitOrderCallback(xhr, status, args){
         }
     });
 }
-
-/*function openComfirmDialog(src, msg){
-    $('#order-confirm-msg').text(msg);
-    $('#order-confirm-dialog').openModal({
-        dismissible: false,
-    });
-    $('#order-confirm-dialog .ui-confirmdialog-yes').click(function(){
-        $('#order-confirm-dialog').closeModal();
-        src.click();
-    });
-    $('#order-confirm-dialog .ui-confirmdialog-no').click(function(){
-        $('#order-confirm-dialog').closeModal();
-        return false;
-    });
-}*/

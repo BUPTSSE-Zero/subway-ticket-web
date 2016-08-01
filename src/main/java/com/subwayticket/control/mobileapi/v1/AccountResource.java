@@ -64,11 +64,11 @@ public class AccountResource {
     }
 
     public static Account authCheck(HttpServletRequest request){
-        Account account = SecurityUtil.checkMobileToken(request.getHeader(SecurityUtil.HEADER_TOKEN_KEY), JedisUtil.getJedis());
-        if(account == null)
+        String userId = SecurityUtil.checkMobileToken(request.getHeader(SecurityUtil.HEADER_TOKEN_KEY), JedisUtil.getJedis());
+        if(userId == null)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), new Result(Response.Status.UNAUTHORIZED.getStatusCode(),
                                         BundleUtil.getString(request, "TipTokenInvalid")));
-        return account;
+        return new Account(userId);
     }
 
     @GET

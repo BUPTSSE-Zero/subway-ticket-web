@@ -13,6 +13,7 @@
         <class>com.subwayticket.database.model.HistoryRoute</class>
         <class>com.subwayticket.database.model.PreferRoute</class>
         <class>com.subwayticket.database.model.PreferSubwayStation</class>
+        <class>com.subwayticket.database.model.SystemAccount</class>
         <properties>
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/SubwayTicketDB"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>

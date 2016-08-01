@@ -4,22 +4,22 @@ package com.subwayticket.model.request;
  * Created by shengyun-zhou on 6/2/16.
  */
 public class LoginRequest {
-    private String phoneNumber;
+    private String userId;
     private String password;
 
     public LoginRequest(){}
 
-    public LoginRequest(String phoneNumber, String password) {
-        this.phoneNumber = phoneNumber;
+    public LoginRequest(String userId, String password) {
+        this.userId = userId;
         this.password = password;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getPassword() {

@@ -35,7 +35,7 @@ allprojects {
 ```
 dependencies {
     ...
-    compile 'com.subwayticket:subway-ticket-models:0.+'
+    compile 'com.subwayticket:subway-ticket-models:1.+'
 }
 ```
 
@@ -381,7 +381,7 @@ Return: RefundOrderResult
 
 ## 查询某个订单的详细信息*
 ```
-GET ticket_order/order_info/{orderId}
+GET ticket_order/order_info/by_orderid/{orderId}
 ```
 `orderId`为要查询的订单号ID。
 

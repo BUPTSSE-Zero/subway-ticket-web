@@ -27,7 +27,7 @@ public class SecurityUtil {
     public static final int PHONE_CAPTCHA_INTERVAL_SECONDS = 60;
     public static final int PHONE_CAPTCHA_ERROR_TIMES = 3;
 
-    public static final String REDIS_KEY_MOBILETOKEN = "MobileToken";
+    public static final String REDIS_KEY_MOBILETOKEN_PREFIX = "MobileToken-";
     public static int MOBILETOKEN_VALID_HOURS = 120;
 
     public static Result sendPhoneCaptcha(ServletRequest request, String phoneNumber, Jedis jedis){
@@ -77,24 +77,24 @@ public class SecurityUtil {
     private static Key tokenkey = MacProvider.generateKey();
     public static final String HEADER_TOKEN_KEY = "AuthToken";
 
-    public static String getMobileToken(String phoneNumber){
-        MobileToken token = new MobileToken(phoneNumber);
+    public static String getMobileToken(String userId){
+        MobileToken token = new MobileToken(userId);
         Gson gson = GsonUtil.getGson();
-        String tokenString = Jwts.builder().setIssuer(phoneNumber).setSubject(gson.toJson(token)).signWith(SignatureAlgorithm.HS512, tokenkey).compact();
+        String tokenString = Jwts.builder().setIssuer(userId).setSubject(gson.toJson(token)).signWith(SignatureAlgorithm.HS512, tokenkey).compact();
         return tokenString;
     }
 
-    public static Account checkMobileToken(String tokenStr, Jedis jedis){
+    public static String checkMobileToken(String tokenStr, Jedis jedis){
         if(tokenStr == null)
             return null;
         try {
             String subject = Jwts.parser().setSigningKey(tokenkey).parseClaimsJws(tokenStr).getBody().getSubject();
             MobileToken token = GsonUtil.getGson().fromJson(subject, MobileToken.class);
-            String redisToken = jedis.get(REDIS_KEY_MOBILETOKEN + token.getPhoneNumber());
+            String redisToken = jedis.get(REDIS_KEY_MOBILETOKEN_PREFIX + token.getUserId());
             if(!tokenStr.equals(redisToken))
                 return null;
-            jedis.setex(REDIS_KEY_MOBILETOKEN + token.getPhoneNumber(), MOBILETOKEN_VALID_HOURS * 3600, redisToken);
-            return new Account(token.getPhoneNumber());
+            jedis.setex(REDIS_KEY_MOBILETOKEN_PREFIX + token.getUserId(), MOBILETOKEN_VALID_HOURS * 3600, redisToken);
+            return token.getUserId();
         }catch (Exception e){
             e.printStackTrace();
             return null;

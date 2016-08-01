@@ -62,7 +62,7 @@ public class OrderTest {
         if(refundOrderResult.getResultCode() == PublicResultCode.SUCCESS)
             System.out.println("Refund Amount:" + refundOrderResult.getRefundAmount());*/
 
-        response = RESTServiceTestUtil.get(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/order_info/" + submitOrderResult.getTicketOrder().getTicketOrderId(), result.getToken());
+        response = RESTServiceTestUtil.get(RESTServiceTestUtil.API_BASE_URL_V1 + "/ticket_order/order_info/by_orderid/" + submitOrderResult.getTicketOrder().getTicketOrderId(), result.getToken());
         OrderInfoResult orderInfoResult = (OrderInfoResult) RESTServiceTestUtil.showResponse(response, OrderInfoResult.class);
         showTicketOrderInfo(orderInfoResult.getTicketOrder());
 
