@@ -6,7 +6,16 @@ apply plugin: 'maven'
 
 sourceCompatibility = 1.7
 
-repositories {
+buildscript{
+    repositories{
+        mavenCentral()
+    }
+    dependencies{
+        classpath 'net.sf.proguard:proguard-gradle:+'
+    }
+}
+
+repositories{
     mavenCentral()
 }
 
@@ -56,6 +65,10 @@ ext{
     mavenURL = 'http://101.200.144.204:16082/nexus/content/repositories/releases'
     mavenAccount = 'admin'
     mavenPassword = null
+    SUBWAY_TICKET_MODEL_BASENAME = 'subway-ticket-models'
+    SUBWAY_TICKET_MODEL_PROGUARD_BASENAME = 'subway-ticket-models-proguard'
+    SUBWAY_TICKET_MODEL_JAR_PATH = 'build/libs/' + SUBWAY_TICKET_MODEL_BASENAME + '.jar'
+    SUBWAY_TICKET_MODEL_PROGUARD_JAR_PATH = 'build/libs/' + SUBWAY_TICKET_MODEL_PROGUARD_BASENAME + '.jar'
 }
 
 def inputPassword = {
@@ -147,7 +160,7 @@ task deployWebapp(dependsOn: ['build']){
 }
 
 task modelsJar(type: Jar, dependsOn:classes) {
-    baseName 'subway-ticket-models'
+    baseName SUBWAY_TICKET_MODEL_BASENAME
     from('build/classes/main')
     include(
             'com/subwayticket/model/result/*',
@@ -160,6 +173,21 @@ task modelsJar(type: Jar, dependsOn:classes) {
 artifacts {
     archives(modelsJar){
         name = 'models_jar'
+    }
+}
+
+task modelsProguard(type: proguard.gradle.ProGuardTask, dependsOn:modelsJar) {
+    injars SUBWAY_TICKET_MODEL_JAR_PATH
+    outjars SUBWAY_TICKET_MODEL_PROGUARD_JAR_PATH
+    libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+    libraryjars files(configurations.compile.collect())
+    configuration 'models-proguard-rules.pro'
+}
+
+task modelsProguardJar(dependsOn: modelsProguard){
+    doLast{
+        file(SUBWAY_TICKET_MODEL_JAR_PATH).delete()
+        file(SUBWAY_TICKET_MODEL_PROGUARD_JAR_PATH).renameTo(file(SUBWAY_TICKET_MODEL_JAR_PATH))
     }
 }
 
@@ -205,7 +233,7 @@ def mavenAuth = {
     }
 }
 
-task mavenLocalInstall(type: Upload) {
+task mavenLocalInstall(type: Upload, dependsOn: modelsProguardJar) {
     description "Installs the artifacts to the local Maven repository."
     configuration = configurations['archives']
     repositories.mavenDeployer {
@@ -223,7 +251,7 @@ task mavenLocalInstall(type: Upload) {
     }
 }
 
-task mavenRemoteSync(type: Upload) {
+task mavenRemoteSync(type: Upload, dependsOn: modelsProguardJar) {
     description "Syncs the artifacts to the remote Maven repository."
     configuration = configurations['archives']
     doFirst {
