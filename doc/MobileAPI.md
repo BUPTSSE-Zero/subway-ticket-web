@@ -138,7 +138,7 @@ Request: LoginRequest
 Return: MobileLoginResult
 
 ### Request JSON Key：
-+ phone_number：手机号
++ user_id：这里指手机号
 + password：密码
 
 ### Return:
