@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
  * Created by shengyun-zhou on 6/10/16.
  */
 public class RESTServiceTestUtil {
-    public static final String API_BASE_URL_V1 = "http://localhost:16080/subway-ticket-web/mobileapi/v1";
+    public static final String API_BASE_URL_V1 = "http://aliyun-server:16080/subway-ticket-web/mobileapi/v1";
 
     public static WebTarget getWebTarget(String url){
         Client client = ClientBuilder.newClient();
