@@ -1,6 +1,4 @@
-package com.subwayticket.control.listener; /**
- * @author buptsse-zero <GGGZ-1101-28@Live.cn>
- */
+package com.subwayticket.control.listener;
 
 import com.subwayticket.control.jobs.AutoRefundCancelOrdersJob;
 import com.subwayticket.control.jobs.ClearOutdateOrdersJob;
@@ -15,7 +13,11 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.util.Date;
 
-@WebListener()
+/**
+ * 监听器，Web App部署与卸载时触发
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
+ */
+@WebListener
 public class WebappListener implements ServletContextListener {
 
     // Public constructor is required by servlet spec

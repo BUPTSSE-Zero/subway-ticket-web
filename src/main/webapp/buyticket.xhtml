@@ -6,64 +6,56 @@
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:w="http://java.sun.com/jsf/composite/widgets"
                 template="/templates/main-template.xhtml">
+    <!--购票页面-->
 
-    <ui:define name="login-button">
-        <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                         value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
-                         update="login_error_message header-panel #{p:component('normal-buyticket-panel')}
-                            #{p:component('quick-buyticket-panel')} #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"
-                         oncomplete="handleLoginResult(xhr, status, args);Materialize.updateTextFields();$('select').material_select()">
-            <f:actionListener binding="#{buyTicketBean.findUser()}"/>
-            <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
-            <f:actionListener binding="#{preferBean.findUser()}"/>
-            <f:actionListener binding="#{orderBean.findUser()}"/>
-            <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
-        </p:commandButton>
+    <!--loginUpdate、onLoginComplete、after-login-listener的定义见/templates/login-register.xhtml-->
+    <ui:param name="loginUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}
+                    #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"/>
+    <ui:param name="onLoginComplete" value="Materialize.updateTextFields();$('select').material_select()"/>
+    <ui:define name="after-login-listener">
+        <f:actionListener binding="#{buyTicketBean.findUser()}"/>
+        <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
+        <f:actionListener binding="#{preferBean.findUser()}"/>
+        <f:actionListener binding="#{orderBean.findUser()}"/>
+        <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
     </ui:define>
 
-    <ui:define name="signup-button">
-        <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
-                         value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
-                         update="singup_message header-panel #{p:component('normal-buyticket-panel')}
-                            #{p:component('quick-buyticket-panel')} #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"
-                         oncomplete="handleLoginResult(xhr, status, args);Materialize.updateTextFields();$('select').material_select()">
-            <f:actionListener binding="#{buyTicketBean.findUser()}"/>
-            <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
-            <f:actionListener binding="#{preferBean.findUser()}"/>
-            <f:actionListener binding="#{orderBean.findUser()}"/>
-            <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
-        </p:commandButton>
+    <!--signupUpdate、onSignupComplete、after-signup-listener的定义见/templates/login-register.xhtml-->
+    <ui:param name="signupUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}
+                    #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"/>
+    <ui:param name="onSignupComplete" value="Materialize.updateTextFields();$('select').material_select()"/>
+    <ui:define name="after-signup-listener">
+        <f:actionListener binding="#{buyTicketBean.findUser()}"/>
+        <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
+        <f:actionListener binding="#{preferBean.findUser()}"/>
+        <f:actionListener binding="#{orderBean.findUser()}"/>
+        <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
     </ui:define>
 
-    <ui:define name="reset-password-button">
-        <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
-                         value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
-                         update="reset_password_message header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}
-                            #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"
-                         oncomplete="handleLoginResult(xhr, status, args);Materialize.updateTextFields();$('select').material_select()">
-            <f:actionListener binding="#{buyTicketBean.findUser()}"/>
-            <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
-            <f:actionListener binding="#{preferBean.findUser()}"/>
-            <f:actionListener binding="#{orderBean.findUser()}"/>
-            <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
-        </p:commandButton>
+    <!--resetPasswordUpdate、onResetPasswordComplete、after-resetpassword-listener的定义见/templates/login-register.xhtml-->
+    <ui:param name="resetPasswordUpdate" value="#{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')}
+                    #{p:component('normal-buyticket-input')} #{p:component('station-fullselect-panel')}"/>
+    <ui:param name="onResetPasswordComplete" value="Materialize.updateTextFields();$('select').material_select()"/>
+    <ui:define name="after-resetpassword-listener">
+        <f:actionListener binding="#{buyTicketBean.findUser()}"/>
+        <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
+        <f:actionListener binding="#{preferBean.findUser()}"/>
+        <f:actionListener binding="#{orderBean.findUser()}"/>
+        <f:actionListener binding="#{buyTicketBean.onSelectedCityChange()}"/>
     </ui:define>
 
-    <ui:define name="logout-button">
-        <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
-                         style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
-                         update="header-panel #{p:component('normal-buyticket-panel')} #{p:component('quick-buyticket-panel')} #{p:component('submitted-order-detail-panel')}">
-            <f:actionListener binding="#{buyTicketBean.findUser()}"/>
-            <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
-            <f:actionListener binding="#{preferBean.findUser()}"/>
-            <f:actionListener binding="#{orderBean.findUser()}"/>
-            <f:actionListener binding="#{orderBean.setSubmitedOrder(null)}"/>
-        </p:commandButton>
+    <!--logoutUpdate、after-logout-listener的定义见/templates/header.xhtml-->
+    <ui:param name="logoutUpdate" value="#{p:component('quick-buyticket-panel')} #{p:component('submitted-order-detail-panel')}"/>
+    <ui:define name="after-logout-listener">
+        <f:actionListener binding="#{buyTicketBean.findUser()}"/>
+        <f:actionListener binding="#{subwayInfoBean.findUser()}"/>
+        <f:actionListener binding="#{preferBean.findUser()}"/>
+        <f:actionListener binding="#{orderBean.findUser()}"/>
+        <f:actionListener binding="#{orderBean.setSubmitedOrder(null)}"/>
     </ui:define>
 
     <ui:define name="page-panel-content">
         <h:outputScript library="js" name="station-msg.js"/>
-        <h:outputScript library="js" name="order-callback.js"/>
         <p:importConstants type="com.subwayticket.control.TicketOrderControl" var="orderControl"/>
         <script type="text/javascript">
             $(document).ready(function() {
@@ -85,6 +77,8 @@
             <p:separator/>
             <div class="row" style="margin-bottom: 0">
                 <h:form class="col s12">
+
+                    <!--普通选票输入区域-->
                     <p:outputPanel id="normal-buyticket-input" class="row" style="margin-bottom: 0">
                         <div class="col s2">
                             <div class="col" style="padding: 20px 6px 0 0;">
@@ -167,6 +161,7 @@
                 </c:if>
             </p:outputPanel>
 
+            <!--快速购票区域，即通过常用路线和历史路线记录快速购票-->
             <p:outputPanel id="quick-buyticket-panel">
                 <h5 class="indigo-text" style="margin-top: 50px">#{bundle.PreferRoute}</h5>
                 <p:separator/>
@@ -248,6 +243,7 @@
             </p:outputPanel>
         </div>
 
+        <!--一个城市的全部地铁站的点选对话框-->
         <div id="station-fullselect-dialog" class="modal modal-fixed-footer" style="width: 75%">
             <p:outputPanel id="station-fullselect-panel" class="modal-content">
                 <h5 class="light-blue-text">#{subwayInfoBean.selectedCity.cityName}</h5>
@@ -294,6 +290,7 @@
             </div>
         </div>
 
+        <!--显示地铁站消息的对话框-->
         <div id="station-msg-dialog" class="modal modal-fixed-footer">
             <div class="modal-content">
                 <h5 class="light-blue-text">#{bundle.StationMessage} -
@@ -313,6 +310,7 @@
                 </a>
             </div>
         </div>
+
         <p:confirmDialog styleClass="confirm-dialog"
                          global="true" showEffect="fade" hideEffect="fade" closable="false" responsive="true" width="600">
             <f:facet name="header">
@@ -321,6 +319,8 @@
             <a class="ui-confirmdialog-yes waves-effect waves-green btn-flat right">#{bundle.Ok}</a>
             <a class="ui-confirmdialog-no waves-effect waves-red btn-flat right">#{bundle.Cancel}</a>
         </p:confirmDialog>
+
+        <!--提交订单后的订单详情对话框-->
         <div id="submitted-order-detail-dialog" class="modal" style="width: 90%">
             <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="orderStatus"/>
             <div class="modal-content">
@@ -363,6 +363,8 @@
                 </a>
             </div>
         </div>
+
+        <!--订单操作（支付、取消等）的结果提示框-->
         <div id="order-callback-dialog" class="modal" style="width: 600px;">
             <div class="modal-content">
                 <h5 class="light-blue-text">#{bundle.Alert}</h5>
@@ -376,6 +378,8 @@
                 </h:form>
             </div>
         </div>
+
+        <!--查看取票二维码的对话框-->
         <div id="extract-code-dialog" class="modal" style="width: 400px">
             <div class="modal-content">
                 <h5 class="light-blue-text">#{bundle.ExtractCode}</h5>

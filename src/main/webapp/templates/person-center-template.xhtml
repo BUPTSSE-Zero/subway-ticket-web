@@ -5,18 +5,20 @@
                 xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:c="http://java.sun.com/jsp/jstl/core"
                 template="/templates/main-template.xhtml">
 
+    <!--个人中心页面的模板，继承自main-template.xhtml-->
+    <!--@elvariable id="notPayOrders" type="java.util.List<com.subwayticket.database.model.TicketOrder>"-->
+    <!--notPayOrders在/templates/header.xhtml中定义-->
+    <!--@elvariable id="notExtractTicketOrders" type="java.util.List<com.subwayticket.database.model.TicketOrder>"-->
+    <!--notExtractTicketOrders在/templates/header.xhtml中定义-->
+
     <ui:define name="head">
         <f:event type="preRenderView" listener="#{userOperationBean.loginCheck}"/>
         <h:outputStylesheet library="css" name="perfect-scrollbar.css"/>
         <h:outputScript library="js" name="perfect-scrollbar.js"/>
     </ui:define>
 
-    <ui:define name="logout-button">
-        <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
-                         style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
-                         oncomplete="document.location.href = '#{facesContext.externalContext.applicationContextPath}';">
-        </p:commandButton>
-    </ui:define>
+    <!--onLogoutComplete的定义见/templates/header.xhtml-->
+    <ui:param name="onLogoutComplete" value="document.location.href = '#{facesContext.externalContext.applicationContextPath}'"/>
 
     <ui:define name="page-panel-content">
         <div class="row">
@@ -76,6 +78,7 @@
                                         <li class="#{itemNotPayOrderActive}">
                                             <h:link class="white-text" outcome="not-pay-orders.xhtml">
                                                 #{bundle.NotPayOrders}
+
                                                 <c:if test="#{notPayOrders.size() > 0}">
                                                     <span class="new badge amber darken-2">#{notPayOrders.size()}</span>
                                                 </c:if>
@@ -87,7 +90,8 @@
                                             <h:link class="white-text" outcome="not-extract-ticket-orders.xhtml">
                                                 #{bundle.NotExtractTicketOrders}
                                                 <c:if test="#{notExtractTicketOrders.size() > 0}">
-                                                    <span class="new badge amber darken-2">#{notExtractTicketOrders.size()}</span>
+                                                    <span class="new badge amber darken-2">
+                                                    #{notExtractTicketOrders.size()}</span>
                                                 </c:if>
                                             </h:link>
                                         </li>

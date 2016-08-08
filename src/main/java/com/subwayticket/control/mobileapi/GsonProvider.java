@@ -20,7 +20,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 
 /**
- * Created by shengyun-zhou on 6/10/16.
+ * 为RESTful API提供JSON序列化与反序列化器
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @Provider
 @Produces("application/json")
@@ -36,10 +37,10 @@ public class GsonProvider implements MessageBodyReader<Object>, MessageBodyWrite
 
     @Override
     public Object readFrom(Class<Object> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
-        Gson gson = GsonUtil.getGson();
+        Gson gson = GsonUtil.getDefaultGson();
         Reader inputReader = new InputStreamReader(entityStream, DEFAULT_CHARSET);
         Object obj = gson.fromJson(inputReader, type);
-        logger.info("JSON Output:" + gson.toJson(obj));
+        logger.info("JSON Input:" + gson.toJson(obj));
         for(Field f : obj.getClass().getDeclaredFields()){
             f.setAccessible(true);
             try{
@@ -68,9 +69,9 @@ public class GsonProvider implements MessageBodyReader<Object>, MessageBodyWrite
     @Override
     public void writeTo(Object o, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
         OutputStreamWriter writer = new OutputStreamWriter(entityStream, DEFAULT_CHARSET);
-        Gson gson = GsonUtil.getGson();
+        Gson gson = GsonUtil.getDefaultGson();
         String jsonStr = gson.toJson(o);
-        logger.info("JSON Input:" + jsonStr);
+        logger.info("JSON Output:" + jsonStr);
         writer.write(jsonStr);
         writer.close();
     }

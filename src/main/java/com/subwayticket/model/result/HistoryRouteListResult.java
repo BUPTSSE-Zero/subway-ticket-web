@@ -5,7 +5,7 @@ import com.subwayticket.database.model.HistoryRoute;
 import java.util.List;
 
 /**
- * Created by zhou-shengyun on 7/25/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class HistoryRouteListResult extends Result{
     private List<HistoryRoute> historyRouteList;

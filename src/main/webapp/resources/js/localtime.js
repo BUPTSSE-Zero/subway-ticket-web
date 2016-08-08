@@ -1,6 +1,6 @@
 /**
- * Created by zhou-shengyun on 7/11/16.
- */
+    * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
+    */
 
 function numFormat(num) {
     if(num < 10)

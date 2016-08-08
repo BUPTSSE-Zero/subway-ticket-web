@@ -3,10 +3,15 @@ package com.subwayticket.util;
 import com.google.gson.*;
 
 /**
- *
- * @author buptsse-zero <GGGZ-1101-28@Live.cn>
+ * Gson相关工具类
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class GsonUtil {
+
+    /**
+     * 获取默认的Gson配置
+     * @return GsonBuilder对象，可用于构造Gson实例
+     */
     private static GsonBuilder getDefaultGsonBuilder(){
         return new GsonBuilder()
                    .setDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -25,8 +30,12 @@ public class GsonUtil {
                        }
                    });
     }
-    
-    public static Gson getGson(){
+
+    /**
+     * 获取由默认配置生成的Gson实例
+     * @return Gson实例对象
+     */
+    public static Gson getDefaultGson(){
         return getDefaultGsonBuilder().create();
     }
 }

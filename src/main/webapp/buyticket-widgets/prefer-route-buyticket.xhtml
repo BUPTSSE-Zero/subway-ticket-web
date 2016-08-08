@@ -7,6 +7,9 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 
+    <!--购票时用于从常用路线中快速购票-->
+    <!--@elvariable id="routeList" type="java.util.List<com.subwayticket.database.model.PreferRoute>"-->
+
     <ul class="collapsible" data-collapsible="accordion">
         <c:forEach var="route" items="#{routeList}" varStatus="loop">
             <li>

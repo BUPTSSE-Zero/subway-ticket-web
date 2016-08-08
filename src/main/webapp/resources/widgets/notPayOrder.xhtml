@@ -7,11 +7,14 @@
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui">
 
+    <!--复合控件-未支付订单-->
+
     <cc:interface>
         <cc:attribute name="ticketOrder" type="com.subwayticket.database.model.TicketOrder" required="true"/>
     </cc:interface>
 
     <cc:implementation>
+        <h:outputScript library="js" name="order-callback.js"/>
         <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="orderStatus"/>
         <ul class="collapsible order-record" data-collapsible="accordion" order-status="#{orderStatus.ORDER_STATUS_NOT_PAY}">
             <li>
@@ -61,7 +64,8 @@
                                             <h:form>
                                                 <p:commandButton styleClass="btn waves-effect waves-light light-green left" type="submit"
                                                                  value="#{bundle.PayOrder}" style="margin-right: 15px" icon="ui-icon-pay"
-                                                                 actionListener="#{orderBean.payOrder(cc.attrs.ticketOrder)}" oncomplete="onOrderCallback(xhr, status, args)">
+                                                                 actionListener="#{orderBean.payOrder(cc.attrs.ticketOrder)}"
+                                                                 oncomplete="onOrderCallback(xhr, status, args)">
                                                     <p:confirm message="#{bundle.QueryPayOrder}"/>
                                                 </p:commandButton>
                                                 <p:commandButton styleClass="btn waves-effect waves-light red accent-2 left" type="submit"

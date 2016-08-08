@@ -4,6 +4,7 @@
                 xmlns:c="http://java.sun.com/jsp/jstl/core"
                 xmlns:p="http://primefaces.org/ui"
                 template="/templates/main-template.xhtml">
+    <!--首页-->
 
     <ui:define name="page-panel-content">
         <div id="index-title-body" class="light-blue darken-2 white-text valign-wrapper">
@@ -51,6 +52,7 @@
                 </c:otherwise>
             </c:choose>
         </ul>
+        <!--显示系统公告的对话框-->
         <div id="system-msg-dialog" class="modal modal-fixed-footer">
             <div class="modal-content">
                 <p:outputPanel id="system-msg-panel">

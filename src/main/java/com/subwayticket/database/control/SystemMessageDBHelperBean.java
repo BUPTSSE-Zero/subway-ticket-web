@@ -3,13 +3,12 @@ package com.subwayticket.database.control;
 import com.subwayticket.database.model.SystemMessage;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Created by shengyun-zhou on 6/8/16.
+ * 查询系统公告的EJB
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @Stateless(name = "SystemMessageDBHelperEJB")
 public class SystemMessageDBHelperBean extends SystemDBHelperBean {

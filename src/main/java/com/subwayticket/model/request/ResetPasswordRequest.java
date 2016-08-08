@@ -1,7 +1,7 @@
 package com.subwayticket.model.request;
 
 /**
- * Created by shengyun-zhou on 6/6/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class ResetPasswordRequest {
     private String phoneNumber;

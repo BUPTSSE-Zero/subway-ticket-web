@@ -15,7 +15,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by zhou-shengyun on 7/7/16.
+ * 查询订单的EJB
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Stateless(name = "TicketOrderDBHelperEJB")

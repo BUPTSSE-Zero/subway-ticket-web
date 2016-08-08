@@ -3,7 +3,7 @@ package com.subwayticket.database.model;
 import javax.persistence.*;
 
 /**
- * Created by zhou-shengyun on 8/1/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Entity

@@ -1,7 +1,7 @@
 package com.subwayticket.model;
 
 /**
- * @author buptsse-zero <GGGZ-1101-28@Live.cn>
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class PublicResultCode {
     public static final int SUCCESS = 0;

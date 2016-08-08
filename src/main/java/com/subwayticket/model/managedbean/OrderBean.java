@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by zhou-shengyun on 7/9/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @ManagedBean(name = "orderBean")
@@ -68,6 +68,10 @@ public class OrderBean implements Serializable {
         return ticketOrderDBHelperBean.getAllOrderByStatus(TicketOrder.ORDER_STATUS_NOT_PAY, user);
     }
 
+    /**
+     * 将结果发送给前端的网页
+     * @param result 要发送的结果
+     */
     private void sendOrderOperResult(Result result){
         RequestContext requestContext = RequestContext.getCurrentInstance();
         requestContext.addCallbackParam("result_code", result.getResultCode());

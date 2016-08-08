@@ -1,7 +1,7 @@
 package com.subwayticket.model.result;
 
 /**
- * Created by zhou-shengyun on 7/6/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class RefundOrderResult extends Result {
     private float refundAmount;

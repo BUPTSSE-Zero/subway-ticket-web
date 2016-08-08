@@ -9,7 +9,8 @@ import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
 /**
- * Created by zhou-shengyun on 7/26/16.
+ * SubwayStation对象的转换器
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @FacesConverter("subwayStationConverter")

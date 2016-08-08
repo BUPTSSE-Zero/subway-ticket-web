@@ -8,157 +8,174 @@
       xmlns:p="http://primefaces.org/ui"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
 
-<nav style="z-index: 10">
-    <div class="nav-wrapper light-blue">
-        <div id="titlebar">
-            <a href="#{facesContext.externalContext.applicationContextPath}">#{bundle.AppName}
-                <i class="material-icons left">directions_subway</i>
-            </a>
-        </div>
-        <ul class="right hide-on-med-and-down">
-            <li>
-                <p:clock id="time-text" pattern="yyyy-MM-dd HH:mm" autoSync="true" syncInterval="30000" mode="server"/>
-                <i class="material-icons left">schedule</i>
-            </li>
-            <li>
-                <p:outputPanel id="header-panel">
-                    <c:choose>
-                        <c:when test="#{not empty userOperationBean.userID}">
-                            <c:set var="notPayOrders" value="#{orderBean.notPayOrders}" scope="request"/>
-                            <c:set var="notExtractTicketOrders" value="#{orderBean.notExtractTicketOrders}" scope="request"/>
-                            <a id="header-user-dropdown" class='dropdown-button waves-effect waves-light' data-activates='header-user-menu'
-                               data-beloworigin="true" data-hover="true">#{userOperationBean.userID}
-                                <i class="material-icons left">account_circle</i>
-                                <i class="material-icons right">arrow_drop_down</i>
-                                <c:if test="#{notPayOrders.size() + notExtractTicketOrders.size() > 0}">
-                                    <span class="new badge amber darken-2">#{notPayOrders.size() + notExtractTicketOrders.size()}</span>
-                                </c:if>
-                            </a>
+    <!--页面顶部导航栏部分-->
 
-                            <ul id='header-user-menu' class="dropdown-content" style="min-width: 200px">
-                                <li class="waves-effect user-menu-item">
-                                    <div>
-                                        <i class="material-icons light-green-text" style="float: left; height: 50px; line-height: 50px">perm_identity</i>
-                                        <p:button styleClass="btn transparent z-depth-0 black-text" outcome="/person-center/person-center-index.xhtml" value="#{bundle.PersonCenter}"
-                                                  style="float: left; height: 50px; line-height: 50px; text-align: left; padding-left: 0"/>
-                                    </div>
-                                </li>
-                                <li class="divider"></li>
-                                <li class="waves-effect user-menu-item">
-                                    <div>
-                                        <h:form>
-                                            <i class="material-icons red-text user-menu-item-i" style="float: left; height: 50px; line-height: 50px">power_settings_new</i>
-                                            <ui:insert name="logout-button">
-                                                <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
-                                                                 style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
-                                                                 update="header-panel page-panel">
-                                                </p:commandButton>
-                                            </ui:insert>
-                                        </h:form>
-                                    </div>
-                                </li>
-                            </ul>
-                            <script type="text/javascript">
-                                $('#header-user-dropdown').dropdown({
-                                            hover: true,
-                                            belowOrigin: true
-                                        }
-                                );
-                            </script>
-                        </c:when>
-                        <c:otherwise>
-                            <a class="waves-effect waves-light" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab');">#{bundle.Signin}/#{bundle.Signup}
-                                <i class="material-icons left">account_circle</i>
-                            </a>
-                        </c:otherwise>
-                    </c:choose>
-                </p:outputPanel>
-            </li>
-            <li>
-                <div>
-                    <a class="waves-effect waves-light"
-                       onclick="$('#mobile-client-download-dialog').openModal();$('ul.tabs').tabs('select_tab', 'android-client-tabpage');">
-                        <i class="material-icons left">android</i>
-                        #{bundle.MobileClient}
-                    </a>
-                </div>
-            </li>
-        </ul>
-    </div>
-</nav>
+    <nav style="z-index: 10">
+        <div class="nav-wrapper light-blue">
+            <!--左上角标题栏-->
+            <div id="titlebar">
+                <a href="#{facesContext.externalContext.applicationContextPath}">#{bundle.AppName}
+                    <i class="material-icons left">directions_subway</i>
+                </a>
+            </div>
 
-<div id="login-modal" class="modal white">
-    <div class="modal-content">
-        <ui:include src="login-register.xhtml"/>
-    </div>
-</div>
-<div id="login-tip-modal" class="modal">
-    <div class="modal-content">
-        <p>#{bundle.TipLoginWithPreOffline}</p>
-        <p>#{bundle.TipWithoutLogout}</p>
-    </div>
-    <div class="modal-footer">
-        <a class="modal-action modal-close waves-effect waves-red btn-flat">#{bundle.Close}
-            <i class="material-icons left" style="font-size: 24px">close</i>
-        </a>
-    </div>
-</div>
+            <ul class="right hide-on-med-and-down">
+                <!--时钟-->
+                <li>
+                    <p:clock id="time-text" pattern="yyyy-MM-dd HH:mm" autoSync="true" syncInterval="30000" mode="server"/>
+                    <i class="material-icons left">schedule</i>
+                </li>
+                <!--登录状态栏-->
+                <li>
+                    <p:outputPanel id="header-panel">
+                        <c:choose>
+                            <!--若已经登录，显示用户账号和下拉菜单栏-->
+                            <c:when test="#{not empty userOperationBean.userID}">
+                                <c:set var="notPayOrders" value="#{orderBean.notPayOrders}" scope="request"/>
+                                <c:set var="notExtractTicketOrders" value="#{orderBean.notExtractTicketOrders}" scope="request"/>
+                                <a id="header-user-dropdown" class='dropdown-button waves-effect waves-light' data-activates='header-user-menu'
+                                   data-beloworigin="true" data-hover="true">#{userOperationBean.userID}
+                                    <i class="material-icons left">account_circle</i>
+                                    <i class="material-icons right">arrow_drop_down</i>
+                                    <c:if test="#{notPayOrders.size() + notExtractTicketOrders.size() > 0}">
+                                        <span class="new badge amber darken-2">#{notPayOrders.size() + notExtractTicketOrders.size()}</span>
+                                    </c:if>
+                                </a>
 
-<div id="mobile-client-download-dialog" class="modal white" style="width: 500px">
-    <div class="modal-content">
-        <h5 class="light-blue-text">#{bundle.MobileClientDownload}</h5>
-        <div class="col s12">
-            <ul class="tabs">
-                <li class="tab col s3"><a href="#android-client-tabpage">#{bundle.Android}</a></li>
+                                <ul id='header-user-menu' class="dropdown-content" style="min-width: 200px">
+                                    <li class="waves-effect user-menu-item">
+                                        <div>
+                                            <i class="material-icons light-green-text" style="float: left; height: 50px; line-height: 50px">perm_identity</i>
+                                            <p:button styleClass="btn transparent z-depth-0 black-text" outcome="/person-center/person-center-index.xhtml" value="#{bundle.PersonCenter}"
+                                                      style="float: left; height: 50px; line-height: 50px; text-align: left; padding-left: 0"/>
+                                        </div>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li class="waves-effect user-menu-item">
+                                        <div>
+                                            <h:form>
+                                                <i class="material-icons red-text user-menu-item-i" style="float: left; height: 50px; line-height: 50px">power_settings_new</i>
+                                                <ui:insert name="logout-button">
+                                                    <p:commandButton styleClass="btn transparent z-depth-0 black-text" actionListener="#{userOperationBean.logout}" value="#{bundle.Logout}"
+                                                                     style="float: left; height: 50px; line-height: 50px; text-align: left; padding: 0"
+                                                                     update="header-panel #{logoutUpdate}" oncomplete="#{onLogoutComplete}">
+                                                        <ui:insert name="after-logout-listener"/>
+                                                    </p:commandButton>
+                                                </ui:insert>
+                                            </h:form>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <script type="text/javascript">
+                                    $('#header-user-dropdown').dropdown({
+                                                hover: true,
+                                                belowOrigin: true
+                                            }
+                                    );
+                                </script>
+                            </c:when>
+                            <!--若没有登录，显示“登录/快速注册”的按钮-->
+                            <c:otherwise>
+                                <a class="waves-effect waves-light" onclick="$('#login-modal').openModal();$('ul.tabs').tabs('select_tab', 'login-tab');">#{bundle.Signin}/#{bundle.Signup}
+                                    <i class="material-icons left">account_circle</i>
+                                </a>
+                            </c:otherwise>
+                        </c:choose>
+                    </p:outputPanel>
+                </li>
+                <!--手机端下载-->
+                <li>
+                    <div>
+                        <a class="waves-effect waves-light"
+                           onclick="$('#mobile-client-download-dialog').openModal();$('ul.tabs').tabs('select_tab', 'android-client-tabpage');">
+                            <i class="material-icons left">android</i>
+                            #{bundle.MobileClient}
+                        </a>
+                    </div>
+                </li>
             </ul>
         </div>
-        <div id="android-client-tabpage" class="col s12">
-            <table>
-                <tr>
-                    <td>
-                        <p:barcode value="http://#{facesContext.externalContext.requestServerName}:#{facesContext.externalContext.requestServerPort}#{facesContext.externalContext.applicationContextPath}#{mobileVersion.AndroidClientFilePath}"
-                                   type="qr" format="svg" width="200"/>
-                    </td>
-                    <td>
-                        <span>#{bundle.LatestVersion}:#{mobileVersion.AndroidClientVersion}</span>
-                        <br/>
-                        <span>#{bundle.UpdateDate}:#{mobileVersion.AndroidClientUpdateDate}</span>
-                        <br/>
-                        <a class="btn waves-effect waves-light light-green" style="margin-top: 10px" href="#{facesContext.externalContext.applicationContextPath}#{mobileVersion.AndroidClientFilePath}">
-                            <i class="material-icons left">file_download</i>
-                            #{bundle.Download}
-                        </a>
-                    </td>
-                </tr>
-            </table>
+    </nav>
+
+    <!--登录/注册对话框-->
+    <div id="login-modal" class="modal white">
+        <div class="modal-content">
+            <ui:include src="login-register.xhtml"/>
         </div>
     </div>
-    <div class="modal-footer white">
-        <a class="modal-action modal-close waves-effect waves-green btn-flat">#{bundle.Close}</a>
-    </div>
-</div>
 
-<p:ajaxExceptionHandler type="javax.faces.application.ViewExpiredException"
-                        onexception="$('#exception-modal').openModal({dismissible: false});"/>
-
-<div id="exception-modal" class="modal">
-    <div class="modal-content">
-        <p>#{bundle.TipSessionTimeout}</p>
-        <p>&bull;&nbsp;#{bundle.TipLoginInOtherPlace}</p>
-        <p>&bull;&nbsp;#{bundle.TipNotOperateForLongTime}</p>
-        <p>&bull;&nbsp;#{bundle.TipPageInvalid}</p>
-        <p>#{bundle.TipRefreshPage}</p>
+    <!--登录后的提示对话框，提示用户账号同时也在异地登录-->
+    <div id="login-tip-modal" class="modal">
+        <div class="modal-content">
+            <p>#{bundle.TipLoginWithPreOffline}</p>
+            <p>#{bundle.TipWithoutLogout}</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-action modal-close waves-effect waves-red btn-flat">#{bundle.Close}
+                <i class="material-icons left" style="font-size: 24px">close</i>
+            </a>
+        </div>
     </div>
-    <div class="modal-footer">
-        <a class="modal-action modal-close waves-effect waves-green btn-flat"
-           onclick="document.location.href = document.location.href;">#{bundle.Refresh}
-            <i class="material-icons left" style="font-size: 24px">refresh</i>
-        </a>
-    </div>
-</div>
 
-<script type="text/javascript">
-    $('nav').pushpin({ top: $('nav').offset().top });
-</script>
+    <!--手机客户端下载对话框-->
+    <div id="mobile-client-download-dialog" class="modal white" style="width: 500px">
+        <div class="modal-content">
+            <h5 class="light-blue-text">#{bundle.MobileClientDownload}</h5>
+            <div class="col s12">
+                <ul class="tabs">
+                    <li class="tab col s3"><a href="#android-client-tabpage">#{bundle.Android}</a></li>
+                </ul>
+            </div>
+            <!--Android客户端下载-->
+            <div id="android-client-tabpage" class="col s12">
+                <table>
+                    <tr>
+                        <td>
+                            <p:barcode value="http://#{facesContext.externalContext.requestServerName}:#{facesContext.externalContext.requestServerPort}#{facesContext.externalContext.applicationContextPath}#{mobileVersion.AndroidClientFilePath}"
+                                       type="qr" format="svg" width="200"/>
+                        </td>
+                        <td>
+                            <span>#{bundle.LatestVersion}:#{mobileVersion.AndroidClientVersion}</span>
+                            <br/>
+                            <span>#{bundle.UpdateDate}:#{mobileVersion.AndroidClientUpdateDate}</span>
+                            <br/>
+                            <a class="btn waves-effect waves-light light-green" style="margin-top: 10px" href="#{facesContext.externalContext.applicationContextPath}#{mobileVersion.AndroidClientFilePath}">
+                                <i class="material-icons left">file_download</i>
+                                #{bundle.Download}
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="modal-footer white">
+            <a class="modal-action modal-close waves-effect waves-green btn-flat">#{bundle.Close}</a>
+        </div>
+    </div>
+
+    <!--页面过期异常处理器，页面过期往往是由于Session过期引起-->
+    <p:ajaxExceptionHandler type="javax.faces.application.ViewExpiredException"
+                            onexception="$('#exception-modal').openModal({dismissible: false});"/>
+
+    <!--Session过期提示对话框-->
+    <div id="exception-modal" class="modal">
+        <div class="modal-content">
+            <p>#{bundle.TipSessionTimeout}</p>
+            <p>&bull;&nbsp;#{bundle.TipLoginInOtherPlace}</p>
+            <p>&bull;&nbsp;#{bundle.TipNotOperateForLongTime}</p>
+            <p>&bull;&nbsp;#{bundle.TipPageInvalid}</p>
+            <p>#{bundle.TipRefreshPage}</p>
+        </div>
+        <div class="modal-footer">
+            <a class="modal-action modal-close waves-effect waves-green btn-flat"
+               onclick="document.location.href = document.location.href;">#{bundle.Refresh}
+                <i class="material-icons left" style="font-size: 24px">refresh</i>
+            </a>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $('nav').pushpin({ top: $('nav').offset().top });
+    </script>
 
 </html>

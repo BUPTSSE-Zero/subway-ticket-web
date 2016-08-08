@@ -16,7 +16,7 @@ import com.subwayticket.database.model.*;
 import com.subwayticket.util.BundleUtil;
 
 /**
- * Created by shenqipingguo on 16-7-2.
+ * @author shenqipingguo
  */
 
 @ManagedBean

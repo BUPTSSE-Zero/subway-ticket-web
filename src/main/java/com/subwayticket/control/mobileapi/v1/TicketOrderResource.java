@@ -27,7 +27,8 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by zhou-shengyun on 7/4/16.
+ * RESTful API-订单操作相关
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Path("/v1/ticket_order")

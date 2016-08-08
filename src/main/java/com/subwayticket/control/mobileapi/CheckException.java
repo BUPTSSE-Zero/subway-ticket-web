@@ -7,7 +7,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by shengyun-zhou on 6/9/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class CheckException extends MobileAPIBaseException {
     public CheckException(Result result){

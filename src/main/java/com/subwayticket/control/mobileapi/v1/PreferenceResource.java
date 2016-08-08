@@ -21,7 +21,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by zhou-shengyun on 7/25/16.
+ * RESTful API-常用设置
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Path("/v1/preference")

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Date;
 
 /**
- * @author buptsse-zero <GGGZ-1101-28@Live.cn>
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @Entity
 @Table(name = "Account")

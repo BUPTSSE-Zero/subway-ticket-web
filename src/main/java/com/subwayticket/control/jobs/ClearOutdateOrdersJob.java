@@ -12,9 +12,9 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by zhou-shengyun on 7/23/16.
+ * 自动清理过时的未支付与未取票的订单，Web App部署时执行
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
-
 @DisallowConcurrentExecution
 public class ClearOutdateOrdersJob implements Job {
     @Override

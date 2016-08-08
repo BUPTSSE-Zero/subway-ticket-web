@@ -6,7 +6,8 @@ import javax.naming.NamingException;
 import javax.persistence.*;
 
 /**
- * @author buptsse-zero <GGGZ-1101-28@Live.cn>
+ * 通用EJB，只提供最基本的数据库操作
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @Stateless(name = "SubwayTicketDBHelperEJB")
 public class SystemDBHelperBean extends EntityManagerHelper {

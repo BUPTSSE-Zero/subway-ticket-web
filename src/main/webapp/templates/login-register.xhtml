@@ -5,7 +5,10 @@
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui" xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <!--登录/注册相关页面-->
 
     <h:outputScript library="js" name="login.js"/>
 
@@ -15,14 +18,17 @@
             <li class="tab col s3"><a class="waves-effect" href="#signup-tab">#{bundle.Signup}</a></li>
         </ul>
     </div>
+
+    <!--登录/忘记密码页-->
     <div id="login-tab">
+        <!--登录页-->
         <div id="login-page">
             <h:form id="login-from">
                 <div class="row" style="margin-bottom: 0">
                     <div class="input-field col s12" style="margin-top: 30px">
                         <i class="material-icons prefix">stay_primary_portrait</i>
                         <p:inputText id="login_phone_number" class="validate" value="#{userOperationBean.phoneNumber}"
-                                     required="true" requiredMessage="#{bundle.TipInputPhoneNumber}"/>
+                                     required="true" requiredMessage="#{bundle.TipInputPhoneNumber}" maxlength="20"/>
                         <label for="login_phone_number">#{bundle.PhoneNumber}</label>
                     </div>
                 </div>
@@ -30,27 +36,34 @@
                     <div class="input-field col s12">
                         <i class="material-icons prefix">vpn_key</i>
                         <p:password id="login_password" class="validate" value="#{userOperationBean.password}"
-                                    required="true" requiredMessage="#{bundle.TipInputPassword}"/>
+                                    required="true" requiredMessage="#{bundle.TipInputPassword}" maxlength="20"/>
                         <label for="login_password">#{bundle.Password}</label>
                     </div>
                 </div>
+                <!--登陆时的消息提示框-->
                 <p:messages id="login_error_message" autoUpdate="false" closable="true"/>
                 <div style="text-align: center">
                     <ui:insert name="login-button">
+                        <!--"header-panel"在header.xhtml中定义，下同-->
                         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                                          value="#{bundle.Login}" actionListener="#{userOperationBean.login}" icon="ui-icon-enter"
-                                         update="login_error_message header-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
+                                         update="login_error_message header-panel #{loginUpdate}"
+                                         oncomplete="handleLoginResult(xhr, status, args);#{onLoginComplete}">
+                            <ui:insert name="after-login-listener"/>
+                        </p:commandButton>
                     </ui:insert>
                 </div>
             </h:form>
         </div>
+
+        <!--忘记密码页-->
         <div id="forget-password-page" style="display: none">
             <h:form id="reset-password-form">
                 <div class="row" style="margin-bottom: 0">
                     <div class="input-field col s12" style="margin-top: 30px">
                         <i class="material-icons prefix">stay_primary_portrait</i>
                         <p:inputText id="reset_password_phone_number" class="validate" value="#{userOperationBean.phoneNumber}"
-                                     required="true" requiredMessage="#{bundle.TipInputPhoneNumber}"/>
+                                     required="true" requiredMessage="#{bundle.TipInputPhoneNumber}" maxlength="20"/>
                         <label for="reset_password_phone_number">#{bundle.PhoneNumber}</label>
                     </div>
                 </div>
@@ -58,20 +71,22 @@
                     <div class="input-field col s12">
                         <i class="material-icons prefix">vpn_key</i>
                         <p:password id="reset_password_password" class="validate" value="#{userOperationBean.newPassword}"
-                                    match="reset_password_repeat_password" validatorMessage="#{bundle.TipPasswordNotMatch}"/>
-                        <label for="reset_password_password">#{bundle.ResetPassword}</label>
+                                    match="reset_password_repeat_password" validatorMessage="#{bundle.TipPasswordNotMatch}"
+                                    maxlength="20"/>
+                        <label for="reset_password_password">#{bundle.ResetPassword}(#{bundle.PasswordLength})</label>
                     </div>
                 </div>
                 <div class="row" style="margin-bottom: 0">
                     <div class="input-field col s12">
                         <i class="material-icons prefix">vpn_key</i>
-                        <p:password id="reset_password_repeat_password" class="validate"/>
+                        <p:password id="reset_password_repeat_password" class="validate" maxlength="20"/>
                         <label for="reset_password_repeat_password">#{bundle.RepeatNewPassword}</label>
                     </div>
                 </div>
                 <div class="row" style="margin-bottom: 0;">
                     <div class="input-field col s6">
-                        <p:inputText id="reset_password_captcha" class="validate" value="#{userOperationBean.captcha}"/>
+                        <p:inputText id="reset_password_captcha" class="validate" value="#{userOperationBean.captcha}"
+                            maxlength="10"/>
                         <label for="reset_password_captcha">#{bundle.PhoneCaptcha}</label>
                     </div>
                     <div style="height: 60px; line-height: 60px">
@@ -79,16 +94,22 @@
                                        icon="ui-icon-send" update="reset_password_message"/>
                     </div>
                 </div>
+                <!--消息提示框-->
                 <p:messages id="reset_password_message" autoUpdate="false" closable="true"/>
                 <div style="text-align: center">
                     <ui:insert name="reset-password-button">
                         <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit"
                                          value="#{bundle.Login}" actionListener="#{userOperationBean.loginWithNewPassword}" icon="ui-icon-enter"
-                                         update="reset_password_message header-panel" oncomplete="handleLoginResult(xhr, status, args)"/>
+                                         update="reset_password_message header-panel #{resetPasswordUpdate}"
+                                         oncomplete="handleLoginResult(xhr, status, args);#{onResetPasswordComplete}">
+                            <ui:insert name="after-resetpassword-listener"/>
+                        </p:commandButton>
                     </ui:insert>
                 </div>
             </h:form>
         </div>
+
+        <!--忘记密码的开关切换按钮-->
         <div style="text-align: right; margin-top: 15px">
             <div class="switch">
                 <label>
@@ -99,13 +120,19 @@
             </div>
         </div>
     </div>
+
+    <!--注册页-->
     <div id="signup-tab">
         <h:form id="signup-form">
             <div class="row" style="margin-bottom: 0">
                 <div class="input-field col s12" style="margin-top: 30px">
                     <i class="material-icons prefix">stay_primary_portrait</i>
                     <p:inputText id="signup_phone_number" class="validate" value="#{userOperationBean.phoneNumber}"
-                                 required="true" requiredMessage="#{bundle.TipInputPhoneNumber}"/>
+                                 required="true" requiredMessage="#{bundle.TipInputPhoneNumber}" maxlength="20">
+                        <!--当输入手机号的输入框失去焦点时，检查手机号是否已被注册-->
+                        <p:ajax event="blur" global="false" listener="#{userOperationBean.checkSignupPhoneNumber}"
+                                update="signup_message"/>
+                    </p:inputText>
                     <label for="signup_phone_number">#{bundle.PhoneNumber}</label>
                 </div>
             </div>
@@ -113,34 +140,40 @@
                 <div class="input-field col s12">
                     <i class="material-icons prefix">vpn_key</i>
                     <p:password id="signup_password" class="validate" value="#{userOperationBean.newPassword}"
-                                match="signup_repeat_password" validatorMessage="#{bundle.TipPasswordNotMatch}"/>
-                    <label for="signup_password">#{bundle.Password}</label>
+                                match="signup_repeat_password" validatorMessage="#{bundle.TipPasswordNotMatch}"
+                                maxlength="20"/>
+                    <label for="signup_password">#{bundle.Password}(#{bundle.PasswordLength})</label>
                 </div>
             </div>
             <div class="row" style="margin-bottom: 0">
                 <div class="input-field col s12">
                     <i class="material-icons prefix">vpn_key</i>
-                    <p:password id="signup_repeat_password" class="validate"/>
-                    <label for="signup_repeat_password">#{bundle.RepeatNewPassword}</label>
+                    <p:password id="signup_repeat_password" class="validate" maxlength="20"/>
+                    <label for="signup_repeat_password">#{bundle.RepeatPassword}</label>
                 </div>
             </div>
             <div class="row" style="margin-bottom: 0;">
                 <div class="input-field col s6">
-                    <p:inputText id="signup_captcha" class="validate" value="#{userOperationBean.captcha}"/>
+                    <p:inputText id="signup_captcha" class="validate" value="#{userOperationBean.captcha}"
+                                 maxlength="10"/>
                     <label for="signup_captcha">#{bundle.PhoneCaptcha}</label>
                 </div>
                 <div style="height: 60px; line-height: 60px">
                     <p:commandButton styleClass="captcha-button btn teal waves-effect waves-light" value="#{bundle.GetCaptcha}" actionListener="#{userOperationBean.sendCaptcha}"
-                         icon="ui-icon-send" update="singup_message">
+                         icon="ui-icon-send" update="signup_message">
                     </p:commandButton>
                 </div>
             </div>
-            <p:messages id="singup_message" autoUpdate="false" closable="true"/>
+            <!--注册的消息提示框-->
+            <p:messages id="signup_message" autoUpdate="false" closable="true"/>
             <div style="text-align: center">
                 <ui:insert name="signup-button">
                     <p:commandButton styleClass="submit-button btn waves-effect waves-light amber" type="submit" icon="ui-icon-done"
                                      value="#{bundle.Register}" actionListener="#{userOperationBean.register}"
-                                     update="singup_message header-panel"/>
+                                     update="signup_message header-panel #{signupUpdate}"
+                                     oncomplete="handleLoginResult(xhr, status, args);#{onSignupComplete}">
+                        <ui:insert name="after-signup-listener"/>
+                    </p:commandButton>
                 </ui:insert>
             </div>
         </h:form>

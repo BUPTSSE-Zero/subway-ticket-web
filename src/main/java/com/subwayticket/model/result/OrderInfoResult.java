@@ -3,7 +3,7 @@ package com.subwayticket.model.result;
 import com.subwayticket.database.model.TicketOrder;
 
 /**
- * Created by zhou-shengyun on 7/7/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class OrderInfoResult extends Result {
     private TicketOrder ticketOrder;

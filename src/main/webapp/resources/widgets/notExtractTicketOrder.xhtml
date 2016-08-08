@@ -7,6 +7,8 @@
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui">
 
+    <!--复合控件-未取票订单-->
+
     <cc:interface>
         <cc:attribute name="ticketOrder" type="com.subwayticket.database.model.TicketOrder" required="true"/>
         <cc:attribute name="extractCodeDialog" required="true"/>
@@ -14,6 +16,7 @@
     </cc:interface>
 
     <cc:implementation>
+        <h:outputScript library="js" name="order-callback.js"/>
         <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="orderStatus"/>
         <ul class="collapsible order-record" data-collapsible="accordion" order-status="#{orderStatus.ORDER_STATUS_NOT_EXTRACT_TICKET}">
             <li>
@@ -73,7 +76,7 @@
                                                     <p:commandButton styleClass="btn waves-effect waves-light cyan left" type="submit"
                                                                      value="#{bundle.ViewExtractQRCode}" style="margin-right: 15px" icon="ui-icon-image"
                                                                      actionListener="#{orderBean.selectNotExtractTicketOrder(cc.attrs.ticketOrder)}" update="#{cc.attrs.updateExtractCodePanel}"
-                                                                     onsuccess="$('##{cc.attrs.extractCodeDialog}').openModal();return;">
+                                                                     onsuccess="$('##{cc.attrs.extractCodeDialog}').openModal()">
                                                     </p:commandButton>
                                                     <p:commandButton styleClass="btn waves-effect waves-light red accent-2 left" type="submit"
                                                                      actionListener="#{orderBean.refundOrder(cc.attrs.ticketOrder)}" value="#{bundle.RefundOrder}" icon="ui-icon-cancel"

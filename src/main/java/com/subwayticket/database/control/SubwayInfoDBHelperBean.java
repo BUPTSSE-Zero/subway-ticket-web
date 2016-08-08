@@ -10,7 +10,8 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Created by shengyun-zhou on 6/16/16.
+ * 查询地铁信息的EJB
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Stateless(name = "SubwayInfoDBHelperEJB")
@@ -42,6 +43,7 @@ public class SubwayInfoDBHelperBean extends SystemDBHelperBean{
     public TicketPrice getTicketPrice(int startStationID, int endStationBID){
         TicketPrice ticketPrice = (TicketPrice) find(TicketPrice.class, new TicketPricePK(startStationID, endStationBID));
         if(ticketPrice == null){
+            //TODO:将TicketPrice设计成单向路线
             ticketPrice = (TicketPrice) find(TicketPrice.class, new TicketPricePK(endStationBID, startStationID));
             if(ticketPrice == null)
                 return null;

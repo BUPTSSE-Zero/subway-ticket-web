@@ -20,7 +20,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by shengyun-zhou on 6/9/16.
+ * RESTful API-账号操作
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Path("/v1/account")
@@ -63,6 +64,11 @@ public class AccountResource {
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 
+    /**
+     * 对request中携带的token进行认证
+     * @param request Request对象
+     * @return token对应的用户对象，注意该对象不是处于持久化状态的
+     */
     public static Account authCheck(HttpServletRequest request){
         String userId = SecurityUtil.checkMobileToken(request.getHeader(SecurityUtil.HEADER_TOKEN_KEY), JedisUtil.getJedis());
         if(userId == null)
@@ -85,7 +91,7 @@ public class AccountResource {
     public Result modifyPassword(ModifyPasswordRequest modifyReq){
         Account account = authCheck(request);
         account = (Account) dbBean.find(Account.class, account.getPhoneNumber());
-        Result result = AccountControl.mobileModifyPassword(request, modifyReq, account, dbBean);
+        Result result = AccountControl.modifyPassword(request, modifyReq, account, dbBean);
         if(result.getResultCode() == PublicResultCode.PASSWORD_INCORRECT)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)

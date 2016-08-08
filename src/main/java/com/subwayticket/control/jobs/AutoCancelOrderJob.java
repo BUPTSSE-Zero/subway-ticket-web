@@ -10,7 +10,8 @@ import org.quartz.JobExecutionException;
 import javax.ejb.EJBException;
 
 /**
- * Created by zhou-shengyun on 7/24/16.
+ * 定时自动取消订单工作，用户超时未支付订单时执行
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class AutoCancelOrderJob implements Job {
     public static final String JOB_KEY_ORDER_ID = "OrderId";

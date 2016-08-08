@@ -7,76 +7,83 @@
       xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
-<h:head>
-    <f:facet name="first">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    </f:facet>
-    <f:event type="preRenderView" listener="#{userOperationBean.refreshLoginUser}"/>
-    <h:outputScript library="js" name="materialize.js"/>
-    <h:outputScript library="js" name="localtime.js"/>
-    <title>#{bundle.AppName}</title>
-    <ui:insert name="head"/>
-</h:head>
+    <!--所有页面共用的主模板-->
 
-<h:body>
-    <h:outputStylesheet library="css" name="primefaces.css"/>
-    <h:outputStylesheet library="css" name="material-icon.css"/>
-    <h:outputStylesheet library="css" name="materialize.css"/>
-    <h:outputStylesheet library="css" name="style.css"/>
+    <h:head>
+        <f:facet name="first">
+            <!--解决IE浏览器的兼容问题-->
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        </f:facet>
+        <!--页面开始渲染时从数据库中查询用户的最新数据（包括与用户相关联的数据，如常用设置、历史路线记录等）-->
+        <f:event type="preRenderView" listener="#{userOperationBean.refreshLoginUser}"/>
+        <h:outputScript library="js" name="materialize.js"/>
+        <h:outputScript library="js" name="localtime.js"/>
+        <title>#{bundle.AppName}</title>
+        <ui:insert name="head"/>
+    </h:head>
 
-    <ui:insert name="page-header">
-        <ui:include src="header.xhtml"/>
-    </ui:insert>
+    <h:body>
+        <h:outputStylesheet library="css" name="primefaces.css"/>
+        <h:outputStylesheet library="css" name="material-icon.css"/>
+        <h:outputStylesheet library="css" name="materialize.css"/>
+        <h:outputStylesheet library="css" name="style.css"/>
 
-    <ui:insert name="page-content">
-        <p:outputPanel id="page-panel" style="width: 100%; margin-top: 60px">
-            <ui:insert name="page-panel-content"/>
-        </p:outputPanel>
-    </ui:insert>
+        <ui:insert name="page-header">
+            <ui:include src="header.xhtml"/>
+        </ui:insert>
 
-    <ui:insert name="page-footer">
-        <ui:include src="footer.xhtml"/>
-    </ui:insert>
+        <ui:insert name="page-content">
+            <p:outputPanel id="page-panel" style="width: 100%; margin-top: 60px">
+                <ui:insert name="page-panel-content"/>
+            </p:outputPanel>
+        </ui:insert>
 
-    <p:ajaxStatus onstart="$('#ajax-status-dialog').openModal({dismissible: false, in_duration: 50, out_duration: 100});return;"
-                  oncomplete="$('#ajax-status-dialog').closeModal();updateAllDate();return;"
-                  onerror="$('#ajax-status-dialog').closeModal();$('#ajax-error-dialog').openModal({dismissible: false})"/>
+        <ui:insert name="page-footer">
+            <ui:include src="footer.xhtml"/>
+        </ui:insert>
 
-    <div id="ajax-status-dialog" class="modal">
-        <table style="width: auto">
-            <tr>
-                <td>
-                    <div class="preloader-wrapper active" style="margin-right: 10px">
-                        <div class="spinner-layer spinner-blue-only">
-                            <div class="circle-clipper left">
-                                <div class="circle"></div>
-                            </div>
-                            <div class="gap-patch">
-                                <div class="circle"/>
-                            </div>
-                            <div class="circle-clipper right">
-                                <div class="circle"/>
+        <!--全局Ajax请求监听器，默认情况下所有Ajax请求发出时会触发此监听器，但每个控件也可单独指定不触发-->
+        <p:ajaxStatus onstart="$('#ajax-status-dialog').openModal({dismissible: false, in_duration: 50, out_duration: 100});return;"
+                      oncomplete="$('#ajax-status-dialog').closeModal();updateAllDate();return;"
+                      onerror="$('#ajax-status-dialog').closeModal();$('#ajax-error-dialog').openModal({dismissible: false})"/>
+
+        <!--Ajax请求状态显示对话框-->
+        <div id="ajax-status-dialog" class="modal">
+            <table style="width: auto">
+                <tr>
+                    <td>
+                        <div class="preloader-wrapper active" style="margin-right: 10px">
+                            <div class="spinner-layer spinner-blue-only">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"/>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"/>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </td>
-                <td>
-                    <h5>#{bundle.TipPleaseWait}</h5>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <div id="ajax-error-dialog" class="modal">
-        <div class="modal-content">
-            <h5>#{bundle.Alert}</h5>
-            <p>#{bundle.TipAjaxError}</p>
+                    </td>
+                    <td>
+                        <h5>#{bundle.TipPleaseWait}</h5>
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div class="modal-footer">
-            <a class=" modal-action modal-close waves-effect waves-red btn-flat">#{bundle.Close}</a>
-        </div>
-    </div>
 
-</h:body>
+        <!--Ajax请求发送错误时显示的对话框-->
+        <div id="ajax-error-dialog" class="modal">
+            <div class="modal-content">
+                <h5>#{bundle.Alert}</h5>
+                <p>#{bundle.TipAjaxError}</p>
+            </div>
+            <div class="modal-footer">
+                <a class=" modal-action modal-close waves-effect waves-red btn-flat">#{bundle.Close}</a>
+            </div>
+        </div>
+
+    </h:body>
 
 </html>

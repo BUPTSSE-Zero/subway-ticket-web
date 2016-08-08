@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  *
- * @author buptsse-zero <GGGZ-1101-28@Live.cn>
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class PhoneCaptcha implements Serializable{
     private final String code;
@@ -35,7 +35,7 @@ public class PhoneCaptcha implements Serializable{
         if(str == null || str.isEmpty())
             return null;
         try{
-            PhoneCaptcha c = GsonUtil.getGson().fromJson(str, PhoneCaptcha.class);
+            PhoneCaptcha c = GsonUtil.getDefaultGson().fromJson(str, PhoneCaptcha.class);
             return c;
         }catch(JsonSyntaxException jse){
             jse.printStackTrace();
@@ -45,6 +45,6 @@ public class PhoneCaptcha implements Serializable{
     
     @Override
     public String toString(){
-        return GsonUtil.getGson().toJson(this);
+        return GsonUtil.getDefaultGson().toJson(this);
     }
 }

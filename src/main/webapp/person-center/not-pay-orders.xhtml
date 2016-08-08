@@ -7,12 +7,15 @@
                 xmlns:w="http://xmlns.jcp.org/jsf/composite/widgets"
                 template="/templates/person-center-template.xhtml">
 
+    <!--个人中心-订单记录-未支付订单-->
+    <!--@elvariable id="notPayOrders" type="java.util.List<com.subwayticket.database.model.TicketOrder>"-->
+    <!--notPayOrders在/templates/header.xhtml中定义-->
+
     <ui:param name="itemOrderRecordsActive" value="#{'active'}"/>
     <ui:param name="itemNotPayOrderActive" value="#{'active'}"/>
     <ui:param name="personCenterContentTitle" value="#{bundle.NotPayOrders}"/>
 
     <ui:define name="person-center-content">
-        <h:outputScript library="js" name="order-callback.js"/>
         <p:outputPanel id="nopay-orders-panel" style="height: calc(100% - 70px)">
             <c:choose>
                 <c:when test="#{empty notPayOrders}">
@@ -55,6 +58,8 @@
                 <p:commandButton type="button" styleClass="ui-confirmdialog-yes waves-effect waves-green btn-flat right" value="#{bundle.Ok}"/>
                 <p:commandButton type="button" styleClass="ui-confirmdialog-no waves-effect waves-red btn-flat right" value="#{bundle.Cancel}"/>
             </p:confirmDialog>
+
+            <!--订单操作结果提示对话框-->
             <div id="order-callback-dialog" class="modal" style="width: 600px;">
                 <div class="modal-content">
                     <h5 class="light-blue-text">#{bundle.Alert}</h5>
@@ -68,6 +73,7 @@
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                 </div>
             </div>
+
             <div class="fixed-action-btn">
                 <p:commandButton styleClass="btn-floating btn-large pink waves-effect waves-light" icon="ui-icon-refresh"
                                  update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('nopay-orders-panel')}"

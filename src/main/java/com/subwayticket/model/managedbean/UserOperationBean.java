@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 /**
- * Created by 张炜奇 on 2016/5/14 0014.
+ * @author 张炜奇
  */
 
 @ManagedBean
@@ -75,6 +75,15 @@ public class UserOperationBean implements Serializable {
         this.newPassword = newPassword;
     }
 
+    public void checkSignupPhoneNumber(){
+        request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
+        Result result = AccountControl.checkPhoneNumber(phoneNumber, request);
+        if(result.getResultCode() == PublicResultCode.SUCCESS)
+            result = AccountControl.checkPhoneNumberRegistered(phoneNumber, dbBean, request);
+        if(result.getResultCode() != PublicResultCode.SUCCESS)
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                    result.getResultDescription(), ""));
+    }
 
     public boolean register() {
         request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
@@ -96,6 +105,10 @@ public class UserOperationBean implements Serializable {
         return false;
     }
 
+    /**
+     * 将结果发送给前端的网页
+     * @param result 要发送的结果
+     */
     private void sendResult(Result result){
         RequestContext requestContext = RequestContext.getCurrentInstance();
         requestContext.addCallbackParam("result_code", result.getResultCode());
@@ -130,7 +143,7 @@ public class UserOperationBean implements Serializable {
     public void modifyPassword(){
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
-        Result result = AccountControl.webModifyPassword(request, new ModifyPasswordRequest(password, newPassword), dbBean);
+        Result result = AccountControl.modifyPassword(request, new ModifyPasswordRequest(password, newPassword), user, dbBean);
         if (result.getResultCode() != PublicResultCode.SUCCESS) {
             context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
         }else{
@@ -138,6 +151,10 @@ public class UserOperationBean implements Serializable {
         }
     }
 
+    /**
+     * 重置密码并登录
+     * @return true表示重置密码且登录成功
+     */
     public boolean loginWithNewPassword(){
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
@@ -180,18 +197,18 @@ public class UserOperationBean implements Serializable {
     }
 
     public String getUserID(){
-        HttpSession session = (HttpSession)FacesContext.getCurrentInstance().getExternalContext().getSession(false);
-        if(session == null)
+        if(user == null)
             return null;
-        Account account = (Account)session.getAttribute(AccountControl.SESSION_ATTR_USER);
-        if(account == null)
-            return null;
-        StringBuffer phoneNumber = new StringBuffer(account.getPhoneNumber());
+        StringBuffer phoneNumber = new StringBuffer(user.getPhoneNumber());
         for(int i = 3; i < 7 && i < phoneNumber.length(); i++)
             phoneNumber.setCharAt(i, '*');
         return phoneNumber.toString();
     }
 
+    /**
+     * 检查用户是否登录，如果未登录则强制重定向到首页
+     * @throws IOException
+     */
     public void loginCheck() throws IOException{
         if(getUserID() == null){
             FacesContext.getCurrentInstance().getExternalContext().redirect(

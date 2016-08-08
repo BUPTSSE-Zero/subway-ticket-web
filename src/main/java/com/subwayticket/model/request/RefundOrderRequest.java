@@ -1,7 +1,7 @@
 package com.subwayticket.model.request;
 
 /**
- * Created by zhou-shengyun on 7/5/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class RefundOrderRequest {
     private String orderId;

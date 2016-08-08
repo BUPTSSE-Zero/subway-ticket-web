@@ -13,7 +13,8 @@ import javax.ejb.EJBException;
 import java.util.List;
 
 /**
- * Created by zhou-shengyun on 7/24/16.
+ * 定时自动退票与取消订单的工作，每天0:00时执行
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @DisallowConcurrentExecution
 public class AutoRefundCancelOrdersJob implements Job {

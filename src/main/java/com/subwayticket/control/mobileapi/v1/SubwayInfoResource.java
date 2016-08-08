@@ -20,7 +20,8 @@ import javax.ws.rs.core.Response;
 import java.util.List;
 
 /**
- * Created by shengyun-zhou on 6/16/16.
+ * RESTful API-查询地铁信息
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Path("/v1/subway")

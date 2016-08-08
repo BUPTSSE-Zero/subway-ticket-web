@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 import java.util.Scanner;
 
 /**
- * Created by shengyun-zhou on 6/12/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class ResetPasswordTest {
     public static void main(String[] argv) {

@@ -1,7 +1,7 @@
 package com.subwayticket.model.request;
 
 /**
- * Created by zhou-shengyun on 7/25/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class AddPreferStationRequest {
     private Integer stationId;

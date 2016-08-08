@@ -5,7 +5,7 @@ import com.subwayticket.database.model.SubwayLine;
 import java.util.List;
 
 /**
- * Created by shengyun-zhou on 6/16/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class SubwayLineListResult extends Result{
     private List<SubwayLine> subwayLineList;

@@ -3,7 +3,7 @@ package com.subwayticket.control.mobileapi;
 import com.subwayticket.model.result.Result;
 
 /**
- * Created by shengyun-zhou on 6/10/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class MobileAPIBaseException extends RuntimeException {
     private int statusCode;

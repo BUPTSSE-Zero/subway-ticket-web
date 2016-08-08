@@ -16,9 +16,9 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 /**
- * Created by shengyun-zhou on 6/10/16.
+ * RESTful API异常统一处理
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
-
 @Provider
 public class MobileAPIExceptionMapper implements ExceptionMapper<Exception> {
     private static final Logger logger = LoggerUtil.getLogger("Mobile API", "MobileAPI.log");

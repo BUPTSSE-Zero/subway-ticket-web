@@ -15,7 +15,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Created by zhou-shengyun on 7/15/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @ManagedBean(name = "subwayInfoBean")
@@ -87,6 +87,7 @@ public class SubwayInfoBean implements Serializable {
 
     public List<SubwayStation> searchStation(String queryString){
         List<SubwayStation> result = new ArrayList<>();
+        //当查询字段为空时（也就是用户在站点自动完成输入框中查看常用地铁站时），返回用户设置的常用地铁站列表
         if(queryString == null || queryString.isEmpty()){
             if(user == null)
                 return result;

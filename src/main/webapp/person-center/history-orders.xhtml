@@ -7,13 +7,18 @@
                 xmlns:w="http://xmlns.jcp.org/jsf/composite/widgets"
                 template="/templates/person-center-template.xhtml">
 
+    <!--个人中心-订单记录-历史订单-->
+    <!--@elvariable id="notPayOrders" type="java.util.List<com.subwayticket.database.model.TicketOrder>"-->
+    <!--notPayOrders在/templates/header.xhtml中定义-->
+    <!--@elvariable id="notExtractTicketOrders" type="java.util.List<com.subwayticket.database.model.TicketOrder>"-->
+    <!--notExtractTicketOrders在/templates/header.xhtml中定义-->
+
     <ui:param name="itemOrderRecordsActive" value="#{'active'}"/>
     <ui:param name="itemHistoryOrderActive" value="#{'active'}"/>
     <ui:param name="personCenterContentTitle" value="#{bundle.HistoryOrders}"/>
 
     <ui:define name="person-center-content">
         <h:outputScript library="js" name="materialize-datepicker-i18n.js"/>
-        <h:outputScript library="js" name="order-callback.js"/>
         <p:importConstants type="com.subwayticket.database.model.TicketOrder" var="orderStatus"/>
         <div class="row" style="margin-bottom: 0">
             <h:form class="col s12">
@@ -171,6 +176,8 @@
                 <p:commandButton type="button" styleClass="ui-confirmdialog-yes waves-effect waves-green btn-flat right" value="#{bundle.Ok}"/>
                 <p:commandButton type="button" styleClass="ui-confirmdialog-no waves-effect waves-red btn-flat right" value="#{bundle.Cancel}"/>
             </p:confirmDialog>
+
+            <!--订单操作结果提示对话框-->
             <div id="order-callback-dialog" class="modal" style="width: 600px;">
                 <div class="modal-content">
                     <h5 class="light-blue-text">#{bundle.Alert}</h5>
@@ -183,6 +190,8 @@
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>
                 </div>
             </div>
+
+            <!--查看取票二维码对话框-->
             <div id="extract-code-dialog" class="modal" style="width: 400px">
                 <div class="modal-content">
                     <h5 class="light-blue-text">#{bundle.ExtractCode}</h5>

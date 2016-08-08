@@ -25,7 +25,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by zhou-shengyun on 8/1/16.
+ * RESTful API-系统管理员账户相关
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @Path("/v1/system_account")

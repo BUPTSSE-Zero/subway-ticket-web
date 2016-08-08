@@ -5,7 +5,7 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 /**
- * Created by zhou-shengyun on 7/8/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class HistoryRoutePK implements Serializable {
     private String userId;

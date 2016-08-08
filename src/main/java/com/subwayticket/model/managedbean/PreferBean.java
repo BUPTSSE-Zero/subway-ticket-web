@@ -18,7 +18,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * Created by zhou-shengyun on 7/15/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 
 @ManagedBean(name = "preferBean")

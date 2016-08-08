@@ -3,11 +3,11 @@
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:cc="http://xmlns.jcp.org/jsf/composite"
       xmlns:p="http://primefaces.org/ui"
       xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+    <!--复合控件-地铁站输入自动完成控件-->
 
     <cc:interface>
         <cc:attribute name="id"/>
@@ -23,6 +23,8 @@
     </cc:interface>
 
     <cc:implementation>
+        <!--@elvariable id="station" type="com.subwayticket.database.model.SubwayStation"-->
+        <h:outputScript library="js" name="station-msg.js"/>
         <p:autoComplete id="#{cc.attrs.id}" value="#{cc.attrs.value}" styleClass="#{cc.attrs.id} station-autocomplete" style="width: 100%"
                         emptyMessage="#{bundle.TipNoStationSearchResult}" completeMethod="#{cc.attrs.completeMethod}"
                         forceSelection="true" var="station" itemLabel="#{station.displayName}" dropdown="true"
@@ -53,6 +55,7 @@
             </c:choose>
         </p:autoComplete>
 
+        <!--由于Primefaces控件的高度集成性，需要额外用js代码对原来的控件做一些修饰-->
         <script type="text/javascript">
             $(PrimeFaces.escapeClientId('#{p:component(cc.id)}:#{cc.attrs.id}')).append('<label>#{cc.attrs.label}</label>');
             $(PrimeFaces.escapeClientId('#{p:component(cc.id)}:#{cc.attrs.id}')).append('<a class="station-fullselect"><i id="#{cc.attrs.id}-fullselect" class="material-icons materialize-red-text">place</i></a>');

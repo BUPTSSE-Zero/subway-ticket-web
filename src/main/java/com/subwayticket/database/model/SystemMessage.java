@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by shengyun-zhou on 6/8/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @Entity
 @Table(name = "SystemMessage")

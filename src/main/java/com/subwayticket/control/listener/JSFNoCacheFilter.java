@@ -8,7 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Created by shengyun-zhou on 6/6/16.
+ * 过滤器，禁止所有web网页的缓存
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @WebFilter(filterName = "JSFNoCacheFilter", servletNames = {"Faces Servlet"})
 public class JSFNoCacheFilter implements Filter {

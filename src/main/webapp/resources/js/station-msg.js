@@ -1,6 +1,6 @@
 /**
- * Created by zhou-shengyun on 7/15/16.
- */
+    * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
+    */
 
 var station_msg_order = 0;
 var station_msg = {};

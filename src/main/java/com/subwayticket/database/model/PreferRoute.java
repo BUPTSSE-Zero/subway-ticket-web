@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * Created by zhou-shengyun on 7/8/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 @Entity
 @Table(name = "PreferRoute")

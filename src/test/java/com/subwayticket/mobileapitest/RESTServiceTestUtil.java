@@ -8,7 +8,7 @@ import javax.ws.rs.client.*;
 import javax.ws.rs.core.Response;
 
 /**
- * Created by shengyun-zhou on 6/10/16.
+ * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
  */
 public class RESTServiceTestUtil {
     public static final String API_BASE_URL_V1 = "http://aliyun-server:16080/subway-ticket-web/mobileapi/v1";

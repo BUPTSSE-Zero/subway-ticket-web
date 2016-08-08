@@ -1,6 +1,6 @@
 /**
- * Created by shengyun-zhou on 6/1/16.
- */
+    * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
+    */
 
 function onForgetPasswordSwitch(checked){
     var login_page = document.getElementById('login-page');

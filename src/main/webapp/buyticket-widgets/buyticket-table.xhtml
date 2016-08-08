@@ -7,15 +7,28 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:p="http://primefaces.org/ui">
 
+    <!--购票时用于显示路线票价信息和提交订单等的表格-->
+    <!--@elvariable id="startStation" type="com.subwayticket.database.model.SubwayStation"-->
+    <!--@elvariable id="endStation" type="com.subwayticket.database.model.SubwayStation"-->
+    <!--@elvariable id="ticketPrice" type="com.subwayticket.database.model.TicketPrice"-->
+
+    <h:outputScript library="js" name="station-msg.js"/>
     <table>
         <thead>
             <tr>
                 <th data-field="city">#{bundle.City}</th>
                 <th data-field="start_station">#{bundle.StartSubwayStation}</th>
                 <th data-field="end_station">#{bundle.EndSubwayStation}</th>
-                <th data-field="ticket_price">#{bundle.TicketPrice}</th>
-                <th data-field="ticket_amount">#{bundle.TicketNumber}</th>
-                <th data-field="ticket_total_price">#{bundle.TotalPrice}</th>
+                <c:choose>
+                    <c:when test="#{not empty ticketPrice}">
+                        <th data-field="ticket_price">#{bundle.TicketPrice}</th>
+                        <th data-field="ticket_amount">#{bundle.TicketNumber}</th>
+                        <th data-field="ticket_total_price">#{bundle.TotalPrice}</th>
+                    </c:when>
+                    <c:otherwise>
+                        <th/>
+                    </c:otherwise>
+                </c:choose>
             </tr>
         </thead>
 
@@ -88,33 +101,43 @@
                     </c:choose>
                 </h:form>
             </td>
-            <td>
-                <h:outputText value="#{ticketPrice.price}">
-                    <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
-                </h:outputText>
-            </td>
-            <td>
-                <span id="#{widgetId}-ticketamount">1</span>
-                <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{widgetId}', #{ticketPrice.price}, -1)">
-                    <i class="material-icons red-text">remove</i>
-                </a>
-                <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{widgetId}', #{ticketPrice.price}, 1)">
-                    <i class="material-icons light-green-text">add</i>
-                </a>
-            </td>
-            <td>
-                <span class="red-text" style="font-size: 25px; font-weight: bold">￥</span>
-                <span id="#{widgetId}-totalprice" class="red-text" style="font-size: 25px; font-weight: bold">
-                    <h:outputText value="#{ticketPrice.price}">
-                        <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
-                    </h:outputText>
-                </span>
-            </td>
+            <c:choose>
+                <c:when test="#{not empty ticketPrice}">
+                    <td>
+                        <h:outputText value="#{ticketPrice.price}">
+                            <f:convertNumber currencySymbol="￥" type="currency" minFractionDigits="2" maxFractionDigits="2"/>
+                        </h:outputText>
+                    </td>
+                    <td>
+                        <span id="#{widgetId}-ticketamount">1</span>
+                        <!--onTicketAmountChange()函数定义在/buyticket.xhtml中-->
+                        <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{widgetId}', #{ticketPrice.price}, -1)">
+                            <i class="material-icons red-text">remove</i>
+                        </a>
+                        <a class="btn-floating btn-flat transparent waves-effect" onclick="onTicketAmountChange('#{widgetId}', #{ticketPrice.price}, 1)">
+                            <i class="material-icons light-green-text">add</i>
+                        </a>
+                    </td>
+                    <td>
+                        <span class="red-text" style="font-size: 25px; font-weight: bold">￥</span>
+                        <span id="#{widgetId}-totalprice" class="red-text" style="font-size: 25px; font-weight: bold">
+                            <h:outputText value="#{ticketPrice.price}">
+                                <f:convertNumber minFractionDigits="2" maxFractionDigits="2"/>
+                            </h:outputText>
+                        </span>
+                    </td>
+                </c:when>
+                <c:otherwise>
+                    <td>
+                        <span class="red-text">#{bundle.TipRouteUnavailable}</span>
+                    </td>
+                </c:otherwise>
+            </c:choose>
         </tr>
         <c:choose>
             <c:when test="#{empty sessionScope.user}">
                 <tr>
-                    <td colspan="6" style="padding: 0;">
+                    <td colspan="#{empty ticketPrice ? 4 : 6}" style="padding: 0;">
                         <p class="right red-text">
                             #{bundle.TipBuyTicketAfterLogin}
                         </p>
@@ -123,7 +146,7 @@
             </c:when>
             <c:otherwise>
                 <tr>
-                    <td colspan="6" style="padding: 0">
+                    <td colspan="#{empty ticketPrice ? 4 : 6}" style="padding: 0">
                         <h:form>
                             <c:choose>
                                 <c:when test="#{preferBean.isRoutePrefer(startStation, endStation)}">
@@ -146,15 +169,17 @@
                                 </c:otherwise>
                             </c:choose>
                         </h:form>
-                        <h:form>
-                            <input type="hidden" id="#{widgetId}-ticketamount-hinput" name="ticketAmount" value="1"/>
-                            <p:commandButton styleClass="btn green darken-1 waves-effect waves-light right" icon="ui-icon-done" type="submit"
-                                             actionListener="#{orderBean.submitOrder(startStation, endStation, ticketPrice)}"
-                                             update="#{submitUpdate}" oncomplete="onSubmitOrderCallback(xhr, status, args);$('.collapsible').collapsible({accordion: true});"
-                                             value="#{bundle.SubmitOrder}">
-                                <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
-                            </p:commandButton>
-                        </h:form>
+                        <c:if test="#{not empty ticketPrice}">
+                            <h:form>
+                                <input type="hidden" id="#{widgetId}-ticketamount-hinput" name="ticketAmount" value="1"/>
+                                <p:commandButton styleClass="btn green darken-1 waves-effect waves-light right" icon="ui-icon-done" type="submit"
+                                                 actionListener="#{orderBean.submitOrder(startStation, endStation, ticketPrice)}"
+                                                 update="#{submitUpdate}" oncomplete="onSubmitOrderCallback(xhr, status, args);$('.collapsible').collapsible({accordion: true});"
+                                                 value="#{bundle.SubmitOrder}">
+                                    <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
+                                </p:commandButton>
+                            </h:form>
+                        </c:if>
                     </td>
                 </tr>
             </c:otherwise>

@@ -1,6 +1,6 @@
 /**
- * Created by zhou-shengyun on 7/12/16.
- */
+    * @author zhou-shengyun <GGGZ-1101-28@Live.cn>
+    */
 
 $.datepicker.regional['default'] = {};
 
