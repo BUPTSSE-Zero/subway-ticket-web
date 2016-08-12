@@ -44,7 +44,7 @@ public class JedisUtil {
         Jedis j = getJedis(IP, port);
         System.out.println("Jedis ping [" + key + "]: " + pool.getResource().ping());
         j.setex("SubwayTicket", 30, "Hello, Subway Ticket Server!");
-        closeJedis(IP, port, j);
+        j.close();
     }
 
     /**
@@ -78,25 +78,13 @@ public class JedisUtil {
     }
 
     /**
-     * 将一个Jedis对象返回到默认主机的连接池中
-     * @param jedis Jedis对象实例
-     * @deprecated
+     * 销毁所有的Jedis连接池
      */
-    @Deprecated
-    public static void closeJedis(Jedis jedis){
-        closeJedis(REDIS_DEFAULT_IP, REDIS_DEFAULT_PORT, jedis);
-    }
-
-    /**
-     * 将一个Jedis对象返回到指定主机的连接池中
-     * @param IP 指定主机地址的IP
-     * @param port 指定主机地址的端口
-     * @param jedis Jedis对象
-     * @deprecated
-     */
-    @Deprecated
-    public static void closeJedis(String IP, int port, Jedis jedis){
-        JedisPool pool = getJedisPool(IP, port);
-        pool.returnResource(jedis);
+    public static void destroyAllJedisPool(){
+        System.out.println("Destroy all Jedis pools.");
+        for(Map.Entry<String, JedisPool> e : jedisPoolMap.entrySet()){
+            e.getValue().destroy();
+        }
+        jedisPoolMap.clear();
     }
 }

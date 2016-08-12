@@ -41,6 +41,7 @@ public class WebappListener implements ServletContextListener {
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
+        JedisUtil.destroyAllJedisPool();
         EntityManagerFactory.closeSubwayTicketDBPU();
         System.out.println("Persistence units have been closed.");
         try {

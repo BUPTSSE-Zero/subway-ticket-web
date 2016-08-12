@@ -69,7 +69,6 @@ public class TicketOrderControl {
             TicketOrder newOrder = new TicketOrder(orderID, date, user, new SubwayStation(submitOrderRequest.getStartStationId()),
                                                    new SubwayStation(submitOrderRequest.getEndStationId()), ticketPrice.getPrice(), submitOrderRequest.getAmount());
             subwayInfoDBHelperBean.create(newOrder);
-            subwayInfoDBHelperBean.refresh(newOrder);
             result = new SubmitOrderResult(PublicResultCode.SUCCESS, BundleUtil.getString(req, "TipOrderSubmitSuccess"), newOrder);
 
             //定时60分钟后取消该订单
@@ -87,14 +86,14 @@ public class TicketOrderControl {
                     return result;
                 }
             }
+            HistoryRoute newRoute = new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
+                    submitOrderRequest.getEndStationId());
             if(user.getHistoryRouteList().size() < 3){
-                subwayInfoDBHelperBean.create(new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
-                        submitOrderRequest.getEndStationId()));
+                subwayInfoDBHelperBean.create(newRoute);
                 return result;
             }
             subwayInfoDBHelperBean.remove(user.getHistoryRouteList().get(user.getHistoryRouteList().size() - 1));
-            subwayInfoDBHelperBean.create(new HistoryRoute(user.getPhoneNumber(), submitOrderRequest.getStartStationId(),
-                    submitOrderRequest.getEndStationId()));
+            subwayInfoDBHelperBean.create(newRoute);
             subwayInfoDBHelperBean.refresh(user);
         }catch (EJBException e){
             e.printStackTrace();

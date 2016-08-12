@@ -8,7 +8,7 @@ sourceCompatibility = 1.7
 
 buildscript{
     repositories{
-        mavenCentral()
+        jcenter()
     }
     dependencies{
         classpath 'net.sf.proguard:proguard-gradle:+'
@@ -16,7 +16,7 @@ buildscript{
 }
 
 repositories{
-    mavenCentral()
+    jcenter()
 }
 
 dependencies {

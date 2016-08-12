@@ -67,7 +67,6 @@
                 </div>
                 <div class="modal-footer">
                     <p:commandButton styleClass="waves-effect waves-green btn-flat" value="#{bundle.Close}"
-                                     actionListener="#{orderBean.refreshNotPayOrders}"
                                      onclick="$('#order-callback-dialog').closeModal();return;"
                                      update="#{p:component('header-panel')} #{p:component('person-center-nav-order-record')} #{p:component('nopay-orders-panel')}"
                                      oncomplete="$('.collapsible').collapsible({accordion: false});"/>

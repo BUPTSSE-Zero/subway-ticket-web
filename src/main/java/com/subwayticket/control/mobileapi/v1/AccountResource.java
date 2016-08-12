@@ -10,6 +10,7 @@ import com.subwayticket.model.result.Result;
 import com.subwayticket.util.BundleUtil;
 import com.subwayticket.util.JedisUtil;
 import com.subwayticket.util.SecurityUtil;
+import redis.clients.jedis.Jedis;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -38,7 +39,9 @@ public class AccountResource {
     @Path("/register")
     @Consumes("application/json")
     public Response register(RegisterRequest regReq){
-        Result result = AccountControl.register(request, regReq, dbBean, JedisUtil.getJedis());
+        Jedis jedis = JedisUtil.getJedis();
+        Result result = AccountControl.register(request, regReq, dbBean, jedis);
+        jedis.close();
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -48,7 +51,9 @@ public class AccountResource {
     @Path("/phone_captcha")
     @Consumes("application/json")
     public Response phoneCaptcha(PhoneCaptchaRequest pcReq){
-        Result result = SecurityUtil.sendPhoneCaptcha(request, pcReq.getPhoneNumber(), JedisUtil.getJedis());
+        Jedis jedis = JedisUtil.getJedis();
+        Result result = SecurityUtil.sendPhoneCaptcha(request, pcReq.getPhoneNumber(), jedis);
+        jedis.close();
         if(result.getResultCode() != PublicResultCode.SUCCESS)
             throw new CheckException(result);
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -58,7 +63,9 @@ public class AccountResource {
     @Path("/login")
     @Consumes("application/json")
     public Response login(LoginRequest loginRequest){
-        Result result = AccountControl.mobileLogin(request, loginRequest, dbBean, JedisUtil.getJedis());
+        Jedis jedis = JedisUtil.getJedis();
+        Result result = AccountControl.mobileLogin(request, loginRequest, dbBean, jedis);
+        jedis.close();
         if(result.getResultCode() != PublicResultCode.SUCCESS && result.getResultCode() != PublicResultCode.LOGIN_SUCCESS_WITH_PRE_OFFLINE)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
         return Response.status(Response.Status.CREATED).entity(result).type(MediaType.APPLICATION_JSON_TYPE).build();
@@ -70,7 +77,9 @@ public class AccountResource {
      * @return token对应的用户对象，注意该对象不是处于持久化状态的
      */
     public static Account authCheck(HttpServletRequest request){
-        String userId = SecurityUtil.checkMobileToken(request.getHeader(SecurityUtil.HEADER_TOKEN_KEY), JedisUtil.getJedis());
+        Jedis jedis = JedisUtil.getJedis();
+        String userId = SecurityUtil.checkMobileToken(request.getHeader(SecurityUtil.HEADER_TOKEN_KEY), jedis);
+        jedis.close();
         if(userId == null)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), new Result(Response.Status.UNAUTHORIZED.getStatusCode(),
                                         BundleUtil.getString(request, "TipTokenInvalid")));
@@ -104,7 +113,9 @@ public class AccountResource {
     @Consumes("application/json")
     @Produces("application/json")
     public Result resetPassword(ResetPasswordRequest resetRequest){
-        Result result = AccountControl.resetPassword(request, resetRequest, dbBean, JedisUtil.getJedis());
+        Jedis jedis = JedisUtil.getJedis();
+        Result result = AccountControl.resetPassword(request, resetRequest, dbBean, jedis);
+        jedis.close();
         if(result.getResultCode() == PublicResultCode.USER_NOT_EXIST)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), result);
         else if(result.getResultCode() != PublicResultCode.SUCCESS)
@@ -116,7 +127,9 @@ public class AccountResource {
     @Path("/logout")
     public Response logout(){
         Account account = authCheck(request);
-        AccountControl.mobileLogout(account, JedisUtil.getJedis());
+        Jedis jedis = JedisUtil.getJedis();
+        AccountControl.mobileLogout(account, jedis);
+        jedis.close();
         return Response.noContent().build();
     }
 }

@@ -40,7 +40,9 @@ public class SystemAccountResource {
 
 
     public static SystemAccount authCheck(HttpServletRequest request){
-        String userId = SecurityUtil.checkMobileToken(request.getHeader(SecurityUtil.HEADER_TOKEN_KEY), JedisUtil.getJedis());
+        Jedis jedis = JedisUtil.getJedis();
+        String userId = SecurityUtil.checkMobileToken(request.getHeader(SecurityUtil.HEADER_TOKEN_KEY), jedis);
+        jedis.close();
         if(userId == null)
             throw new CheckException(Response.Status.UNAUTHORIZED.getStatusCode(), new Result(Response.Status.UNAUTHORIZED.getStatusCode(),
                     BundleUtil.getString(request, "TipTokenInvalid")));
@@ -61,6 +63,7 @@ public class SystemAccountResource {
         mobileLoginResult.setToken(SecurityUtil.getMobileToken(loginRequest.getUserId()));
         jedis.setex(SecurityUtil.REDIS_KEY_MOBILETOKEN_PREFIX + loginRequest.getUserId(), SecurityUtil.MOBILETOKEN_VALID_HOURS * 3600,
                 mobileLoginResult.getToken());
+        jedis.close();
         return Response.status(Response.Status.CREATED).entity(mobileLoginResult).type(MediaType.APPLICATION_JSON_TYPE).build();
     }
 }

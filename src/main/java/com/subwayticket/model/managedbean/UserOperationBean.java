@@ -18,6 +18,7 @@ import com.subwayticket.util.JedisUtil;
 import com.subwayticket.util.SecurityUtil;
 import com.subwayticket.database.control.*;
 import org.primefaces.context.RequestContext;
+import redis.clients.jedis.Jedis;
 
 import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
@@ -88,8 +89,10 @@ public class UserOperationBean implements Serializable {
     public boolean register() {
         request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try{
+            Jedis jedis = JedisUtil.getJedis();
             Result result = AccountControl.register(request, new RegisterRequest(phoneNumber, newPassword, captcha),
-                    dbBean, JedisUtil.getJedis());
+                    dbBean, jedis);
+            jedis.close();
             if (result.getResultCode() == PublicResultCode.SUCCESS) {
                 password = newPassword;
                 return login();
@@ -159,7 +162,9 @@ public class UserOperationBean implements Serializable {
         FacesContext context = FacesContext.getCurrentInstance();
         request = (HttpServletRequest) context.getExternalContext().getRequest();
         try {
-            Result result = AccountControl.resetPassword(request, new ResetPasswordRequest(phoneNumber, newPassword, captcha), dbBean, JedisUtil.getJedis());
+            Jedis jedis = JedisUtil.getJedis();
+            Result result = AccountControl.resetPassword(request, new ResetPasswordRequest(phoneNumber, newPassword, captcha), dbBean, jedis);
+            jedis.close();
             if (result.getResultCode() != PublicResultCode.SUCCESS) {
                 context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, result.getResultDescription(), ""));
                 return false;
@@ -181,7 +186,9 @@ public class UserOperationBean implements Serializable {
     public void sendCaptcha(){
         request = (HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest();
         try{
-            Result result = SecurityUtil.sendPhoneCaptcha(request, phoneNumber, JedisUtil.getJedis());
+            Jedis jedis = JedisUtil.getJedis();
+            Result result = SecurityUtil.sendPhoneCaptcha(request, phoneNumber, jedis);
+            jedis.close();
             if (result.getResultCode() == PublicResultCode.SUCCESS) {
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                         result.getResultDescription(), ""));

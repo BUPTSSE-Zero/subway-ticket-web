@@ -21,6 +21,7 @@ public abstract class EntityManagerHelper {
         getEntityManager().getTransaction().begin();
         getEntityManager().persist(entity);
         getEntityManager().getTransaction().commit();
+        getEntityManager().refresh(entity);
     }
 
     /**

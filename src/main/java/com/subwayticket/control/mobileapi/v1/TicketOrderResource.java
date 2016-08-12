@@ -56,7 +56,6 @@ public class TicketOrderResource {
 
     @DELETE
     @Path("/cancel/{orderId}")
-    @Consumes("application/json")
     @Produces("application/json")
     public Result cancelOrder(@PathParam("orderId") String orderId){
         Account user = AccountResource.authCheck(request);

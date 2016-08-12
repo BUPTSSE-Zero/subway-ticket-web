@@ -8,10 +8,10 @@
     <!--购票时用于从历史路线记录中快速购票的控件-->
     <!--@elvariable id="routeList" type="java.util.List<com.subwayticket.database.model.HistoryRoute>"-->
 
-    <ul class="collapsible" data-collapsible="accordion">
+    <ul class="history-route-collapsible collapsible" data-collapsible="accordion">
         <c:forEach var="route" items="#{routeList}" varStatus="loop">
             <li>
-                <div class="collapsible-header teal white-text order-record-header waves-effect waves-light"
+                <div id="#{widgetId}-#{loop.index}-header" class="collapsible-header teal white-text order-record-header waves-effect waves-light"
                      style="border-bottom-color: white">
                     <i class="material-icons left">location_city</i>
                     <span class="left">#{route.startStation.subwayLine.city.cityName}</span>
@@ -29,6 +29,8 @@
                             <ui:param name="ticketPrice" value="#{buyTicketBean.searchTicketPrice(route.startStation, route.endStation)}"/>
                             <ui:param name="preferUpdate" value="#{preferUpdate}"/>
                             <ui:param name="submitUpdate" value="#{submitUpdate}"/>
+                            <ui:param name="collapsibleClass" value="history-route-collapsible"/>
+                            <ui:param name="collapsibleHeaderId" value="#{widgetId}-#{loop.index}-header"/>
                             <ui:param name="widgetId" value="#{widgetId}-#{loop.index}"/>
                         </ui:include>
                     </div>

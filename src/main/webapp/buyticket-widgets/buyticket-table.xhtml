@@ -49,11 +49,16 @@
                     <script type="text/javascript">
                         initStationMessage('station-msg-dialog', '#{widgetId}-start-station', true);
                     </script>
+                    <c:if test="#{empty collapsibleHeaderId}">
+                        <c:set var="collapsibleHeaderId" value="-"/>
+                        <c:set var="collapsibleClass" value="-"/>
+                    </c:if>
                     <c:choose>
                         <c:when test="#{not empty sessionScope.user and preferBean.isStationPrefer(startStation)}">
                             <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
                                              icon="ui-icon-star" actionListener="#{preferBean.removePreferSubwayStation(startStation)}"
                                              update="#{preferUpdate}"
+                                             oncomplete="$('##{collapsibleHeaderId}').addClass('active'); $('.#{collapsibleClass}').collapsible({accordion: true});"
                                              onsuccess="Materialize.toast('#{bundle.TipRemovePreferStationSuccess}', 4000, 'rounded')">
                                 <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
@@ -61,6 +66,7 @@
                         <c:when test="#{not empty sessionScope.user}">
                             <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
                                              icon="ui-icon-star-border" actionListener="#{preferBean.addPreferSubwayStation(startStation)}"
+                                             oncomplete="$('##{collapsibleHeaderId}').addClass('active'); $('.#{collapsibleClass}').collapsible({accordion: true});"
                                              onsuccess="Materialize.toast('#{bundle.TipAddPreferStationSuccess}', 4000, 'rounded')"
                                              update="#{preferUpdate}">
                                 <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
@@ -86,6 +92,7 @@
                             <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
                                              icon="ui-icon-star" actionListener="#{preferBean.removePreferSubwayStation(endStation)}"
                                              update="#{preferUpdate}"
+                                             oncomplete="$('##{collapsibleHeaderId}').addClass('active'); $('.#{collapsibleClass}').collapsible({accordion: true})"
                                              onsuccess="Materialize.toast('#{bundle.TipRemovePreferStationSuccess}', 4000, 'rounded')">
                                 <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
@@ -94,6 +101,7 @@
                             <p:commandButton styleClass="btn-floating btn-flat transparent waves-effect prefer-button"
                                              icon="ui-icon-star-border" actionListener="#{preferBean.addPreferSubwayStation(endStation)}"
                                              onsuccess="Materialize.toast('#{bundle.TipAddPreferStationSuccess}', 4000, 'rounded')"
+                                             oncomplete="$('##{collapsibleHeaderId}').addClass('active'); $('.#{collapsibleClass}').collapsible({accordion: true})"
                                              update="#{preferUpdate}">
                                 <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                             </p:commandButton>
@@ -154,6 +162,7 @@
                                                      icon="ui-icon-remove" value="#{bundle.RemovePreferRoute}"
                                                      actionListener="#{preferBean.removePreferSubwayRoute(startStation, endStation)}"
                                                      onsuccess="Materialize.toast('#{bundle.TipRemovePreferRoute}', 4000, 'rounded')"
+                                                     oncomplete="$('##{collapsibleHeaderId}').addClass('active'); $('.#{collapsibleClass}').collapsible({accordion: true});"
                                                      update="#{preferUpdate}">
                                         <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                                     </p:commandButton>
@@ -163,6 +172,7 @@
                                                      icon="ui-icon-add" value="#{bundle.AddToPreferRoute}"
                                                      actionListener="#{preferBean.addPreferSubwayRoute(startStation, endStation)}"
                                                      onsuccess="Materialize.toast('#{bundle.TipAddPreferRouteSuccess}', 4000, 'rounded')"
+                                                     oncomplete="$('##{collapsibleHeaderId}').addClass('active'); $('.#{collapsibleClass}').collapsible({accordion: true});"
                                                      update="#{preferUpdate}">
                                         <f:actionListener binding="#{userOperationBean.refreshLoginUser()}"/>
                                     </p:commandButton>
